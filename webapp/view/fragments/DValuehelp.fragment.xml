@@ -1,0 +1,16 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		id="NewvalueHelpDialog"
+		title="Code"
+		items="{sPathHeaderItemModel>/Code}"
+		search="_handleValueHelpSearchNew"
+		confirm="_handleValueHelpCloseNew"
+		cancel="_handleValueHelpCloseNew"
+		multiSelect="true">
+		<StandardListItem
+			title="{sPathHeaderItemModel>Planid}"
+			description="{sPathHeaderItemModel>description}" />
+	</SelectDialog>
+</core:FragmentDefinition>

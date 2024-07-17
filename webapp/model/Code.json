@@ -1,0 +1,42 @@
+{
+    
+    "Code": [
+        {
+            "Planid": "G44.85",
+            "description": "Primary Stabing Fever",
+            "validity": "12/09/2050",
+            "headerlimit": "100000",
+            "familylimit": "2000000",
+            "version": "1.0"
+
+        },
+        {
+            "Planid": "G44.86",
+            "description": "Primary Stabing Fever",
+            "validity": "12/09/2050",
+            "headerlimit": "100000",
+            "familylimit": "2000000",
+            "version": "1.0"
+
+        },
+        {
+            "Planid": "G44.87",
+            "description": "Primary Stabing Fever",
+            "validity": "12/09/2050",
+            "headerlimit": "100000",
+            "familylimit": "2000000",
+            "version": "1.0"
+
+        },
+        {
+            "Planid": "G44.88",
+            "description": "Primary Stabing Fever",
+            "validity": "12/09/2050",
+            "headerlimit": "100000",
+            "familylimit": "2000000",
+            "version": "1.0"
+
+        }
+    ]
+}
+

@@ -1,0 +1,30 @@
+{
+    
+    "header": [
+        {
+            "Catalog":"ICD-10",
+            "Code":"G44.85",
+            "Description":"Primary Stabing Fever",
+            "Level":"130200708",
+            "Laternity": "Right",
+            "Certainity": "Suspected",
+            "C1": true,
+            "C2": false,
+            "enabledcode":false
+
+        },
+        {
+            "Catalog":"",
+            "Code":"",
+            "Description":"",
+            "Level":"",
+            "Laternity": "",
+            "Certainity": "",
+            "C1": false,
+            "C2": false,
+            "enabledcode":true
+
+        }
+    ]
+}
+
