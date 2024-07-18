@@ -30,11 +30,10 @@
 					<m:Title id="_IDGenTitle3" text="MRN: 12345" />
 				</snappedTitleOnMobile>
 				<actions>
-					<m:Button id="_IDGenButton1" text="Save" type="Emphasized" press="onPress"
+					<m:Button id="_IDGenButton1" text="Save" type="Emphasized" press="onPressSave"
 						ariaDescribedBy="defaultButtonDescription genericButtonDescription"
 						icon="sap-icon://business-card">
 					</m:Button>
-
 				</actions>
 			</ObjectPageDynamicHeaderTitle>
 		</headerTitle>
@@ -80,10 +79,8 @@
 								items="{LimitsTemplateModel1>/to_Encounter/results}">
 								<m:Panel id="_IDGenPanel1" headerText="{LimitsTemplateModel1>EncID}"
 									expanded="true" expandable="true">
-
 									<m:Table id="_IDGenTable1"
 										items="{LimitsTemplateModel1>to_Diagnosis/results}">
-
 										<m:columns>
 											<m:Column id="_IDGenColumn1" minScreenWidth="Tablet"
 												hAlign="Center" width="6rem"
@@ -178,10 +175,8 @@
 											</m:ColumnListItem>
 										</m:items>
 									</m:Table>
-
 								</m:Panel>
 							</m:VBox>
-
 						</blocks>
 					</ObjectPageSubSection>
 				</subSections>
@@ -192,7 +187,6 @@
 					<ObjectPageSubSection id="_IDGenObjectPageSubSection2">
 						<blocks>
 							<m:Table id="_IDGenTable2" items="{LimitsTabableModel>/}">
-
 								<m:columns>
 									<m:Column id="_IDGenColumn9" minScreenWidth="Tablet"
 										hAlign="Center" width="6rem"
@@ -276,8 +270,6 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-
-
 		</sections>
 	</ObjectPageLayout>
 </mvc:View>

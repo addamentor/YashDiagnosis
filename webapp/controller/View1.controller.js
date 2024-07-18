@@ -101,58 +101,42 @@ sap.ui.define([
                                             // template: oTemplate
                                         }),
                                     });
-                                    oData1.to_Encounter.results.forEach(function (encounter) {
-                                        var to_diag = encounter.to_Diagnosis.results; //table Data
-                                        if (to_diag.length > 0){
-                                            to_diag.forEach(function (diagnosis) {
-                                                // oTable.addColumn(
-                                                //     new sap.m.Column(  {
-                                                //         header: new sap.m.Label({
-                                                //             text: ""
-                                                //         }),
-                                                //     })
-                                                // );
-                                                // var oTemplate = oTable.getBindingInfo("items").template;
-                                                // oTemplate.addCell(new sap.m.Button({
-                                                //     press: "onPressDelete",
-                                                //     icon: "sap-icon://delete"
-                                                // }));
-                                                diagnosis[aDiatype.DiagType] = false;
-                                            })
-                                        } else {
-                                            
-                                            to_diag.push(
-                                                {}
-                                            )
-                                            // oTable.addColumn(
-                                            //     new sap.m.Column(  {
-                                            //         header: new sap.m.Label({
-                                            //             text: ""
-                                            //         }),
-                                            //     })
-                                            // );
-                                            // var oTemplate = oTable.getBindingInfo("items").template;
-                                            // oTemplate.addCell(new sap.m.Button({
-                                            //     press: "onPressDelete",
-                                            //     icon: "sap-icon://delete"
-                                            // }));
-                                    }
-                                    });
                                     oTable.addColumn(oColumn);
                                     var oTemplate = oTable.getBindingInfo("items").template;
                                     oTemplate.addCell(new sap.m.CheckBox({
                                         id: "id_" + aDiatype.DiagType,
                                         selected: "{LimitsTemplateModel1>" + aDiatype.DiagType + "}"
                                     }));
+                                    oData1.to_Encounter.results.forEach(function (encounter) {
+                                        var to_diag = encounter.to_Diagnosis.results; //table Data
+                                        if (to_diag.length > 0) {
+                                            to_diag.forEach(function (diagnosis) {
+                                                diagnosis[aDiatype.DiagType] = false;
+                                            })
+                                        } else {
+                                            to_diag.push({});
+                                        }
+                                    });
                                 });
+                                oTable.addColumn(
+                                    new sap.m.Column({
+                                        header: new sap.m.Label({
+                                            text: ""
+                                        })
+                                    })
+                                );
+                                var oTemplate = oTable.getBindingInfo("items").template;
+                                oTemplate.addCell(new sap.m.Button({
+                                    press: this.onDiagDeletePress.bind(this),
+                                    icon: "sap-icon://delete",
+                                    type: "Reject"
+                                }));
                                 this.getView().setModel(LimitsTemplateModel1, "LimitsTemplateModel1");
-
-
                                 var aEnc = oData1.to_Encounter.results;
                                 aEnc.forEach(function (encounter) {
                                     var to_diag = encounter.to_Diagnosis.results; //table Data
                                     to_diag.forEach(function (diagnosis) {
-                                        if(diagnosis.to_DiagType && diagnosis.to_DiagType.results > 0){
+                                        if (diagnosis.to_DiagType && diagnosis.to_DiagType.results > 0) {
                                             diagnosis.to_DiagType.results.forEach(function (diagType) {
                                                 var type = diagType.DiagType;
                                                 diagnosis[type] = diagType.DiagFlag
@@ -190,11 +174,11 @@ sap.ui.define([
                                         this.getView().setModel(oModel1, "LimitsTabableModel");
 
                                         var aChroninDiag = oData.results;
-                                        if(aChroninDiag.length === 0){
-                                            aChroninDiag.push( {} );
+                                        if (aChroninDiag.length === 0) {
+                                            aChroninDiag.push({});
                                         }
                                         aChroninDiag.forEach(function (ChroninDiag) {
-                                            if(ChroninDiag && ChroninDiag.to_DiagType && ChroninDiag.to_DiagType.results.length > 0){
+                                            if (ChroninDiag && ChroninDiag.to_DiagType && ChroninDiag.to_DiagType.results.length > 0) {
                                                 var to_diagtype = ChroninDiag.to_DiagType.results; //table Data
                                                 to_diagtype.forEach(function (diagtype) {
                                                     ChroninDiag[diagtype.DiagType] = diagtype.DiagFlag
@@ -202,20 +186,13 @@ sap.ui.define([
                                             }
                                         });
                                         this.getView().getModel("LimitsTabableModel").setData(oData.results);
-
-
-
-
                                     }.bind(this),
                                     error: function (oError) {
                                         me.bsyDialog.close();
                                         var msg = JSON.parse(oError.responseText).error.message.value;
                                         sap.m.MessageToast.show(msg);
                                     }
-
                                 });
-
-
                             }.bind(this),
                             error: function (oError) {
                                 me.bsyDialog.close();
@@ -231,6 +208,10 @@ sap.ui.define([
                     }
                 });
 
+            },
+            onDiagDeletePress: function(oEvent){
+                var object = oEvent.getSource().getParent().getBindingContext("LimitsTemplateModel1").getObject();
+                MessageToast.show(object.DiagCode + " " + "will be deleted");
             },
             _handleValueHelpCloseNew: function (evt) {
                 var that = this;
@@ -282,7 +263,7 @@ sap.ui.define([
                             C1: false,
                             C2: false
                         };
-                       // that.getView().getModel("LimitsTemplateModel").getData().panelData[0].data.splice(finalIndx, 0, newItem);
+                        // that.getView().getModel("LimitsTemplateModel").getData().panelData[0].data.splice(finalIndx, 0, newItem);
                         that.getView().getModel("LimitsTemplateModel").refresh();
                         //  var oModel = this.getOwnerComponent().getModel("invoice");
                         //  oModel.setProperty("/Invoices", oModel.getProperty("/Invoices").concat(newItem));
@@ -329,7 +310,7 @@ sap.ui.define([
             /**
              * 
              */
-            onChangeLevel: function(oEvent){
+            onChangeLevel: function (oEvent) {
 
             },
 
@@ -400,10 +381,8 @@ sap.ui.define([
                 // this.DiagnosisData();
             },
 
-            onPress: function (oevt) {
-
+            onPressSave: function (oevt) {
                 var oModel = this.getOwnerComponent().getModel();
-
                 var oModel2 = new sap.ui.model.odata.ODataModel(oModel.sServiceUrl, true);
 
                 var oLimitsData = this.getView().getModel("LimitsTemplateModel1").getData();
