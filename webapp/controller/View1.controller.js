@@ -209,7 +209,7 @@ sap.ui.define([
                 });
 
             },
-            onDiagDeletePress: function(oEvent){
+            onDiagDeletePress: function (oEvent) {
                 var object = oEvent.getSource().getParent().getBindingContext("LimitsTemplateModel1").getObject();
                 MessageToast.show(object.DiagCode + " " + "will be deleted");
             },
@@ -243,35 +243,7 @@ sap.ui.define([
                     });
                 }
             },
-            _handleValueHelpClose: function (evt) {
-                var that = this;
-                var aSelectedItems = evt.getParameter("selectedItems"),
-                    oMultiInput = this.byId("multiInput");
-                //var index = that.getView().getModel("LimitsTemplateModel").getData().panelData[0].data.length;
-                //var finalIndx = index - 1;
-
-                if (aSelectedItems && aSelectedItems.length > 0) {
-                    aSelectedItems.forEach(function (oItem) {
-                        var newItem = {
-                            Catalog: "ICD-10",
-                            Code: oItem.getTitle(),
-                            enabledcode: true,
-                            Description: oItem.getDescription(),
-                            Level: "",
-                            Laternity: "",
-                            Certainity: "",
-                            C1: false,
-                            C2: false
-                        };
-                        // that.getView().getModel("LimitsTemplateModel").getData().panelData[0].data.splice(finalIndx, 0, newItem);
-                        that.getView().getModel("LimitsTemplateModel").refresh();
-                        //  var oModel = this.getOwnerComponent().getModel("invoice");
-                        //  oModel.setProperty("/Invoices", oModel.getProperty("/Invoices").concat(newItem));
-                        // oMultiInput.addToken(new Token({
-                        //     text: oItem.getTitle()
-                        // }));
-                    });
-                }
+            _handleDiagCodeVHClose: function (evt) {
             },
             handleValueHelpNew: function () {
                 var that = this;
@@ -286,10 +258,10 @@ sap.ui.define([
                 //  var sPathHeaderItem =new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath());
                 this.getView().setModel(oModel, "sPathHeaderItemModel");
             },
-            handleValueHelp: function () {
+            onDiagCodeVHPress: function () {
                 var that = this;
                 if (!this.HeaderFrgment) {
-                    this.HeaderFrgment = sap.ui.xmlfragment("project7.view.fragments.valuehelp", this);
+                    this.HeaderFrgment = sap.ui.xmlfragment("project7.view.fragments.DiagCodeVH", this);
                     this.getView().addDependent(this.HeaderFrgment);
                     // this.HeaderFrgment.setModel(this.getView().getModel("plantModel"));
                 }

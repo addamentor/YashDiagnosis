@@ -140,7 +140,7 @@
 													value="{LimitsTemplateModel1>DiagCode}"
 													liveChange="changeCode"
 													id="multiInput" showValueHelp="true"
-													valueHelpRequest="handleValueHelp"
+													valueHelpRequest="onDiagCodeVHPress"
 													suggestionItems="{/DiagnosisCodeValueHelp}">
 														<m:suggestionItems>
 															<core:ListItem text="{DiagCode}" additionalText="{DiagCode_Text}" />
