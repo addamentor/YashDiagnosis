@@ -112,7 +112,8 @@ sap.ui.define([
                                         if (to_diag.length > 0) {
                                             to_diag.forEach(function (diagnosis) {
                                                 diagnosis[aDiatype.DiagType] = false;
-                                            })
+                                            });
+
                                         } else {
                                             to_diag.push({});
                                         }
@@ -142,7 +143,10 @@ sap.ui.define([
                                                 diagnosis[type] = diagType.DiagFlag
                                             });
                                         }
-                                    })
+                                    });
+                                    if (to_diag.length !== 1) {
+                                        to_diag.push({});
+                                    }
                                 });
 
                                 this.getView().getModel("LimitsTemplateModel1").setData(oData1);
@@ -174,9 +178,9 @@ sap.ui.define([
                                         this.getView().setModel(oModel1, "LimitsTabableModel");
 
                                         var aChroninDiag = oData.results;
-                                        if (aChroninDiag.length === 0) {
+                                        //if (aChroninDiag.length == 0) {
                                             aChroninDiag.push({});
-                                        }
+                                       // }
                                         aChroninDiag.forEach(function (ChroninDiag) {
                                             if (ChroninDiag && ChroninDiag.to_DiagType && ChroninDiag.to_DiagType.results.length > 0) {
                                                 var to_diagtype = ChroninDiag.to_DiagType.results; //table Data
