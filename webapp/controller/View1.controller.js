@@ -105,12 +105,37 @@ sap.ui.define([
                                         var to_diag = encounter.to_Diagnosis.results; //table Data
                                         if (to_diag.length > 0){
                                             to_diag.forEach(function (diagnosis) {
+                                                // oTable.addColumn(
+                                                //     new sap.m.Column(  {
+                                                //         header: new sap.m.Label({
+                                                //             text: ""
+                                                //         }),
+                                                //     })
+                                                // );
+                                                // var oTemplate = oTable.getBindingInfo("items").template;
+                                                // oTemplate.addCell(new sap.m.Button({
+                                                //     press: "onPressDelete",
+                                                //     icon: "sap-icon://delete"
+                                                // }));
                                                 diagnosis[aDiatype.DiagType] = false;
                                             })
                                         } else {
+                                            
                                             to_diag.push(
                                                 {}
                                             )
+                                            // oTable.addColumn(
+                                            //     new sap.m.Column(  {
+                                            //         header: new sap.m.Label({
+                                            //             text: ""
+                                            //         }),
+                                            //     })
+                                            // );
+                                            // var oTemplate = oTable.getBindingInfo("items").template;
+                                            // oTemplate.addCell(new sap.m.Button({
+                                            //     press: "onPressDelete",
+                                            //     icon: "sap-icon://delete"
+                                            // }));
                                     }
                                     });
                                     oTable.addColumn(oColumn);
@@ -300,6 +325,14 @@ sap.ui.define([
             onPress: function () {
 
             },
+
+            /**
+             * 
+             */
+            onChangeLevel: function(oEvent){
+
+            },
+
             DiagnosisData: function () {
                 var that = this;
                 var oModel = this.getOwnerComponent().getModel();
