@@ -133,10 +133,9 @@
 											<m:ColumnListItem id="_IDGenColumnListItem1">
 												<m:ComboBox id="_IDGenComboBox1"
 													selectedKey="{LimitsTemplateModel1>DiagCatalog}"
-													enabled="{LimitsTemplateModel1>DiagSecondary}">
-													<!-- <core:Item id="_IDGenItem1" key="ICD-10"
-													text="ICD-10" />
-				 <core:Item id="_IDGenItem2" key="ICD-11" text="ICD-11" /> -->
+													enabled="{LimitsTemplateModel1>DiagSecondary}"
+													items="{/DiagnosisCatalogValueHelp}">
+													<core:Item key="{value_low}" text="{text}" />
 												</m:ComboBox>
 												<!-- <m:Input enabled="false"
 												value="{LimitsTemplateModel>Code}"/> -->
@@ -144,10 +143,11 @@
 													value="{LimitsTemplateModel1>DiagCode}"
 													liveChange="changeCode"
 													id="multiInput" showValueHelp="true"
-													valueHelpRequest="handleValueHelp">
-													<core:Item id="_IDGenItem3"
-														key="{LimitsTemplateModel1>DiagCode}"
-														text="{LimitsTemplateModel1>DiagCode}" />
+													valueHelpRequest="handleValueHelp"
+													suggestionItems="{/DiagnosisCodeValueHelp}">
+														<m:suggestionItems>
+															<core:ListItem text="{DiagCode}" additionalText="{DiagCode_Text}" />
+														</m:suggestionItems>
 												</m:Input>
 												<m:Input id="_IDGenInput1" enabled="true"
 													value="{LimitsTemplateModel1>DiagCode}" />
@@ -156,8 +156,8 @@
 													<m:items>
 														<m:SegmentedButtonItem
 															id="_IDGenSegmentedButtonItem1"
-															tooltip="Primary" type="Accept" text="P"
-															key="P" />
+															tooltip="Primary" text="P"
+															key="P"/>
 														<m:SegmentedButtonItem
 															id="_IDGenSegmentedButtonItem2"
 															tooltip="Secondary" text="S" key="S" />
@@ -237,9 +237,9 @@
 									<m:ColumnListItem id="_IDGenColumnListItem2">
 										<m:ComboBox id="_IDGenComboBox4"
 											selectedKey="{LimitsTabableModel>DiagCatalog}"
-											enabled="{LimitsTabableModel>enabledcode}">
-											<core:Item id="_IDGenItem8" key="ICD-10" text="ICD-10" />
-											<core:Item id="_IDGenItem9" key="ICD-11" text="ICD-11" />
+											enabled="{LimitsTabableModel>enabledcode}"
+											items="{/DiagnosisCatalogValueHelp}">
+													<core:Item key="{value_low}" text="{text}" />					
 										</m:ComboBox>
 										<!-- <m:Input enabled="false"
 										value="{LimitsTemplateModel>Code}"/> -->

@@ -34,38 +34,38 @@ sap.ui.define([
 
                 var oModel_Data = this.getOwnerComponent().getModel();
 
-                oModel_Data.read("/DiagnosisCatalogValueHelp", {
-                    success: function (oData) {
-                        LimitsTemplateModel.setProperty("/DiagnosisCatalogValueHelp", oData.results)
-                    }.bind(this),
-                    error: function (oError) {
-                        that.bsyDialog.close();
-                        var msg = JSON.parse(oError.responseText).error.message.value;
-                        sap.m.MessageToast.show(msg);
-                    }
-                });
+                // oModel_Data.read("/DiagnosisCatalogValueHelp", {
+                //     success: function (oData) {
+                //         LimitsTemplateModel.setProperty("/DiagnosisCatalogValueHelp", oData.results)
+                //     }.bind(this),
+                //     error: function (oError) {
+                //         that.bsyDialog.close();
+                //         var msg = JSON.parse(oError.responseText).error.message.value;
+                //         sap.m.MessageToast.show(msg);
+                //     }
+                // });
 
-                oModel_Data.read("/DiagnosisCodeValueHelp", {
-                    success: function (oData) {
-                        LimitsTemplateModel.setProperty("/DiagnosisCodeValueHelp", oData.results)
-                    }.bind(this),
-                    error: function (oError) {
-                        that.bsyDialog.close();
-                        var msg = JSON.parse(oError.responseText).error.message.value;
-                        sap.m.MessageToast.show(msg);
-                    }
-                });
+                // oModel_Data.read("/DiagnosisCodeValueHelp", {
+                //     success: function (oData) {
+                //         LimitsTemplateModel.setProperty("/DiagnosisCodeValueHelp", oData.results)
+                //     }.bind(this),
+                //     error: function (oError) {
+                //         that.bsyDialog.close();
+                //         var msg = JSON.parse(oError.responseText).error.message.value;
+                //         sap.m.MessageToast.show(msg);
+                //     }
+                // });
 
-                oModel_Data.read("/DiagnosisLevelValueHelp", {
-                    success: function (oData) {
-                        LimitsTemplateModel.setProperty("/DiagnosisLevelValueHelp", oData.results)
-                    }.bind(this),
-                    error: function (oError) {
-                        that.bsyDialog.close();
-                        var msg = JSON.parse(oError.responseText).error.message.value;
-                        sap.m.MessageToast.show(msg);
-                    }
-                });
+                // oModel_Data.read("/DiagnosisLevelValueHelp", {
+                //     success: function (oData) {
+                //         LimitsTemplateModel.setProperty("/DiagnosisLevelValueHelp", oData.results)
+                //     }.bind(this),
+                //     error: function (oError) {
+                //         that.bsyDialog.close();
+                //         var msg = JSON.parse(oError.responseText).error.message.value;
+                //         sap.m.MessageToast.show(msg);
+                //     }
+                // });
 
                 oModel_Data.read("/DiagnosisTypeConfig", {
                     success: function (oData) {
@@ -90,9 +90,6 @@ sap.ui.define([
                             },
                             success: function (oData1) {
                                 var LimitsTemplateModel1 = new sap.ui.model.json.JSONModel();
-                                // this.getView().setModel(LimitsTemplateModel1, "LimitsTemplateModel1");
-                                // this.getView().getModel("LimitsTemplateModel1").setData(oData1);
-                                // var sDiatype = oData1.to_Encounter.results[0].to_Diagnosis.results[0].to_DiagType.results
                                 LimitsTemplateModel1.setProperty("/DiagtypeData", LimitsTemplateModel.getData().DiagtypeData);
                                 var oTable = this.getView().byId("_IDGenTable1");
                                 var oDiadata = LimitsTemplateModel1.getData().DiagtypeData
@@ -106,9 +103,15 @@ sap.ui.define([
                                     });
                                     oData1.to_Encounter.results.forEach(function (encounter) {
                                         var to_diag = encounter.to_Diagnosis.results; //table Data
-                                        to_diag.forEach(function (diagnosis) {
-                                            diagnosis[aDiatype.DiagType] = false;
-                                        })
+                                        if (to_diag.length > 0){
+                                            to_diag.forEach(function (diagnosis) {
+                                                diagnosis[aDiatype.DiagType] = false;
+                                            })
+                                        } else {
+                                            to_diag.push(
+                                                {}
+                                            )
+                                    }
                                     });
                                     oTable.addColumn(oColumn);
                                     var oTemplate = oTable.getBindingInfo("items").template;
@@ -124,10 +127,12 @@ sap.ui.define([
                                 aEnc.forEach(function (encounter) {
                                     var to_diag = encounter.to_Diagnosis.results; //table Data
                                     to_diag.forEach(function (diagnosis) {
-                                        diagnosis.to_DiagType.results.forEach(function (diagType) {
-                                            var type = diagType.DiagType;
-                                            diagnosis[type] = diagType.DiagFlag
-                                        });
+                                        if(diagnosis.to_DiagType && diagnosis.to_DiagType.results > 0){
+                                            diagnosis.to_DiagType.results.forEach(function (diagType) {
+                                                var type = diagType.DiagType;
+                                                diagnosis[type] = diagType.DiagFlag
+                                            });
+                                        }
                                     })
                                 });
 
@@ -160,12 +165,16 @@ sap.ui.define([
                                         this.getView().setModel(oModel1, "LimitsTabableModel");
 
                                         var aChroninDiag = oData.results;
+                                        if(aChroninDiag.length === 0){
+                                            aChroninDiag.push( {} );
+                                        }
                                         aChroninDiag.forEach(function (ChroninDiag) {
-                                            var to_diagtype = ChroninDiag.to_DiagType.results; //table Data
-                                            to_diagtype.forEach(function (diagtype) {
-                                                ChroninDiag[diagtype.DiagType] = diagtype.DiagFlag
-                                            })
-
+                                            if(ChroninDiag && ChroninDiag.to_DiagType && ChroninDiag.to_DiagType.results.length > 0){
+                                                var to_diagtype = ChroninDiag.to_DiagType.results; //table Data
+                                                to_diagtype.forEach(function (diagtype) {
+                                                    ChroninDiag[diagtype.DiagType] = diagtype.DiagFlag
+                                                })
+                                            }
                                         });
                                         this.getView().getModel("LimitsTabableModel").setData(oData.results);
 
