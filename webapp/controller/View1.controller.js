@@ -33,43 +33,10 @@ sap.ui.define([
                 this.getView().setModel(oModel1, "LimitsTabableModel");
 
                 var oModel_Data = this.getOwnerComponent().getModel();
-
-                // oModel_Data.read("/DiagnosisCatalogValueHelp", {
-                //     success: function (oData) {
-                //         LimitsTemplateModel.setProperty("/DiagnosisCatalogValueHelp", oData.results)
-                //     }.bind(this),
-                //     error: function (oError) {
-                //         that.bsyDialog.close();
-                //         var msg = JSON.parse(oError.responseText).error.message.value;
-                //         sap.m.MessageToast.show(msg);
-                //     }
-                // });
-
-                // oModel_Data.read("/DiagnosisCodeValueHelp", {
-                //     success: function (oData) {
-                //         LimitsTemplateModel.setProperty("/DiagnosisCodeValueHelp", oData.results)
-                //     }.bind(this),
-                //     error: function (oError) {
-                //         that.bsyDialog.close();
-                //         var msg = JSON.parse(oError.responseText).error.message.value;
-                //         sap.m.MessageToast.show(msg);
-                //     }
-                // });
-
-                // oModel_Data.read("/DiagnosisLevelValueHelp", {
-                //     success: function (oData) {
-                //         LimitsTemplateModel.setProperty("/DiagnosisLevelValueHelp", oData.results)
-                //     }.bind(this),
-                //     error: function (oError) {
-                //         that.bsyDialog.close();
-                //         var msg = JSON.parse(oError.responseText).error.message.value;
-                //         sap.m.MessageToast.show(msg);
-                //     }
-                // });
-
                 oModel_Data.read("/DiagnosisTypeConfig", {
                     success: function (oData) {
-                        LimitsTemplateModel.setProperty("/DiagtypeData", oData.results)
+                        LimitsTemplateModel.setProperty("/DiagtypeData", oData.results);
+                        this.getView().setModel(new sap.ui.model.json.JSONModel(oData.results), "DiagTypeConfigModel")
                     }.bind(this),
                     error: function (oError) {
                         that.bsyDialog.close();
@@ -214,8 +181,11 @@ sap.ui.define([
 
             },
             onDiagDeletePress: function (oEvent) {
+                var aDeletedDiagnosisEntry = []
                 var object = oEvent.getSource().getParent().getBindingContext("LimitsTemplateModel1").getObject();
-                MessageToast.show(object.DiagCode + " " + "will be deleted");
+                object.Canceled = true; 
+                aDeletedDiagnosisEntry.push(object);
+                sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
             },
             _handleValueHelpCloseNew: function (evt) {
                 var that = this;
@@ -288,6 +258,7 @@ sap.ui.define([
              */
             onChangeLevel: function (oEvent) {
 
+
             },
 
             DiagnosisData: function () {
@@ -357,60 +328,99 @@ sap.ui.define([
                 // this.DiagnosisData();
             },
 
+            onPressSaveConfirmation: function(){
+                if (!this.oApproveDialog) {
+                    var sDiagCode;
+                    aDeletedDiagnosisEntry.forEach(function(DeletedCode){
+                        sDiagCode = sDiagCode + "," + DeletedCode.DiagCode
+                    });
+                    this.oApproveDialog = new Dialog({
+                        type: DialogType.Message,
+                        title: "Confirm",
+                        content: new Text({ text: "Diagnosis Entries with these code" + sDiagCode + "would be deleted, Confirm?"  }),
+                        beginButton: new Button({
+                            type: ButtonType.Emphasized,
+                            text: "Submit",
+                            press: this.onPressSave()
+                        }.bind(this)),
+                        endButton: new Button({
+                            text: "Cancel",
+                            press: function () {
+                                this.oApproveDialog.close();
+                            }.bind(this)
+                        })
+                    });
+                }
+    
+                this.oApproveDialog.open();
+
+
+            },
+
             onPressSave: function (oevt) {
                 var oModel = this.getOwnerComponent().getModel();
                 var oModel2 = new sap.ui.model.odata.ODataModel(oModel.sServiceUrl, true);
-
                 var oLimitsData = this.getView().getModel("LimitsTemplateModel1").getData();
                 var oEncounters = this.getView().getModel("LimitsTemplateModel1").getData().to_Encounter.results;
                 var oPayload = [];
+                var that = this;
                 oEncounters.forEach(function (encounter) {
                     var aDiagnosis = encounter.to_Diagnosis.results;
+                    var sEncounterUUID = encounter.EncounterUUID
                     aDiagnosis.forEach(function (oDiagnosis) {
                         var aDiagType = [];
-                        oDiagnosis.to_DiagType.results.forEach(function (diagType) {
-                            aDiagType.push({
-                                "DiagType": diagType.DiagType,
-                                "DiagFlag": oDiagnosis[diagType.DiagType],
-                                "CreatedBy": "",
-                                "CreatedAt": null,
-                                "LocalLastChangedUser": "",
-                                "LocalLastChangedAt": null,
-                                "Canceled": false
+                        if (oDiagnosis && oDiagnosis.to_DiagType && oDiagnosis.to_DiagType.results){
+                            oDiagnosis.to_DiagType.results.forEach(function (diagType) {
+                                aDiagType.push({
+                                    "DiagType": diagType.DiagType,
+                                    "DiagFlag": oDiagnosis[diagType.DiagType],
+                                    "CreatedBy": "",
+                                    "CreatedAt": null,
+                                    "LocalLastChangedUser": "",
+                                    "LocalLastChangedAt": null,
+                                    "Canceled": false
+                                });
                             });
+                        } else {
+                            var aDiagosisType = that.getView().getModel("DiagTypeConfigModel").getData();
+                            aDiagosisType.forEach(function (diagType) {
+                                aDiagType.push({
+                                    "DiagType": diagType.DiagType,
+                                    "DiagFlag": oDiagnosis[diagType.DiagType],
+                                    "CreatedBy": "",
+                                    "CreatedAt": null,
+                                    "LocalLastChangedUser": "",
+                                    "LocalLastChangedAt": null,
+                                    "Canceled": false
+                                });
                         });
-                        oPayload.push({
-                            "DiagCatalog": oDiagnosis.DiagCatalog,
-                            "DiagCode": oDiagnosis.DiagCode,
-                            "DiagLevel": oDiagnosis.DiagLevel,
-                            "EncounterUUID": oDiagnosis.EncounterUUID,
-                            "PatientId": oDiagnosis.PatientId,
-                            "DiagSecondary": oDiagnosis.DiagSecondary,
-                            "DiagLat": oDiagnosis.DiagLat,
-                            "DiagCert": oDiagnosis.DiagCert,
-                            "DiagStart": oDiagnosis.DiagStart,
-                            "DiagEnd": oDiagnosis.DiagEnd,
-                            "Canceled": oDiagnosis.Canceled,
-                            "to_DiagType": aDiagType
-                        });
+                        }
+                        if (oDiagnosis.DiagCatalog && oDiagnosis.DiagCode) { 
+
+                            var sEncUUID = oDiagnosis.DiagUUID ? oDiagnosis.EncounterUUID : sEncounterUUID 
+                            oPayload.push({
+                                "DiagCatalog": oDiagnosis.DiagCatalog,
+                                "DiagCode": oDiagnosis.DiagCode,
+                                "DiagLevel": oDiagnosis.DiagLevel,
+                                "EncounterUUID": sEncUUID,
+                                "PatientId": oDiagnosis.PatientId,
+                                "DiagSecondary": oDiagnosis.DiagSecondary,
+                                "DiagLat": oDiagnosis.DiagLat,
+                                "DiagCert": oDiagnosis.DiagCert,
+                                "DiagStart": oDiagnosis.DiagStart,
+                                "DiagEnd": oDiagnosis.DiagEnd,
+                                "Canceled": oDiagnosis.Canceled,
+                                "to_DiagType": aDiagType
+                            });
+                        }
                     });
                 });
-                // var oPayloadDummy = {"DiagCatalog":"02","DiagCode":"A06.0","DiagLevel":"PA","EncounterUUID":"b9149892-4a6b-1edf-8cb3-2ebb5ae05c17","PatientId":"0000000151","DiagSecondary":true,"DiagLat":"","DiagCert":"","DiagStart":"2024-07-10T20:00:00Z","DiagEnd":"2024-07-10T20:00:00Z","to_DiagType":[{"DiagType":"AD","DiagFlag":true},{"DiagType":"RF","DiagFlag":true},{"DiagType":"TR","DiagFlag":false}]}
-                // oPayload.forEach( function(){
-                //     oModel.create("/DiagnosisSet", oPayload, {
-                //         success: function(oResponse){
-                //             sap.m.MessageToast("Data Saved")
-                //         },
-                //         error: function(){}
-                //     });
-                // })
-
                 var aBatch = [];
+                oModel2.setUseBatch(true);
                 oPayload.forEach(function (payloadbatch) {
                     aBatch.push(oModel2.createBatchOperation("/DiagnosisSet", "POST", payloadbatch));
-                    oModel2.addBatchChangeOperations(aBatch);
-                    oModel2.setUseBatch(true);
                 });
+                oModel2.addBatchChangeOperations(aBatch);    
                 oModel2.submitBatch(function (oData, oResponse) {
                     sap.m.MessageToast("Data Saved")
                 }, function (oError) { });

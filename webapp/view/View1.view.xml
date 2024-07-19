@@ -30,7 +30,7 @@
 					<m:Title id="_IDGenTitle3" text="MRN: 12345" />
 				</snappedTitleOnMobile>
 				<actions>
-					<m:Button id="_IDGenButton1" text="Save" type="Emphasized" press="onPressSave"
+					<m:Button id="_IDGenButton1" text="Save" type="Emphasized" press="onPressSaveConfirmation"
 						ariaDescribedBy="defaultButtonDescription genericButtonDescription"
 						icon="sap-icon://business-card">
 					</m:Button>
@@ -149,7 +149,7 @@
 												<m:Input id="_IDGenInput1" enabled="false"
 													value="{LimitsTemplateModel1>DiagCode}" />
 												<m:SegmentedButton id="_IDGenSegmentedButton1"
-													selectedKey="{=${LimitsTemplateModel1>DiagSecondary} === true ? 'S' : 'P' }" selectionChange="onChangeLevel" enabled="true">
+													selectedKey="{LimitsTemplateModel1>DiagSecondary}" selectionChange="onChangeLevel" enabled="true">
 													<m:items>
 														<m:SegmentedButtonItem
 															id="_IDGenSegmentedButtonItem1"
@@ -161,6 +161,7 @@
 
 													</m:items>
 												</m:SegmentedButton>
+												
 												<!-- <m:Text text="{LimitsTemplateModel>Level}"/> -->
 												<m:ComboBox id="_IDGenComboBox2"
 													selectedKey="{LimitsTemplateModel1>DiagLat}"
