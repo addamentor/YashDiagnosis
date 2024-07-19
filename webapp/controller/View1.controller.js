@@ -1,14 +1,21 @@
 sap.ui.define([
-    "sap/ui/core/mvc/Controller"
+    "sap/ui/core/mvc/Controller",
+    "sap/m/Dialog",
+    "sap/m/library",
+    "sap/m/Button",
+    "sap/m/MessageToast",
+    "sap/m/Text",
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller) {
+    function (Controller,Dialog,mobileLibrary,Button,MessageToast,Text) {
         "use strict";
-
+        var ButtonType = mobileLibrary.ButtonType;
+        var DialogType = mobileLibrary.DialogType;
         return Controller.extend("project7.controller.View1", {
             onInit: function () {
+               
                 this.bsyDialog = new sap.m.BusyDialog();
                 this.bsyDialog.open();
                 var me = this;
@@ -17,7 +24,7 @@ sap.ui.define([
                 var LimitsTemplateModel = new sap.ui.model.json.JSONModel({
                     FirstEncounter: true,
                     DiagtypeData: [],
-                    DiagnosisCatalogValueHelp: {},
+                    DeletedDiagnsis: [],
                     DiagnosisCodeValueHelp: {},
                     DiagnosisLevelValueHelp: {}
                 });
@@ -31,7 +38,7 @@ sap.ui.define([
                 var oModel1 = new sap.ui.model.json.JSONModel(sPath1);
                 //  var sPathHeaderItem =new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath());
                 this.getView().setModel(oModel1, "LimitsTabableModel");
-
+                this.getView().setModel(new sap.ui.model.json.JSONModel(), "DeletedDiagnosis")
                 var oModel_Data = this.getOwnerComponent().getModel();
                 oModel_Data.read("/DiagnosisTypeConfig", {
                     success: function (oData) {
@@ -104,7 +111,8 @@ sap.ui.define([
                                 aEnc.forEach(function (encounter) {
                                     var to_diag = encounter.to_Diagnosis.results; //table Data
                                     to_diag.forEach(function (diagnosis) {
-                                        if (diagnosis.to_DiagType && diagnosis.to_DiagType.results > 0) {
+                                        if (diagnosis.to_DiagType && diagnosis.to_DiagType.results.length > 0) {
+                                            diagnosis.DiagSecondary = diagnosis.DiagSecondary === true ? 'S' : 'P';
                                             diagnosis.to_DiagType.results.forEach(function (diagType) {
                                                 var type = diagType.DiagType;
                                                 diagnosis[type] = diagType.DiagFlag
@@ -185,6 +193,7 @@ sap.ui.define([
                 var object = oEvent.getSource().getParent().getBindingContext("LimitsTemplateModel1").getObject();
                 object.Canceled = true; 
                 aDeletedDiagnosisEntry.push(object);
+                this.getView().getModel("DeletedDiagnosis").setProperty("/DeletedDiagnsis",aDeletedDiagnosisEntry.DiagCode)
                 sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
             },
             _handleValueHelpCloseNew: function (evt) {
@@ -260,64 +269,7 @@ sap.ui.define([
 
 
             },
-
-            DiagnosisData: function () {
-                var that = this;
-                var oModel = this.getOwnerComponent().getModel();
-                var DiagnosisModel = new sap.ui.model.json.JSONModel();
-                this.getView().setModel(DiagnosisModel, "DiagnosisModel");
-                this.bsyDialog = new sap.m.BusyDialog();
-                this.bsyDialog.open();
-                oModel.read("/DiagnosisSet", {
-                    async: false,
-                    // urlParameters:{
-                    //     $expand:"to_DiagType"
-
-                    // },
-
-                    success: function (oData) {
-                        that.bsyDialog.close();
-                        that.getView().getModel("DiagnosisModel").setSizeLimit(oData.results.length);
-                        that.getView().getModel("DiagnosisModel").setData(oData);
-
-                    }.bind(this),
-                    error: function (oError) {
-                        that.bsyDialog.close();
-                        var msg = JSON.parse(oError.responseText).error.message.value;
-                        sap.m.MessageToast.show(msg);
-                    }.bind(this)
-                });
-            },
-
-            PatientsData: function () {
-                var that = this;
-                var oModel = this.getOwnerComponent().getModel();
-                var PatientsModel = new sap.ui.model.json.JSONModel();
-                // this.getView().setModel(PatientsModel, "PatientsModel");
-                this.bsyDialog = new sap.m.BusyDialog();
-                this.bsyDialog.open();
-                oModel.read("/PatientNames", {
-                    async: false,
-                    // urlParameters:{
-                    //     $expand:"to_Diagnosis"
-
-                    // },
-
-                    success: function (oData) {
-                        that.bsyDialog.close();
-                        // that.getView().getModel("PatientsModel").setSizeLimit(oData.results.length);
-                        // that.getView().getModel("PatientsModel").setData(oData);
-
-                    }.bind(this),
-                    error: function (oError) {
-                        that.bsyDialog.close();
-                        var msg = JSON.parse(oError.responseText).error.message.value;
-                        sap.m.MessageToast.show(msg);
-                    }
-                });
-
-            },
-
+      
             handleRouteMatched: function () {
                 var sPath = jQuery.sap.getModulePath("project7", "/model/Code.json");
                 var oModel = new sap.ui.model.json.JSONModel(sPath);
@@ -329,20 +281,34 @@ sap.ui.define([
             },
 
             onPressSaveConfirmation: function(){
-                if (!this.oApproveDialog) {
-                    var sDiagCode;
+                var that = this;
+                var sDiagCode;
+                var sTextforPopup;
+                var aDeletedDiagnosisEntry = this.getView().getModel("DeletedDiagnosis").getProperty("/DeletedDiagnsis");
+                if(!aDeletedDiagnosisEntry){
+                    sTextforPopup = "Are you sure you want to save?";
+                } else { 
                     aDeletedDiagnosisEntry.forEach(function(DeletedCode){
                         sDiagCode = sDiagCode + "," + DeletedCode.DiagCode
                     });
+                    sTextforPopup = "Diagnosis Entries with these code" + sDiagCode + "would be deleted, Confirm?"  
+                }
+                if (!this.oApproveDialog) {
+                   
                     this.oApproveDialog = new Dialog({
                         type: DialogType.Message,
                         title: "Confirm",
-                        content: new Text({ text: "Diagnosis Entries with these code" + sDiagCode + "would be deleted, Confirm?"  }),
+                        content: new Text({ text: sTextforPopup}),
                         beginButton: new Button({
                             type: ButtonType.Emphasized,
                             text: "Submit",
-                            press: this.onPressSave()
-                        }.bind(this)),
+                            press: function () {
+                                this.oApproveDialog.close();
+                                this.onPressSave();
+                                this.bsyDialog.open();
+                            }.bind(this)
+                            // this.onPressSave().bind(this)
+                        }),
                         endButton: new Button({
                             text: "Cancel",
                             press: function () {
@@ -402,9 +368,10 @@ sap.ui.define([
                                 "DiagCatalog": oDiagnosis.DiagCatalog,
                                 "DiagCode": oDiagnosis.DiagCode,
                                 "DiagLevel": oDiagnosis.DiagLevel,
+                                "DiagUUID": oDiagnosis.DiagUUID,
                                 "EncounterUUID": sEncUUID,
                                 "PatientId": oDiagnosis.PatientId,
-                                "DiagSecondary": oDiagnosis.DiagSecondary,
+                                "DiagSecondary": oDiagnosis.DiagSecondary === 'S' ? true : false,
                                 "DiagLat": oDiagnosis.DiagLat,
                                 "DiagCert": oDiagnosis.DiagCert,
                                 "DiagStart": oDiagnosis.DiagStart,
@@ -418,12 +385,22 @@ sap.ui.define([
                 var aBatch = [];
                 oModel2.setUseBatch(true);
                 oPayload.forEach(function (payloadbatch) {
-                    aBatch.push(oModel2.createBatchOperation("/DiagnosisSet", "POST", payloadbatch));
+                    // if(payloadbatch.Canceled){
+                    //     aBatch.push(oModel2.createBatchOperation("/DiagnosisSet", "POST", payloadbatch));
+                    // }
+                    if (!payloadbatch.DiagUUID){
+                        aBatch.push(oModel2.createBatchOperation("/DiagnosisSet", "POST", payloadbatch));
+                    } else {
+                        aBatch.push(oModel2.createBatchOperation("/DiagnosisSet", "PUT", payloadbatch));
+                    }
                 });
                 oModel2.addBatchChangeOperations(aBatch);    
                 oModel2.submitBatch(function (oData, oResponse) {
-                    sap.m.MessageToast("Data Saved")
-                }, function (oError) { });
+                    that.bsyDialog.close();
+                    MessageToast.show("Data Saved")
+                }, function (oError) {
+                    that.bsyDialog.close();
+                 });
             }
         });
     });
