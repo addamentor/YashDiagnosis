@@ -269,7 +269,36 @@ sap.ui.define([
 
 
             },
-      
+            onLiveChangeDiagCode: function(oEvent){
+                var oCode = oEvent.getParameter("newValue");
+                if(oCode){
+                    var sContextPath = oEvent.getSource().getParent().getBindingContextPath();
+                    var aIndex = this._extractIndexes(sContextPath);
+                    var oData = this.getView().getModel("LimitsTemplateModel1").getData();
+                    var aDiagTableData = oData.to_Encounter.results[aIndex[0]].to_Diagnosis.results;
+                    if (aDiagTableData.length === (aIndex[1] + 1)){
+                        aDiagTableData.push({});
+                    };
+                    this.getView().getModel("LimitsTemplateModel1").setData(oData);
+                }
+            },
+            onLiveChangeChronicDiagCode: function(oEvent){
+                var oCode = oEvent.getParameter("newValue");
+                if(oCode){
+
+                }
+            },
+            _extractIndexes: function(path) {
+                const parts = path.split('/');
+                parts.shift();
+                const indexes = [];
+                parts.forEach(part => {
+                    if (!isNaN(part)) {
+                        indexes.push(Number(part));
+                    }
+                });
+                return indexes;
+            },
             handleRouteMatched: function () {
                 var sPath = jQuery.sap.getModulePath("project7", "/model/Code.json");
                 var oModel = new sap.ui.model.json.JSONModel(sPath);

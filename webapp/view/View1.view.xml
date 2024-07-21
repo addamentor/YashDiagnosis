@@ -138,7 +138,8 @@
 												value="{LimitsTemplateModel>Code}"/> -->
 												<m:Input showSuggestion="true" enabled="true"
 													value="{LimitsTemplateModel1>DiagCode}"
-													liveChange="changeCode"
+													liveChange="onLiveChangeDiagCode"
+													valueLiveUpdate="true"
 													id="multiInput" showValueHelp="true"
 													valueHelpRequest="onDiagCodeVHPress"
 													suggestionItems="{/DiagnosisCodeValueHelp}">
@@ -231,7 +232,8 @@
 										value="{LimitsTemplateModel>Code}"/> -->
 										<m:Input showSuggestion="true" enabled="true"
 											value="{LimitsTabableModel>DiagCode}"
-											liveChange="changeCode"
+											liveChange="onLiveChangeDiagCode"
+											valueLiveUpdate="true"
 											id="new" showValueHelp="true"
 											suggestionItems="{sPathHeaderItemModel>/Code}"
 											valueHelpRequest="handleValueHelpNew">
