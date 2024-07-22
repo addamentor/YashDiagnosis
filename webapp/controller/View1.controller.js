@@ -334,7 +334,6 @@ sap.ui.define([
                             press: function () {
                                 this.oApproveDialog.close();
                                 this.onPressSave();
-                                this.bsyDialog.open();
                             }.bind(this)
                             // this.onPressSave().bind(this)
                         }),
@@ -353,6 +352,7 @@ sap.ui.define([
             },
 
             onPressSave: function (oevt) {
+                this.bsyDialog.open();
                 var oModel = this.getOwnerComponent().getModel();
                 var oModel2 = new sap.ui.model.odata.ODataModel(oModel.sServiceUrl, true);
                 var oLimitsData = this.getView().getModel("LimitsTemplateModel1").getData();

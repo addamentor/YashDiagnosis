@@ -130,7 +130,7 @@
 											<m:ColumnListItem id="_IDGenColumnListItem1">
 												<m:ComboBox id="_IDGenComboBox1"
 													selectedKey="{LimitsTemplateModel1>DiagCatalog}"
-													enabled="{= ${LimitsTemplateModel1>DiagUUID} ? true : false}"
+													enabled="{= ${LimitsTemplateModel1>DiagUUID} ? false : true}"
 													items="{/DiagnosisCatalogValueHelp}">
 													<core:Item key="{value_low}" text="{text}" />
 												</m:ComboBox>
