@@ -426,8 +426,63 @@ sap.ui.define([
                         }
                     });
                 });
-                var aBatch = [];
-                oModel2.setUseBatch(true);
+                // var aBatch = [];
+                // oModel2.setUseBatch(true);
+                // oModel.setDeferredGroups(["BatchCall"]);
+                // oPayload.forEach(function (payloadbatch) {
+                //     if(payloadbatch.Canceled){
+                //         oModel.callFunction("/Cancel" , {
+                //             groupId : "BatchCall",
+                //             eTag: '*',
+                //             method: "POST", 
+                //             urlParameters: {
+                //                 "DiagUUID": payloadbatch.DiagUUID
+                //         }});
+                //     }
+                //     if (!payloadbatch.DiagUUID){
+                //         aBatch.push(oModel2.createBatchOperation("/DiagnosisSet", "POST", payloadbatch));
+                //     } else {
+                //         var payloadforPut = {
+                //                 "DiagCatalog": payloadbatch.DiagCatalog,
+                //                 "DiagCode": payloadbatch.DiagCode,
+                //                 "DiagLevel": payloadbatch.DiagLevel,
+                //                 "DiagUUID": payloadbatch.DiagUUID,
+                //                 "EncounterUUID": payloadbatch.EncounterUUID,
+                //                 "PatientId": payloadbatch.PatientId,
+                //                 "DiagSecondary": payloadbatch.DiagSecondary,
+                //                 "DiagLat": payloadbatch.DiagLat,
+                //                 "DiagCert": payloadbatch.DiagCert,
+                //                 "DiagStart": payloadbatch.DiagStart,
+                //                 "DiagEnd": payloadbatch.DiagEnd,
+                //                 "Canceled": payloadbatch.Canceled,
+                //         };
+                //         var oPayloadDiagType = [];
+                //         oPayloadDiagType.push(payloadbatch.to_DiagType)
+                //         aBatch.push(oModel2.createBatchOperation("/DiagnosisSet(guid'" + payloadbatch.DiagUUID + "')", "PUT", payloadforPut));
+                //         oPayloadDiagType[0].forEach(function (diagtypepayload) {
+                //             if (!diagtypepayload.DiagTypeUuid){
+                //                 aBatch.push(oModel2.createBatchOperation("/DiagnosisSet", "POST", diagtypepayload));
+                //             } else {
+                //                 aBatch.push(oModel2.createBatchOperation("/DiagnosisSet(guid'" + "(" + diagtypepayload.DiagTypeUuid + ")", "PUT", diagtypepayload));
+                //             }
+                //         })
+                //     }
+                // });
+                // oModel2.addBatchChangeOperations(aBatch);    
+                // oModel.submitChanges({
+                //     groupId : "BatchCall"
+                // }); 
+                // oModel2.submitBatch(function (oData, oResponse) {
+                //     this.bsyDialog.close();
+                //     var oTable = this.getView().byId("_IDGenTable1");
+                //     // this._LoadData();
+                //     MessageToast.show("Data Saved")
+                // }.bind(this), function (oError) {
+                //     that.bsyDialog.close();
+                //  });
+
+
+                oModel.setUseBatch(true);
                 oModel.setDeferredGroups(["BatchCall"]);
                 oPayload.forEach(function (payloadbatch) {
                     if(payloadbatch.Canceled){
@@ -440,7 +495,10 @@ sap.ui.define([
                         }});
                     }
                     if (!payloadbatch.DiagUUID){
-                        aBatch.push(oModel2.createBatchOperation("/DiagnosisSet", "POST", payloadbatch));
+                        oModel.create("/DiagnosisSet", payloadbatch, {
+                            groupId : "BatchCall",
+                            eTag: '*' 
+                            });
                     } else {
                         var payloadforPut = {
                                 "DiagCatalog": payloadbatch.DiagCatalog,
@@ -458,28 +516,42 @@ sap.ui.define([
                         };
                         var oPayloadDiagType = [];
                         oPayloadDiagType.push(payloadbatch.to_DiagType)
-                        aBatch.push(oModel2.createBatchOperation("/DiagnosisSet(guid'" + payloadbatch.DiagUUID + "')", "PUT", payloadforPut));
+                        oModel.update("/DiagnosisSet(guid'" + payloadbatch.DiagUUID + "')", payloadforPut, {
+                            groupId : "BatchCall",
+                            eTag: '*' 
+                            });
                         oPayloadDiagType[0].forEach(function (diagtypepayload) {
                             if (!diagtypepayload.DiagTypeUuid){
                                 aBatch.push(oModel2.createBatchOperation("/DiagnosisSet", "POST", diagtypepayload));
                             } else {
-                                aBatch.push(oModel2.createBatchOperation("/DiagnosisSet(guid'" + "(" + diagtypepayload.DiagTypeUuid + ")", "PUT", diagtypepayload));
+                                oModel.update("/DiagnosisSet(guid'" + "(" + diagtypepayload.DiagTypeUuid + ")",
+                                            diagtypepayload, {
+                                            groupId : "BatchCall",
+                                            eTag: '*' 
+                                            })
                             }
                         })
                     }
                 });
-                oModel2.addBatchChangeOperations(aBatch);    
+                  
                 oModel.submitChanges({
-                    groupId : "BatchCall"
+                    groupId : "BatchCall",
+					success: function(oData, oResponse) {
+					MessageToast.show("Data Saved")
+					},
+
+					error: function(oError) { }
                 }); 
-                oModel2.submitBatch(function (oData, oResponse) {
-                    this.bsyDialog.close();
-                    var oTable = this.getView().byId("_IDGenTable1");
-                    // this._LoadData();
-                    MessageToast.show("Data Saved")
-                }.bind(this), function (oError) {
-                    that.bsyDialog.close();
-                 });
+             
+                 
+
+
+
+
+
+
+
+
             }
         });
     });
