@@ -89,7 +89,7 @@ sap.ui.define([
                                             });
 
                                         } else {
-                                            to_diag.push({});
+                                          //  to_diag.push({});
                                         }
                                     });
                                 });
@@ -119,9 +119,9 @@ sap.ui.define([
                                             });
                                         }
                                     });
-                                    if (to_diag.length !== 1) {
+                                    //if (to_diag.length !== 1) {
                                         to_diag.push({});
-                                    }
+                                    //}
                                 });
 
                                 this.getView().getModel("LimitsTemplateModel1").setData(oData1);
@@ -318,7 +318,7 @@ sap.ui.define([
                     sTextforPopup = "Are you sure you want to save?";
                 } else { 
                     aDeletedDiagnosisEntry.forEach(function(DeletedCode){
-                        sDiagCode = sDiagCode + "," + DeletedCode.DiagCode
+                        sDiagCode = sDiagCode + ", " + DeletedCode.DiagCode
                     });
                     sTextforPopup = "Diagnosis Entries with these code" + sDiagCode + "would be deleted, Confirm?"  
                 }
@@ -391,7 +391,6 @@ sap.ui.define([
                         });
                         }
                         if (oDiagnosis.DiagCatalog && oDiagnosis.DiagCode) { 
-
                             var sEncUUID = oDiagnosis.DiagUUID ? oDiagnosis.EncounterUUID : sEncounterUUID 
                             oPayload.push({
                                 "DiagCatalog": oDiagnosis.DiagCatalog,
