@@ -126,7 +126,7 @@
 					 <m:Label id="_IDGenLabel9" design="Bold" text="C2"/>
                      </m:Column> -->
 										</m:columns>
-										<m:items>
+										<m:items visible="{= ${LimitsTemplateModel1>Canceled} ? false : true}">
 											<m:ColumnListItem id="_IDGenColumnListItem1">
 												<m:ComboBox id="_IDGenComboBox1"
 													selectedKey="{LimitsTemplateModel1>DiagCatalog}"

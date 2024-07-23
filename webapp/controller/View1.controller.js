@@ -413,10 +413,16 @@ sap.ui.define([
                 });
                 var aBatch = [];
                 oModel2.setUseBatch(true);
+                oModel.setDeferredGroups(["BatchCall"]);
                 oPayload.forEach(function (payloadbatch) {
-                    // if(payloadbatch.Canceled){
-                    //     aBatch.push(oModel2.createBatchOperation("/DiagnosisSet", "POST", payloadbatch));
-                    // }
+                    if(payloadbatch.Canceled){
+                        oModel.callFunction("/Cancel" , {
+                            groupId : "BatchCall",
+                            method: "POST", 
+                            urlParameters: {
+                                "DiagUUID": payloadbatch.DiagUUID
+                        }});
+                    }
                     if (!payloadbatch.DiagUUID){
                         aBatch.push(oModel2.createBatchOperation("/DiagnosisSet", "POST", payloadbatch));
                     } else {
@@ -424,6 +430,9 @@ sap.ui.define([
                     }
                 });
                 oModel2.addBatchChangeOperations(aBatch);    
+                oModel.submitChanges({
+                    groupId : "BatchCall"
+                }); 
                 oModel2.submitBatch(function (oData, oResponse) {
                     that.bsyDialog.close();
                     MessageToast.show("Data Saved")
