@@ -418,6 +418,7 @@ sap.ui.define([
                     if(payloadbatch.Canceled){
                         oModel.callFunction("/Cancel" , {
                             groupId : "BatchCall",
+                            eTag: '*',
                             method: "POST", 
                             urlParameters: {
                                 "DiagUUID": payloadbatch.DiagUUID
