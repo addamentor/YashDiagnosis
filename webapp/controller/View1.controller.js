@@ -387,7 +387,9 @@ sap.ui.define([
                                     "CreatedAt": null,
                                     "LocalLastChangedUser": "",
                                     "LocalLastChangedAt": null,
-                                    "Canceled": false
+                                    "Canceled": false,
+                                    "DiagTypeUuid": diagType.DiagTypeUuid ,
+                                    "DiagUuid": diagType.DiagUuid
                                 });
                             });
                         } else {
@@ -400,9 +402,7 @@ sap.ui.define([
                                     "CreatedAt": null,
                                     "LocalLastChangedUser": "",
                                     "LocalLastChangedAt": null,
-                                    "Canceled": false,
-                                    "DiagTypeUuid": diagType.DiagTypeUuid ,//Not available
-                                    "DiagUuid": diagType.DiagUuid
+                                    "Canceled": false
                                 });
                         });
                         }
@@ -458,11 +458,13 @@ sap.ui.define([
                         };
                         var oPayloadDiagType = [];
                         oPayloadDiagType.push(payloadbatch.to_DiagType)
-                        // "/DiagnosisSet(DiagUUID=guid\'" + payloadbatch.DiagUUID + "\')"
-                        aBatch.push(oModel2.createBatchOperation("/DiagnosisSet(DiagUUID=guid\'" + payloadbatch.DiagUUID + "\')", "PUT", payloadforPut));
-                        // aBatch.push(oModel2.createBatchOperation("/DiagnosisSet(guid'" + payloadbatch.DiagUUID + "')", "PUT", payloadforPut));
+                        aBatch.push(oModel2.createBatchOperation("/DiagnosisSet(guid'" + payloadbatch.DiagUUID + "')", "PUT", payloadforPut));
                         oPayloadDiagType[0].forEach(function (diagtypepayload) {
-                            aBatch.push(oModel2.createBatchOperation("/DiagnosisSet" + "(" + payloadbatch.DiagUUID + ")", "PUT", diagtypepayload));
+                            if (!diagtypepayload.DiagTypeUuid){
+                                aBatch.push(oModel2.createBatchOperation("/DiagnosisSet", "POST", diagtypepayload));
+                            } else {
+                                aBatch.push(oModel2.createBatchOperation("/DiagnosisSet(guid'" + "(" + diagtypepayload.DiagTypeUuid + ")", "PUT", diagtypepayload));
+                            }
                         })
                     }
                 });
