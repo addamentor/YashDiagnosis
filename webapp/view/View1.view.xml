@@ -232,14 +232,14 @@
 										value="{LimitsTemplateModel>Code}"/> -->
 										<m:Input showSuggestion="true" enabled="true"
 											value="{LimitsTabableModel>DiagCode}"
-											liveChange="onLiveChangeDiagCode"
+											liveChange="onLiveChangeDiagCodeChronic"
 											valueLiveUpdate="true"
 											id="new" showValueHelp="true"
-											suggestionItems="{sPathHeaderItemModel>/Code}"
-											valueHelpRequest="handleValueHelpNew">
-											<core:Item id="_IDGenItem10"
-												key="{sPathHeaderItemModel>Planid}"
-												text="{sPathHeaderItemModel>Planid}" />
+											valueHelpRequest="onDiagCodeVHPress"
+											suggestionItems="{/DiagnosisCodeValueHelp}"	>
+											<m:suggestionItems>
+												<core:ListItem text="{DiagCode}" additionalText="{DiagCode_Text}" />
+											</m:suggestionItems>
 										</m:Input>
 										<m:Input id="_IDGenInput2"
 											enabled="{LimitsTabableModel>enabledcode}"

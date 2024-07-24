@@ -165,6 +165,19 @@ sap.ui.define([
                                                 }));
                                             }
                                         });
+                                        oTable.addColumn(
+                                            new sap.m.Column({
+                                                header: new sap.m.Label({
+                                                    text: ""
+                                                })
+                                            })
+                                        );
+                                        var oTemplate = oTable.getBindingInfo("items").template;
+                                        oTemplate.addCell(new sap.m.Button({
+                                            press: this.onDiagDeletePress.bind(this),
+                                            icon: "sap-icon://delete",
+                                            type: "Reject"
+                                        }));
                                         var oModel1 = new sap.ui.model.json.JSONModel();
                                         this.getView().setModel(oModel1, "LimitsTabableModel");
 
@@ -429,7 +442,8 @@ sap.ui.define([
                             });
                         }
                     });
-                });
+                })
+                var oChronicData = this.getView().getModel("LimitsTabableModel").getData()
                 // var aBatch = [];
                 // oModel2.setUseBatch(true);
                 // oModel.setDeferredGroups(["BatchCall"]);
@@ -559,19 +573,12 @@ sap.ui.define([
 					success: function(oData, oResponse) {
 					MessageToast.show("Data Saved")
 					},
-
-					error: function(oError) { }
+					error: function(oError) {
+                        MessageToast.show("Error is saving Data")
+                     }
                 }); 
              
-                 
-
-
-
-
-
-
-
-
+              
             }
         });
     });
