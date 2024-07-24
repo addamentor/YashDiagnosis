@@ -174,7 +174,7 @@ sap.ui.define([
                                         );
                                         var oTemplate = oTable.getBindingInfo("items").template;
                                         oTemplate.addCell(new sap.m.Button({
-                                            press: this.onDiagDeletePress.bind(this),
+                                            press: this.onChrDiagDeletePress.bind(this),
                                             icon: "sap-icon://delete",
                                             type: "Reject"
                                         }));
@@ -221,21 +221,20 @@ sap.ui.define([
 
             onDiagDeletePress: function (oEvent) {
                 var aDeletedDiagnosisEntry = []
-                // var object;
-                    var objectDiag = oEvent.getSource().getParent().getBindingContext("LimitsTemplateModel1")
-                    if(objectDiag) {
-                        objectDiag.getObject();
-                        objectDiag.Canceled = true; 
-                        aDeletedDiagnosisEntry.push(objectDiag);
-                    }
-                    var objectChronic = oEvent.getSource().getParent().getBindingContext("LimitsTabableModel")
-                    if(objectChronic){
-                        objectChronic.getObject();
-                        objectChronic.Canceled = true; 
-                        aDeletedDiagnosisEntry.push(objectChronic);
-                    }
-                    this.getView().getModel("DeletedDiagnosis").setProperty("/DeletedDiagnsis",aDeletedDiagnosisEntry.DiagCode)
-                    // sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
+                var object = oEvent.getSource().getParent().getBindingContext("LimitsTemplateModel1").getObject();
+                object.Canceled = true; 
+                aDeletedDiagnosisEntry.push(object);
+                this.getView().getModel("DeletedDiagnosis").setProperty("/DeletedDiagnsis",aDeletedDiagnosisEntry.DiagCode)
+                sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
+               
+            },
+            onChrDiagDeletePress: function (oEvent) {
+                var aDeletedDiagnosisEntry = []
+                var object = oEvent.getSource().getParent().getBindingContext("LimitsTabableModel").getObject();
+                object.Canceled = true; 
+                aDeletedDiagnosisEntry.push(object);
+                this.getView().getModel("DeletedDiagnosis").setProperty("/DeletedDiagnsis",aDeletedDiagnosisEntry.DiagCode)
+                sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
                
             },
             _handleValueHelpCloseNew: function (evt) {
