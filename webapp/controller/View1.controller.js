@@ -68,7 +68,8 @@ sap.ui.define([
                             urlParameters: {
                                 $expand: "to_Encounter,to_Encounter/to_Diagnosis,to_Encounter/to_Diagnosis/to_DiagType"
                             },
-                            success: function (oData1) {
+                            success: function (oData1,oResponse) {
+                                this.sETag = oResponse.headers['etag'];
                                 var LimitsTemplateModel1 = new sap.ui.model.json.JSONModel();
                                 LimitsTemplateModel1.setProperty("/DiagtypeData", LimitsTemplateModel.getData().DiagtypeData);
                                 var oTable = this.getView().byId("_IDGenTable1");
@@ -122,6 +123,7 @@ sap.ui.define([
                                     var to_diag = encounter.to_Diagnosis.results; //table Data
                                     to_diag.forEach(function (diagnosis) {
                                         if (diagnosis.to_DiagType && diagnosis.to_DiagType.results.length > 0) {
+                                            diagnosis.eTag = diagnosis.__metadata.etag;
                                             diagnosis.DiagSecondary = diagnosis.DiagSecondary === true ? 'S' : 'P';
                                             diagnosis.to_DiagType.results.forEach(function (diagType) {
                                                 var type = diagType.DiagType;
@@ -366,7 +368,8 @@ sap.ui.define([
             },
 
             onPressSave: function (oevt) {
-                this.bsyDialog.open();
+                // this.bsyDialog.open();
+                var sEtag  = this.sETag
                 var oModel = this.getOwnerComponent().getModel();
                 var oModel2 = new sap.ui.model.odata.ODataModel(oModel.sServiceUrl, true);
                 var oLimitsData = this.getView().getModel("LimitsTemplateModel1").getData();
@@ -421,7 +424,8 @@ sap.ui.define([
                                 "DiagStart": oDiagnosis.DiagStart,
                                 "DiagEnd": oDiagnosis.DiagEnd,
                                 "Canceled": oDiagnosis.Canceled,
-                                "to_DiagType": aDiagType
+                                "to_DiagType": aDiagType,
+                                "eTag": oDiagnosis.eTag
                             });
                         }
                     });
@@ -481,10 +485,25 @@ sap.ui.define([
                 //     that.bsyDialog.close();
                 //  });
 
-
+                
                 oModel.setUseBatch(true);
                 oModel.setDeferredGroups(["BatchCall"]);
                 oPayload.forEach(function (payloadbatch) {
+                    var payloadforCreate = {
+                        "DiagCatalog": payloadbatch.DiagCatalog,
+                        "DiagCode": payloadbatch.DiagCode,
+                        "DiagLevel": payloadbatch.DiagLevel,
+                        "DiagUUID": payloadbatch.DiagUUID,
+                        "EncounterUUID": payloadbatch.EncounterUUID,
+                        "PatientId": payloadbatch.PatientId,
+                        "DiagSecondary": payloadbatch.DiagSecondary,
+                        "DiagLat": payloadbatch.DiagLat,
+                        "DiagCert": payloadbatch.DiagCert,
+                        "DiagStart": payloadbatch.DiagStart,
+                        "DiagEnd": payloadbatch.DiagEnd,
+                        "Canceled": payloadbatch.Canceled,
+                        "to_DiagType": payloadbatch.to_DiagType
+                };
                     if(payloadbatch.Canceled){
                         oModel.callFunction("/Cancel" , {
                             groupId : "BatchCall",
@@ -495,9 +514,8 @@ sap.ui.define([
                         }});
                     }
                     if (!payloadbatch.DiagUUID){
-                        oModel.create("/DiagnosisSet", payloadbatch, {
-                            groupId : "BatchCall",
-                            eTag: '*' 
+                        oModel.create("/DiagnosisSet", payloadforCreate, {
+                            groupId : "BatchCall"
                             });
                     } else {
                         var payloadforPut = {
@@ -516,18 +534,20 @@ sap.ui.define([
                         };
                         var oPayloadDiagType = [];
                         oPayloadDiagType.push(payloadbatch.to_DiagType)
+                        
                         oModel.update("/DiagnosisSet(guid'" + payloadbatch.DiagUUID + "')", payloadforPut, {
                             groupId : "BatchCall",
-                            eTag: '*' 
+                            eTag: payloadbatch.eTag
                             });
+                        var eTagType = payloadbatch.eTag
                         oPayloadDiagType[0].forEach(function (diagtypepayload) {
                             if (!diagtypepayload.DiagTypeUuid){
                                 aBatch.push(oModel2.createBatchOperation("/DiagnosisSet", "POST", diagtypepayload));
                             } else {
-                                oModel.update("/DiagnosisSet(guid'" + "(" + diagtypepayload.DiagTypeUuid + ")",
+                                oModel.update("/DiagnosisTypes(guid'"  + diagtypepayload.DiagTypeUuid + "')",
                                             diagtypepayload, {
                                             groupId : "BatchCall",
-                                            eTag: '*' 
+                                            eTag: eTagType 
                                             })
                             }
                         })
