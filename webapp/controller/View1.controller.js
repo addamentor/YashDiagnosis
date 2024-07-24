@@ -187,6 +187,7 @@ sap.ui.define([
                                        // }
                                         aChroninDiag.forEach(function (ChroninDiag) {
                                             if (ChroninDiag && ChroninDiag.to_DiagType && ChroninDiag.to_DiagType.results.length > 0) {
+                                                ChroninDiag.DiagSecondary = ChroninDiag.DiagSecondary === true ? 'S' : 'P';
                                                 var to_diagtype = ChroninDiag.to_DiagType.results; //table Data
                                                 to_diagtype.forEach(function (diagtype) {
                                                     ChroninDiag[diagtype.DiagType] = diagtype.DiagFlag
@@ -443,65 +444,81 @@ sap.ui.define([
                         }
                     });
                 })
+                oModel.setUseBatch(true);
+                oModel.setDeferredGroups(["BatchCall","BatchCallChronic"]);
                 var oChronicData = this.getView().getModel("LimitsTabableModel").getData()
-                // var aBatch = [];
-                // oModel2.setUseBatch(true);
-                // oModel.setDeferredGroups(["BatchCall"]);
-                // oPayload.forEach(function (payloadbatch) {
-                //     if(payloadbatch.Canceled){
-                //         oModel.callFunction("/Cancel" , {
-                //             groupId : "BatchCall",
-                //             eTag: '*',
-                //             method: "POST", 
-                //             urlParameters: {
-                //                 "DiagUUID": payloadbatch.DiagUUID
-                //         }});
-                //     }
-                //     if (!payloadbatch.DiagUUID){
-                //         aBatch.push(oModel2.createBatchOperation("/DiagnosisSet", "POST", payloadbatch));
-                //     } else {
-                //         var payloadforPut = {
-                //                 "DiagCatalog": payloadbatch.DiagCatalog,
-                //                 "DiagCode": payloadbatch.DiagCode,
-                //                 "DiagLevel": payloadbatch.DiagLevel,
-                //                 "DiagUUID": payloadbatch.DiagUUID,
-                //                 "EncounterUUID": payloadbatch.EncounterUUID,
-                //                 "PatientId": payloadbatch.PatientId,
-                //                 "DiagSecondary": payloadbatch.DiagSecondary,
-                //                 "DiagLat": payloadbatch.DiagLat,
-                //                 "DiagCert": payloadbatch.DiagCert,
-                //                 "DiagStart": payloadbatch.DiagStart,
-                //                 "DiagEnd": payloadbatch.DiagEnd,
-                //                 "Canceled": payloadbatch.Canceled,
-                //         };
-                //         var oPayloadDiagType = [];
-                //         oPayloadDiagType.push(payloadbatch.to_DiagType)
-                //         aBatch.push(oModel2.createBatchOperation("/DiagnosisSet(guid'" + payloadbatch.DiagUUID + "')", "PUT", payloadforPut));
-                //         oPayloadDiagType[0].forEach(function (diagtypepayload) {
-                //             if (!diagtypepayload.DiagTypeUuid){
-                //                 aBatch.push(oModel2.createBatchOperation("/DiagnosisSet", "POST", diagtypepayload));
-                //             } else {
-                //                 aBatch.push(oModel2.createBatchOperation("/DiagnosisSet(guid'" + "(" + diagtypepayload.DiagTypeUuid + ")", "PUT", diagtypepayload));
-                //             }
-                //         })
-                //     }
-                // });
-                // oModel2.addBatchChangeOperations(aBatch);    
-                // oModel.submitChanges({
-                //     groupId : "BatchCall"
-                // }); 
-                // oModel2.submitBatch(function (oData, oResponse) {
-                //     this.bsyDialog.close();
-                //     var oTable = this.getView().byId("_IDGenTable1");
-                //     // this._LoadData();
-                //     MessageToast.show("Data Saved")
-                // }.bind(this), function (oError) {
-                //     that.bsyDialog.close();
-                //  });
+                var aDiagType = []
+                var oPayloadChronic = []
+                oChronicData.forEach(function(chronicData){
+                if (chronicData && chronicData.to_DiagType && chronicData.to_DiagType.results){
+                    chronicData.to_DiagType.results.forEach(function (diagType) {
+                        aDiagType.push({
+                            "DiagType": diagType.DiagType,
+                            "DiagFlag": chronicData[diagType.DiagType],
+                            "CreatedBy": "",
+                            "CreatedAt": null,
+                            "LocalLastChangedUser": "",
+                            "LocalLastChangedAt": null,
+                            "Canceled": false,
+                            "DiagTypeUuid": diagType.DiagTypeUuid ,
+                            "DiagUuid": diagType.DiagUuid
+                        });
+                    });
+                } else {
+                    var aDiagosisType = that.getView().getModel("DiagTypeConfigModel").getData();
+                    aDiagosisType.forEach(function (diagType) {
+                        aDiagType.push({
+                            "DiagType": diagType.DiagType,
+                            "DiagFlag": chronicData[diagType.DiagType],
+                            "CreatedBy": "",
+                            "CreatedAt": null,
+                            "LocalLastChangedUser": "",
+                            "LocalLastChangedAt": null,
+                            "Canceled": false
+                        });
+                });
+                }
+
+                oPayloadChronic.push({
+                    "DiagCatalog": chronicData.DiagCatalog,
+                    "DiagCode": chronicData.DiagCode,
+                    "DiagLevel": chronicData.DiagLevel,
+                    "DiagUUID": chronicData.DiagUUID,
+                    "PatientId": chronicData.PatientId,
+                    "DiagSecondary": chronicData.DiagSecondary === 'S' ? true : false,
+                    "DiagLat": chronicData.DiagLat,
+                    "DiagCert": chronicData.DiagCert,
+                    "DiagStart": chronicData.DiagStart,
+                    "DiagEnd": chronicData.DiagEnd,
+                    "Canceled": chronicData.Canceled,
+                    "to_DiagType": aDiagType
+                });
+            });
+
+             oPayloadChronic.forEach(function(payloadchr) {
+
+                var payloadChronicreate = {
+                    "DiagCatalog": chronicData.DiagCatalog,
+                    "DiagCode": chronicData.DiagCode,
+                    "DiagLevel": chronicData.DiagLevel,
+                    "DiagUUID": chronicData.DiagUUID,
+                    "PatientId": chronicData.PatientId,
+                    "DiagSecondary": chronicData.DiagSecondary === 'S' ? true : false,
+                    "DiagLat": chronicData.DiagLat,
+                    "DiagCert": chronicData.DiagCert,
+                    "DiagStart": chronicData.DiagStart,
+                    "DiagEnd": chronicData.DiagEnd,
+                    "Canceled": chronicData.Canceled,
+                    "to_DiagType": aDiagType
+                }
+
+                oModel.create("/DiagnosisSet", payloadforCreate, {
+                    groupId : "BatchCallChronic"
+                    });
+            });
+                
 
                 
-                oModel.setUseBatch(true);
-                oModel.setDeferredGroups(["BatchCall"]);
                 oPayload.forEach(function (payloadbatch) {
                     var payloadforCreate = {
                         "DiagCatalog": payloadbatch.DiagCatalog,
@@ -570,6 +587,15 @@ sap.ui.define([
                   
                 oModel.submitChanges({
                     groupId : "BatchCall",
+					success: function(oData, oResponse) {
+					MessageToast.show("Data Saved")
+					},
+					error: function(oError) {
+                        MessageToast.show("Error is saving Data")
+                     }
+                }); 
+                oModel.submitChanges({
+                    groupId : "BatchCallChronic",
 					success: function(oData, oResponse) {
 					MessageToast.show("Data Saved")
 					},

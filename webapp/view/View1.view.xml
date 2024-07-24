@@ -245,8 +245,7 @@
 											enabled="{LimitsTabableModel>enabledcode}"
 											value="{LimitsTabableModel>Description}" />
 										<m:SegmentedButton id="_IDGenSegmentedButton2"
-											selectedKey="S"
-											enabled="{LimitsTabableModel>enabledcode}">
+											selectedKey="{LimitsTabableModel>DiagSecondary}" selectionChange="onChangeLevel" enabled="true">
 											<m:items>
 												<m:SegmentedButtonItem
 													id="_IDGenSegmentedButtonItem3"
