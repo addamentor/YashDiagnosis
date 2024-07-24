@@ -187,6 +187,7 @@ sap.ui.define([
                                        // }
                                         aChroninDiag.forEach(function (ChroninDiag) {
                                             if (ChroninDiag && ChroninDiag.to_DiagType && ChroninDiag.to_DiagType.results.length > 0) {
+                                                ChroninDiag.eTag = ChroninDiag.__metadata.etag;
                                                 ChroninDiag.DiagSecondary = ChroninDiag.DiagSecondary === true ? 'S' : 'P';
                                                 var to_diagtype = ChroninDiag.to_DiagType.results; //table Data
                                                 to_diagtype.forEach(function (diagtype) {
@@ -447,12 +448,13 @@ sap.ui.define([
                 oModel.setUseBatch(true);
                 oModel.setDeferredGroups(["BatchCall","BatchCallChronic"]);
                 var oChronicData = this.getView().getModel("LimitsTabableModel").getData()
-                var aDiagType = []
+                
                 var oPayloadChronic = []
                 oChronicData.forEach(function(chronicData){
+                    var aDiagTypeChr = []
                 if (chronicData && chronicData.to_DiagType && chronicData.to_DiagType.results){
                     chronicData.to_DiagType.results.forEach(function (diagType) {
-                        aDiagType.push({
+                        aDiagTypeChr.push({
                             "DiagType": diagType.DiagType,
                             "DiagFlag": chronicData[diagType.DiagType],
                             "CreatedBy": "",
@@ -467,7 +469,7 @@ sap.ui.define([
                 } else {
                     var aDiagosisType = that.getView().getModel("DiagTypeConfigModel").getData();
                     aDiagosisType.forEach(function (diagType) {
-                        aDiagType.push({
+                        aDiagTypeChr.push({
                             "DiagType": diagType.DiagType,
                             "DiagFlag": chronicData[diagType.DiagType],
                             "CreatedBy": "",
@@ -478,7 +480,6 @@ sap.ui.define([
                         });
                 });
                 }
-
                 oPayloadChronic.push({
                     "DiagCatalog": chronicData.DiagCatalog,
                     "DiagCode": chronicData.DiagCode,
@@ -491,18 +492,18 @@ sap.ui.define([
                     "DiagStart": chronicData.DiagStart,
                     "DiagEnd": chronicData.DiagEnd,
                     "Canceled": chronicData.Canceled,
-                    "to_DiagType": aDiagType
+                    "to_DiagType": aDiagTypeChr,
+                    "eTag": chronicData.eTag
                 });
             });
 
              oPayloadChronic.forEach(function(payloadchr) {
-
                 var payloadChronicreate = {
                     "DiagCatalog": payloadchr.DiagCatalog,
                     "DiagCode": payloadchr.DiagCode,
                     "DiagLevel": payloadchr.DiagLevel,
                     "DiagUUID": payloadchr.DiagUUID,
-                    "PatientId": payloadchr.PatientId,
+                    "PatientId": '0000000151',
                     "DiagSecondary": payloadchr.DiagSecondary,
                     "DiagLat": payloadchr.DiagLat,
                     "DiagCert": payloadchr.DiagCert,
@@ -511,10 +512,55 @@ sap.ui.define([
                     "Canceled": payloadchr.Canceled,
                     "to_DiagType": payloadchr.to_DiagType
                 }
+                if(payloadchr.Canceled){
+                        oModel.callFunction("/Cancel" , {
+                            groupId : "BatchCallChronic",
+                            eTag: '*',
+                            method: "POST", 
+                            urlParameters: {
+                                "DiagUUID": payloadchr.DiagUUID
+                        }});
+                }
 
-                oModel.create("/DiagnosisSet", payloadChronicreate, {
-                    groupId : "BatchCallChronic"
-                    });
+                if (!payloadchr.DiagUUID){
+                    oModel.create("/DiagnosisSet", payloadChronicreate, {
+                        groupId : "BatchCallChronic"
+                        });
+                } else {
+                    var payloadChronicUpd = {
+                        "DiagCatalog": payloadchr.DiagCatalog,
+                        "DiagCode": payloadchr.DiagCode,
+                        "DiagLevel": payloadchr.DiagLevel,
+                        "DiagUUID": payloadchr.DiagUUID,
+                        "PatientId": '0000000151',
+                        "DiagSecondary": payloadchr.DiagSecondary,
+                        "DiagLat": payloadchr.DiagLat,
+                        "DiagCert": payloadchr.DiagCert,
+                        "DiagStart": payloadchr.DiagStart,
+                        "DiagEnd": payloadchr.DiagEnd,
+                        "Canceled": payloadchr.Canceled,
+                    };
+                    var oPayloadDiagType = [];
+                    oPayloadDiagType.push(payloadchr.to_DiagType)
+                    
+                    oModel.update("/DiagnosisSet(guid'" + payloadchr.DiagUUID + "')", payloadChronicUpd, {
+                        groupId : "BatchCallChronic",
+                        eTag: payloadchr.eTag
+                        });
+                    var eTagType = payloadchr.eTag
+                    oPayloadDiagType[0].forEach(function (diagtypepayload) {
+                        if (diagtypepayload.DiagTypeUuid){
+                        //     aBatch.push(oModel2.createBatchOperation("/DiagnosisSet", "POST", diagtypepayload));
+                        // } else {
+                            oModel.update("/DiagnosisTypes(guid'"  + diagtypepayload.DiagTypeUuid + "')",
+                                        diagtypepayload, {
+                                        groupId : "BatchCallChronic",
+                                        eTag: eTagType 
+                                        })
+                        }
+                    })
+                }
+                
             });
                 
 
