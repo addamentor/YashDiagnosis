@@ -498,21 +498,21 @@ sap.ui.define([
              oPayloadChronic.forEach(function(payloadchr) {
 
                 var payloadChronicreate = {
-                    "DiagCatalog": chronicData.DiagCatalog,
-                    "DiagCode": chronicData.DiagCode,
-                    "DiagLevel": chronicData.DiagLevel,
-                    "DiagUUID": chronicData.DiagUUID,
-                    "PatientId": chronicData.PatientId,
-                    "DiagSecondary": chronicData.DiagSecondary === 'S' ? true : false,
-                    "DiagLat": chronicData.DiagLat,
-                    "DiagCert": chronicData.DiagCert,
-                    "DiagStart": chronicData.DiagStart,
-                    "DiagEnd": chronicData.DiagEnd,
-                    "Canceled": chronicData.Canceled,
-                    "to_DiagType": aDiagType
+                    "DiagCatalog": payloadchr.DiagCatalog,
+                    "DiagCode": payloadchr.DiagCode,
+                    "DiagLevel": payloadchr.DiagLevel,
+                    "DiagUUID": payloadchr.DiagUUID,
+                    "PatientId": payloadchr.PatientId,
+                    "DiagSecondary": payloadchr.DiagSecondary,
+                    "DiagLat": payloadchr.DiagLat,
+                    "DiagCert": payloadchr.DiagCert,
+                    "DiagStart": payloadchr.DiagStart,
+                    "DiagEnd": payloadchr.DiagEnd,
+                    "Canceled": payloadchr.Canceled,
+                    "to_DiagType": payloadchr.to_DiagType
                 }
 
-                oModel.create("/DiagnosisSet", payloadforCreate, {
+                oModel.create("/DiagnosisSet", payloadChronicreate, {
                     groupId : "BatchCallChronic"
                     });
             });
