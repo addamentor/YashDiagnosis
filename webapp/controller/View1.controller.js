@@ -268,22 +268,18 @@ sap.ui.define([
                     });
                 }
             },
-            _handleDiagCodeVHClose: function (evt) {
+            _handleDiagCodeVHSearch: function (oEvent) {
+                var sValue = oEvent.getParameter("value");
+                var oFilter = new sap.ui.model.Filter("DiagCode", sap.ui.model.FilterOperator.Contains, sValue);
+                var oBinding = oEvent.getParameter("itemsBinding");
+                oBinding.filter([oFilter]);
             },
-            handleValueHelpNew: function () {
-                var that = this;
-                if (!this.HeaderFrgmentNew) {
-                    this.HeaderFrgmentNew = sap.ui.xmlfragment("project7.view.fragments.DValuehelp", this);
-                    this.getView().addDependent(this.HeaderFrgmentNew);
-                    // this.HeaderFrgment.setModel(this.getView().getModel("plantModel"));
-                }
-                that.HeaderFrgmentNew.open();
-                var sPath = jQuery.sap.getModulePath("project7", "/model/Code.json");
-                var oModel = new sap.ui.model.json.JSONModel(sPath);
-                //  var sPathHeaderItem =new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath());
-                this.getView().setModel(oModel, "sPathHeaderItemModel");
+            _handleDiagCodeVHClose: function (oEvent) {
+               var selectedDiagCode = oEvent.getParameter("selectedItem").getBindingContext()
+               .getObject().DiagCode;
+
             },
-            onDiagCodeVHPress: function () {
+            onDiagCodeVHPress: function (oEvent) {
                 var that = this;
                 if (!this.HeaderFrgment) {
                     this.HeaderFrgment = sap.ui.xmlfragment("project7.view.fragments.DiagCodeVH", this);
