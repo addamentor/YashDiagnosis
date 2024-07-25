@@ -320,7 +320,8 @@ sap.ui.define([
             _loadDiagCodeSuggestions: function(oCode){
                 var that = this;
                 this.getView().getModel().read("/DiagnosisCodeValueHelp",{
-                    filters: [new sap.ui.model.Filter("DiagCode", "Contains" , oCode)],
+                    filters: [new sap.ui.model.Filter("DiagCode", "Contains" , oCode),
+                              new sap.ui.model.Filter("DiagCode_Text", "Contains" , oCode)], and: false,
                     success: function(oResponse){
                       that.getView().setModel(new JSONModel(oResponse.results), "DiagCodeSuggestionModel");
                     }

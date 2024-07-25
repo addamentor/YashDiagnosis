@@ -94,24 +94,24 @@
 												<m:Label id="_IDGenLabel3" design="Bold" text="Code" />
 											</m:Column>
 											<m:Column id="_IDGenColumn3" minScreenWidth="Tablet"
-												width="10rem"
+												width="14rem"
 												demandPopin="true">
 												<m:Label id="_IDGenLabel4" design="Bold"
 													text="Description" />
 											</m:Column>
 											<m:Column id="_IDGenColumn4" minScreenWidth="Tablet"
-												demandPopin="true">
+												demandPopin="true" width="5rem">
 												<m:Label id="_IDGenLabel5" design="Bold"
 													text="Level" />
 											</m:Column>
 											<m:Column id="_IDGenColumn5" minScreenWidth="Tablet"
-												hAlign="Left" width="6rem"
+												hAlign="Left" width="8rem"
 												demandPopin="true">
 												<m:Label id="_IDGenLabel6" design="Bold"
 													text="Laterality" />
 											</m:Column>
 											<m:Column id="_IDGenColumn6" minScreenWidth="Tablet"
-												hAlign="Center" width="6rem"
+												hAlign="Center" width="8rem"
 												demandPopin="true">
 												<m:Label id="_IDGenLabel7" design="Bold"
 													text="Certainty" />
