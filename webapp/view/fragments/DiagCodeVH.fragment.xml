@@ -11,6 +11,7 @@
 		multiSelect="false">
 		<StandardListItem
 			title="{DiagCode} - {DiagCode_Text}"
-			description="{DiagCode} {DiagCode_Text}" />
+			description="{DiagCode} {DiagCode_Text}" 
+			type="Active"/>
 	</SelectDialog>
 </core:FragmentDefinition>
