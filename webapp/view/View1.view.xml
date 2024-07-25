@@ -142,13 +142,15 @@
 													valueLiveUpdate="true"
 													id="multiInput" showValueHelp="true"
 													valueHelpRequest="onDiagCodeVHPress"
-													suggestionItems="{/DiagnosisCodeValueHelp}">
+													suggestionItems="{DiagCodeSuggestionModel>/}">
 														<m:suggestionItems>
-															<core:ListItem text="{DiagCode}" additionalText="{DiagCode_Text}" />
+															<core:ListItem text="{DiagCodeSuggestionModel>DiagCode}" 
+															additionalText="{DiagCodeSuggestionModel>DiagCode_Text}"
+															 />
 														</m:suggestionItems>
 												</m:Input>
 												<m:Input id="_IDGenInput1" enabled="false"
-													value="{LimitsTemplateModel1>DiagCode}" />
+													value="{LimitsTemplateModel1>DiagCode_Text}" />
 												<m:SegmentedButton id="_IDGenSegmentedButton1"
 													selectedKey="{LimitsTemplateModel1>DiagSecondary}" selectionChange="onChangeLevel" enabled="true">
 													<m:items>
