@@ -5,11 +5,12 @@ sap.ui.define([
     "sap/m/Button",
     "sap/m/MessageToast",
     "sap/m/Text",
+    "sap/ui/model/json/JSONModel"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller,Dialog,mobileLibrary,Button,MessageToast,Text) {
+    function (Controller,Dialog,mobileLibrary,Button,MessageToast,Text, JSONModel) {
         "use strict";
         var ButtonType = mobileLibrary.ButtonType;
         var DialogType = mobileLibrary.DialogType;
@@ -275,40 +276,37 @@ sap.ui.define([
                 oBinding.filter([oFilter]);
             },
             _handleDiagCodeVHClose: function (oEvent) {
-               var selectedDiagCode = oEvent.getParameter("selectedItem").getBindingContext()
-               .getObject().DiagCode;
-
+               var object = oEvent.getParameter("selectedItem").getBindingContext()
+               .getObject();
+                var aIndex = this._extractIndexes(this.sDiagCodeVHPath); 
+                var oData = this.getView().getModel("LimitsTemplateModel1").getData();
+                    var aDiagTableRowData = oData.to_Encounter.results[aIndex[0]].to_Diagnosis.results[aIndex[1]];
+                    aDiagTableRowData.DiagCatalog = object.DiagCatalog;
+                    aDiagTableRowData.DiagCode = object.DiagCode;
+                    aDiagTableRowData.DiagCode_Text = object.DiagCode_Text;
+                    aDiagTableRowData.DiagCatalog_Text = object.DiagCatalog_Text;
+                    this.getView().getModel("LimitsTemplateModel1").setData(oData);
+            },
+            _handleDiagCodeVHCancel: function(){
+                this.oDiagCodeVHDialog.close();
             },
             onDiagCodeVHPress: function (oEvent) {
-                var that = this;
-                if (!this.HeaderFrgment) {
-                    this.HeaderFrgment = sap.ui.xmlfragment("project7.view.fragments.DiagCodeVH", this);
-                    this.getView().addDependent(this.HeaderFrgment);
-                    // this.HeaderFrgment.setModel(this.getView().getModel("plantModel"));
+                if (!this.oDiagCodeVHDialog) {
+                    this.oDiagCodeVHDialog = sap.ui.xmlfragment("project7.view.fragments.DiagCodeVH", this);
+                    this.getView().addDependent(this.oDiagCodeVHDialog);
                 }
-                that.HeaderFrgment.open();
-                var sPath = jQuery.sap.getModulePath("project7", "/model/Code.json");
-                var oModel = new sap.ui.model.json.JSONModel(sPath);
-                //  var sPathHeaderItem =new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath());
-                this.getView().setModel(oModel, "sPathHeaderItemModel");
+                this.oDiagCodeVHDialog.open();
+                this.sDiagCodeVHPath = oEvent.getSource().getBindingContext("LimitsTemplateModel1").getPath();
             },
-
-            /**Save Button Press handler
-             * 
-             */
-            onPress: function () {
-
-            },
-
-            /**
-             * 
-             */
             onChangeLevel: function (oEvent) {
 
 
             },
             onLiveChangeDiagCode: function(oEvent){
                 var oCode = oEvent.getParameter("newValue");
+                if(oCode.length > 3){
+                    this._loadDiagCodeSuggestions(oCode);
+                }
                 if(oCode){
                     var sContextPath = oEvent.getSource().getParent().getBindingContextPath();
                     var aIndex = this._extractIndexes(sContextPath);
@@ -319,6 +317,15 @@ sap.ui.define([
                     };
                     this.getView().getModel("LimitsTemplateModel1").setData(oData);
                 }
+            },
+            _loadDiagCodeSuggestions: function(oCode){
+                var that = this;
+                this.getView().getModel().read("/DiagnosisCodeValueHelp",{
+                    filters: [new sap.ui.model.Filter("DiagCode", "Contains" , oCode)],
+                    success: function(oResponse){
+                      that.getView().setModel(new JSONModel(oResponse.results), "DiagCodeSuggestionModel");
+                    }
+                });
             },
             onLiveChangeChronicDiagCode: function(oEvent){
                 var oCode = oEvent.getParameter("newValue");

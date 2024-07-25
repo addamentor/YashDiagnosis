@@ -7,7 +7,7 @@
 		items="{/DiagnosisCodeValueHelp}"
 		search="_handleDiagCodeVHSearch"
 		confirm="_handleDiagCodeVHClose"
-		cancel="_handleDiagCodeVHClose"
+		cancel="_handleDiagCodeVHCancel"
 		multiSelect="false">
 		<StandardListItem
 			title="{DiagCode} - {DiagCode_Text}"
