@@ -494,23 +494,26 @@ sap.ui.define([
                         });
                 });
                 }
-                oPayloadChronic.push({
-                    "DiagCatalog": chronicData.DiagCatalog,
-                    "DiagCode": chronicData.DiagCode,
-                    "DiagLevel": chronicData.DiagLevel,
-                    "DiagUUID": chronicData.DiagUUID,
-                    "PatientId": chronicData.PatientId,
-                    "DiagSecondary": chronicData.DiagSecondary === 'S' ? true : false,
-                    "DiagLat": chronicData.DiagLat,
-                    "DiagCert": chronicData.DiagCert,
-                    "DiagStart": chronicData.DiagStart,
-                    "DiagEnd": chronicData.DiagEnd,
-                    "Canceled": chronicData.Canceled,
-                    "to_DiagType": aDiagTypeChr,
-                    "eTag": chronicData.eTag
-                });
-            });
 
+                if(chronicData.DiagCatalog && chronicData.DiagCode) {
+                    oPayloadChronic.push({
+                        "DiagCatalog": chronicData.DiagCatalog,
+                        "DiagCode": chronicData.DiagCode,
+                        "DiagLevel": chronicData.DiagLevel,
+                        "DiagUUID": chronicData.DiagUUID,
+                        "PatientId": chronicData.PatientId,
+                        "DiagSecondary": chronicData.DiagSecondary === 'S' ? true : false,
+                        "DiagLat": chronicData.DiagLat,
+                        "DiagCert": chronicData.DiagCert,
+                        "DiagStart": chronicData.DiagStart,
+                        "DiagEnd": chronicData.DiagEnd,
+                        "Canceled": chronicData.Canceled,
+                        "to_DiagType": aDiagTypeChr,
+                        "eTag": chronicData.eTag
+                    });
+                }
+            });
+            
              oPayloadChronic.forEach(function(payloadchr) {
                 var payloadChronicreate = {
                     "DiagCatalog": payloadchr.DiagCatalog,
@@ -564,8 +567,6 @@ sap.ui.define([
                     var eTagType = payloadchr.eTag
                     oPayloadDiagType[0].forEach(function (diagtypepayload) {
                         if (diagtypepayload.DiagTypeUuid){
-                        //     aBatch.push(oModel2.createBatchOperation("/DiagnosisSet", "POST", diagtypepayload));
-                        // } else {
                             oModel.update("/DiagnosisTypes(guid'"  + diagtypepayload.DiagTypeUuid + "')",
                                         diagtypepayload, {
                                         groupId : "BatchCallChronic",
@@ -632,9 +633,7 @@ sap.ui.define([
                             });
                         var eTagType = payloadbatch.eTag
                         oPayloadDiagType[0].forEach(function (diagtypepayload) {
-                            if (!diagtypepayload.DiagTypeUuid){
-                                aBatch.push(oModel2.createBatchOperation("/DiagnosisSet", "POST", diagtypepayload));
-                            } else {
+                            if (diagtypepayload.DiagTypeUuid){
                                 oModel.update("/DiagnosisTypes(guid'"  + diagtypepayload.DiagTypeUuid + "')",
                                             diagtypepayload, {
                                             groupId : "BatchCall",
