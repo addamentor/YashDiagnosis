@@ -234,10 +234,10 @@
 										value="{LimitsTemplateModel>Code}"/> -->
 										<m:Input showSuggestion="true" enabled="true"
 											value="{LimitsTabableModel>DiagCode}"
-											liveChange="onLiveChangeDiagCodeChronic"
+											liveChange="onLiveChangeChronicDiagCode"
 											valueLiveUpdate="true"
 											id="new" showValueHelp="true"
-											valueHelpRequest="onDiagCodeVHPress"
+											valueHelpRequest="onDiagCodeChronicVHPress"
 											suggestionItems="{/DiagnosisCodeValueHelp}"	>
 											<m:suggestionItems>
 												<core:ListItem text="{DiagCode}" additionalText="{DiagCode_Text}" />

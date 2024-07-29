@@ -16,7 +16,8 @@ sap.ui.define([
         var DialogType = mobileLibrary.DialogType;
         return Controller.extend("project7.controller.View1", {
             onInit: function () {
-               
+
+                this.ChronicFlag = false;
                 this.bsyDialog = new sap.m.BusyDialog();
                 this.bsyDialog.open();
                 var me = this;
@@ -278,6 +279,7 @@ sap.ui.define([
                var object = oEvent.getParameter("selectedItem").getBindingContext()
                .getObject();
                 var aIndex = this._extractIndexes(this.sDiagCodeVHPath); 
+                if(!this.ChronicFlag){
                 var oData = this.getView().getModel("LimitsTemplateModel1").getData();
                     var aDiagTableRowData = oData.to_Encounter.results[aIndex[0]].to_Diagnosis.results[aIndex[1]];
                     aDiagTableRowData.DiagCatalog = object.DiagCatalog;
@@ -285,17 +287,35 @@ sap.ui.define([
                     aDiagTableRowData.DiagCode_Text = object.DiagCode_Text;
                     aDiagTableRowData.DiagCatalog_Text = object.DiagCatalog_Text;
                     this.getView().getModel("LimitsTemplateModel1").setData(oData);
+
+                } else {
+                    var oData = this.getView().getModel("LimitsTabableModel").getData();
+                    oData[aIndex[0]].DiagCode = object.DiagCode;
+                    oData[aIndex[0]].DiagCode_Text = object.DiagCode_Text;
+                    this.getView().getModel("LimitsTabableModel").setData(OData);
+
+                }
             },
             _handleDiagCodeVHCancel: function(){
                 this.oDiagCodeVHDialog.close();
             },
             onDiagCodeVHPress: function (oEvent) {
+                this.ChronicFlag = false;
                 if (!this.oDiagCodeVHDialog) {
                     this.oDiagCodeVHDialog = sap.ui.xmlfragment("project7.view.fragments.DiagCodeVH", this);
                     this.getView().addDependent(this.oDiagCodeVHDialog);
                 }
                 this.oDiagCodeVHDialog.open();
                 this.sDiagCodeVHPath = oEvent.getSource().getBindingContext("LimitsTemplateModel1").getPath();
+            },
+            onDiagCodeChronicVHPress: function (oEvent) {
+                this.ChronicFlag = true;
+                if (!this.oDiagCodeVHDialog) {
+                    this.oDiagCodeVHDialog = sap.ui.xmlfragment("project7.view.fragments.DiagCodeVH", this);
+                    this.getView().addDependent(this.oDiagCodeVHDialog);
+                }
+                this.oDiagCodeVHDialog.open();
+                this.sDiagCodeVHPath = oEvent.getSource().getBindingContext("LimitsTabableModel").getPath();
             },
             onChangeLevel: function (oEvent) {
 
@@ -329,8 +349,18 @@ sap.ui.define([
             },
             onLiveChangeChronicDiagCode: function(oEvent){
                 var oCode = oEvent.getParameter("newValue");
+                if(oCode.length > 3){
+                    this._loadDiagCodeSuggestions(oCode);
+                }
                 if(oCode){
-
+                    var sContextPath = oEvent.getSource().getParent().getBindingContextPath();
+                    var aIndex = this._extractIndexes(sContextPath);
+                    var oData = this.getView().getModel("LimitsTabableModel").getData();
+                    var aDiagTableData = oData[aIndex[0]];
+                    if (aDiagTableData.length === (aIndex[1] + 1)){
+                        aDiagTableData.push({});
+                    };
+                    this.getView().getModel("LimitsTabableModel").setData(oData);
                 }
             },
             _extractIndexes: function(path) {
