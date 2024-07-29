@@ -284,15 +284,17 @@ sap.ui.define([
                     var aDiagTableRowData = oData.to_Encounter.results[aIndex[0]].to_Diagnosis.results[aIndex[1]];
                     aDiagTableRowData.DiagCatalog = object.DiagCatalog;
                     aDiagTableRowData.DiagCode = object.DiagCode;
-                    aDiagTableRowData.DiagCode_Text = object.DiagCode_Text;
+                    aDiagTableRowData.DiagDesc = object.DiagCode_Text;
                     aDiagTableRowData.DiagCatalog_Text = object.DiagCatalog_Text;
                     this.getView().getModel("LimitsTemplateModel1").setData(oData);
 
                 } else {
                     var oData = this.getView().getModel("LimitsTabableModel").getData();
+                    oData[aIndex[0]].DiagCatalog = object.DiagCatalog;
+                    oData[aIndex[0]].DiagCatalog_Text = object.DiagCode;
                     oData[aIndex[0]].DiagCode = object.DiagCode;
-                    oData[aIndex[0]].DiagCode_Text = object.DiagCode_Text;
-                    this.getView().getModel("LimitsTabableModel").setData(OData);
+                    oData[aIndex[0]].DiagDesc = object.DiagCode_Text;
+                    this.getView().getModel("LimitsTabableModel").setData(oData);
 
                 }
             },
@@ -432,6 +434,7 @@ sap.ui.define([
                 var oModel = this.getOwnerComponent().getModel();
                 var oModel2 = new sap.ui.model.odata.ODataModel(oModel.sServiceUrl, true);
                 var oLimitsData = this.getView().getModel("LimitsTemplateModel1").getData();
+                var sOrg = oLimitsData.Org;
                 var oEncounters = this.getView().getModel("LimitsTemplateModel1").getData().to_Encounter.results;
                 var oPayload = [];
                 var that = this;
@@ -471,8 +474,10 @@ sap.ui.define([
                         if (oDiagnosis.DiagCatalog && oDiagnosis.DiagCode) { 
                             var sEncUUID = oDiagnosis.DiagUUID ? oDiagnosis.EncounterUUID : sEncounterUUID 
                             oPayload.push({
+                                "Org": sOrg,
                                 "DiagCatalog": oDiagnosis.DiagCatalog,
                                 "DiagCode": oDiagnosis.DiagCode,
+                                "DiagDesc":oDiagnosis.DiagDesc,
                                 "DiagLevel": oDiagnosis.DiagLevel,
                                 "DiagUUID": oDiagnosis.DiagUUID,
                                 "EncounterUUID": sEncUUID,
@@ -527,8 +532,10 @@ sap.ui.define([
 
                 if(chronicData.DiagCatalog && chronicData.DiagCode) {
                     oPayloadChronic.push({
+                        "Org": sOrg,
                         "DiagCatalog": chronicData.DiagCatalog,
                         "DiagCode": chronicData.DiagCode,
+                        "DiagDesc": chronicData.DiagDesc,
                         "DiagLevel": chronicData.DiagLevel,
                         "DiagUUID": chronicData.DiagUUID,
                         "PatientId": chronicData.PatientId,
@@ -546,8 +553,10 @@ sap.ui.define([
             
              oPayloadChronic.forEach(function(payloadchr) {
                 var payloadChronicreate = {
+                    "Org": payloadchr.Org,
                     "DiagCatalog": payloadchr.DiagCatalog,
                     "DiagCode": payloadchr.DiagCode,
+                    "DiagDesc": payloadchr.DiagDesc,
                     "DiagLevel": payloadchr.DiagLevel,
                     "DiagUUID": payloadchr.DiagUUID,
                     "PatientId": '0000000151',
@@ -575,9 +584,10 @@ sap.ui.define([
                         });
                 } else {
                     var payloadChronicUpd = {
+                        "Org": payloadchr.Org,
                         "DiagCatalog": payloadchr.DiagCatalog,
                         "DiagCode": payloadchr.DiagCode,
-                        "DiagLevel": payloadchr.DiagLevel,
+                        "DiagDesc": payloadchr.DiagDesc,
                         "DiagUUID": payloadchr.DiagUUID,
                         "PatientId": '0000000151',
                         "DiagSecondary": payloadchr.DiagSecondary,
@@ -612,8 +622,10 @@ sap.ui.define([
                 
                 oPayload.forEach(function (payloadbatch) {
                     var payloadforCreate = {
+                        "Org": payloadbatch.Org,
                         "DiagCatalog": payloadbatch.DiagCatalog,
                         "DiagCode": payloadbatch.DiagCode,
+                        "DiagDesc":payloadbatch.DiagDesc,
                         "DiagLevel": payloadbatch.DiagLevel,
                         "DiagUUID": payloadbatch.DiagUUID,
                         "EncounterUUID": payloadbatch.EncounterUUID,
@@ -641,8 +653,10 @@ sap.ui.define([
                             });
                     } else {
                         var payloadforPut = {
+                                "Org": payloadbatch.Org,
                                 "DiagCatalog": payloadbatch.DiagCatalog,
                                 "DiagCode": payloadbatch.DiagCode,
+                                "DiagDesc": payloadbatch.DiagDesc,
                                 "DiagLevel": payloadbatch.DiagLevel,
                                 "DiagUUID": payloadbatch.DiagUUID,
                                 "EncounterUUID": payloadbatch.EncounterUUID,
