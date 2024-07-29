@@ -150,7 +150,7 @@
 														</m:suggestionItems>
 												</m:Input>
 												<m:Input id="_IDGenInput1" enabled="false"
-													value="{LimitsTemplateModel1>DiagCode_Text}" />
+													value="{LimitsTemplateModel1>DiagDesc}" />
 												<m:SegmentedButton id="_IDGenSegmentedButton1"
 													selectedKey="{LimitsTemplateModel1>DiagSecondary}" selectionChange="onChangeLevel" enabled="true">
 													<m:items>
@@ -245,7 +245,7 @@
 										</m:Input>
 										<m:Input id="_IDGenInput2"
 											enabled="{LimitsTabableModel>enabledcode}"
-											value="{LimitsTabableModel>Description}" />
+											value="{LimitsTabableModel>DiagDesc}" />
 										<m:SegmentedButton id="_IDGenSegmentedButton2"
 											selectedKey="{LimitsTabableModel>DiagSecondary}" selectionChange="onChangeLevel" enabled="true">
 											<m:items>
