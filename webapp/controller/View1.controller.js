@@ -32,6 +32,7 @@ sap.ui.define([
                 var LimitsTemplateModel = new sap.ui.model.json.JSONModel({
                     FirstEncounter: true,
                     DiagtypeData: [],
+                    DiagtypeDataChr:[],
                     DeletedDiagnsis: [],
                     DiagnosisCodeValueHelp: {},
                     DiagnosisLevelValueHelp: {}
@@ -50,8 +51,22 @@ sap.ui.define([
                 var oModel_Data = this.getOwnerComponent().getModel();
                 oModel_Data.read("/DiagnosisTypeConfig", {
                     success: function (oData) {
-                        LimitsTemplateModel.setProperty("/DiagtypeData", oData.results);
-                        this.getView().setModel(new sap.ui.model.json.JSONModel(oData.results), "DiagTypeConfigModel")
+                        var aTempDiag = oData.results;
+                        var aTempDiagchr = [];
+                        var aTempDiagOth = [] 
+                        if(aTempDiag.length>0){
+                            aTempDiag.forEach(function(type){
+                                if(type.DiagChr){
+                                    aTempDiagchr.push(type) 
+                                } else {
+                                    aTempDiagOth.push(type)
+                                }
+                            })
+                            LimitsTemplateModel.setProperty("/DiagtypeData", aTempDiagOth);
+                            LimitsTemplateModel.setProperty("/DiagtypeDataChr", aTempDiagchr);
+                            this.getView().setModel(new sap.ui.model.json.JSONModel(aTempDiagOth), "DiagTypeConfigModel")
+                            this.getView().setModel(new sap.ui.model.json.JSONModel(aTempDiagchr), "DiagTypeConfigModelChr")
+                        }
                     }.bind(this),
                     error: function (oError) {
                         that.bsyDialog.close();
@@ -60,12 +75,13 @@ sap.ui.define([
                     }
                 });
                 var aFilter = [];
-                var caseGUID = new sap.ui.model.Filter('CaseID', 'EQ', "000000000114");
-                aFilter.push(caseGUID)
-                oModel_Data.read("/Patients('0000000151')/to_Case", {
-                    filters: aFilter,
-                    success: function (oData) {
-                        var sPathGUID = "/EpisodeOfCareSet" + "(" + "guid'" + oData.results[0].CaseUUID + "')";
+                // var caseGUID = new sap.ui.model.Filter('CaseID', 'EQ', "000000000114");
+                var caseGUID = "b9149892-4a6b-1edf-8caf-422539670d66";
+                // aFilter.push(caseGUID)
+                // oModel_Data.read("/Patients('0000000151')/to_Case", {
+                //     filters: aFilter,
+                //     success: function (oData) {
+                        var sPathGUID = "/EpisodeOfCareSet" + "(" + "guid'" + caseGUID + "')";
                         oModel_Data.read(sPathGUID, {
                             urlParameters: {
                                 $expand: "to_Encounter,to_Encounter/to_Diagnosis,to_Encounter/to_Diagnosis/to_DiagType"
@@ -147,7 +163,7 @@ sap.ui.define([
                                     success: function (oData) {
                                         that.bsyDialog.close();
                                         var oTable = this.getView().byId("_IDGenTable2");
-                                        var oDiadata = LimitsTemplateModel.getData().DiagtypeData
+                                        var oDiadata = LimitsTemplateModel.getData().DiagtypeDataChr
                                         oDiadata.forEach(function (aDiatype) {
                                             if(!oColumn){
                                                 var oColumn = new sap.m.Column("colChrnic" + aDiatype.DiagType, {
@@ -212,13 +228,13 @@ sap.ui.define([
                                 sap.m.MessageToast.show(msg);
                             }
                         });
-                    }.bind(this),
-                    error: function (oError) {
-                        that.bsyDialog.close();
-                        var msg = JSON.parse(oError.responseText).error.message.value;
-                        sap.m.MessageToast.show(msg);
-                    }
-                });
+                //     }.bind(this),
+                //     error: function (oError) {
+                //         that.bsyDialog.close();
+                //         var msg = JSON.parse(oError.responseText).error.message.value;
+                //         sap.m.MessageToast.show(msg);
+                //     }
+                // });
             },
 
             onDiagDeletePress: function (oEvent) {
@@ -516,7 +532,7 @@ sap.ui.define([
                         });
                     });
                 } else {
-                    var aDiagosisType = that.getView().getModel("DiagTypeConfigModel").getData();
+                    var aDiagosisType = that.getView().getModel("DiagTypeConfigModelChr").getData();
                     aDiagosisType.forEach(function (diagType) {
                         aDiagTypeChr.push({
                             "DiagType": diagType.DiagType,

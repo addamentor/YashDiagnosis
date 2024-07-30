@@ -202,22 +202,19 @@
 										demandPopin="true">
 										<m:Label id="_IDGenLabel11" design="Bold" text="Code" />
 									</m:Column>
-									<m:Column id="_IDGenColumn11" minScreenWidth="Tablet"
-										width="10rem"
+									<m:Column id="_IDGenColumn11" 
 										demandPopin="true">
 										<m:Label id="_IDGenLabel12" design="Bold" text="Description" />
 									</m:Column>
-									<m:Column id="_IDGenColumn12" minScreenWidth="Tablet"
+									<m:Column id="_IDGenColumn12" 
 										demandPopin="true">
 										<m:Label id="_IDGenLabel13" design="Bold" text="Level" />
 									</m:Column>
-									<m:Column id="_IDGenColumn13" minScreenWidth="Tablet"
-										hAlign="Left" width="6rem"
+									<m:Column id="_IDGenColumn13" 
 										demandPopin="true">
 										<m:Label id="_IDGenLabel14" design="Bold" text="Laterality" />
 									</m:Column>
-									<m:Column id="_IDGenColumn14" minScreenWidth="Tablet"
-										hAlign="Center" width="6rem"
+									<m:Column id="_IDGenColumn14" 
 										demandPopin="true">
 										<m:Label id="_IDGenLabel15" design="Bold" text="Certainty" />
 									</m:Column>
