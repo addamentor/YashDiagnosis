@@ -131,8 +131,8 @@
 												<m:ComboBox id="_IDGenComboBox1"
 													selectedKey="{LimitsTemplateModel1>DiagCatalog}"
 													enabled="{= ${LimitsTemplateModel1>DiagUUID} ? false : true}"
-													items="{/DiagnosisCatalogValueHelp}">
-													<core:Item key="{value_low}" text="{text}" />
+													items="{DiagCatlogVH>/DiagnosisCatalogValueHelp}">
+													<core:Item key="{DiagCatlogVH>value_low}" text="{DiagCatlogVH>text}" />
 												</m:ComboBox>
 												<!-- <m:Input enabled="false"
 												value="{LimitsTemplateModel>Code}"/> -->
@@ -224,8 +224,8 @@
 										<m:ComboBox id="_IDGenComboBox4"
 											selectedKey="{LimitsTabableModel>DiagCatalog}"
 											enabled="{LimitsTabableModel>enabledcode}"
-											items="{/DiagnosisCatalogValueHelp}">
-											<core:Item key="{value_low}" text="{text}" />					
+											items="{DiagCatlogVH>/DiagnosisCatalogValueHelp}">
+											<core:Item key="{DiagCatlogVH>value_low}" text="{DiagCatlogVH>text}" />					
 										</m:ComboBox>
 										<!-- <m:Input enabled="false"
 										value="{LimitsTemplateModel>Code}"/> -->
