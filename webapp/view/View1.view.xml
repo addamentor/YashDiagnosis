@@ -257,11 +257,13 @@
 										</m:SegmentedButton>
 										<m:ComboBox id="_IDGenComboBox5"
 											selectedKey="{LimitsTabableModel>DiagLat}"
-											enabled="true">
+											items="{DiagLatVH>/DiagnosisLateralityValueHelp}">
+													<core:Item key="{DiagLatVH>DiagLat}" text="{DiagLatVH>DiagLat_Text}" />
 										</m:ComboBox>
 										<m:ComboBox id="_IDGenComboBox6"
 											selectedKey="{LimitsTabableModel>DiagCert}"
-											enabled="{LimitsTabableModel>enabledcode}">
+											items="{DiagCertVH>/DiagnosisCertaintyValueHelp}">
+													<core:Item key="{DiagCertVH>DiagCert}" text="{DiagCertVH>DiagCert_Text}" />
 										</m:ComboBox>
 									</m:ColumnListItem>
 
