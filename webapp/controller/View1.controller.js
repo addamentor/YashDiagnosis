@@ -293,7 +293,7 @@ sap.ui.define([
                 oBinding.filter([oFilter]);
             },
             _handleDiagCodeVHClose: function (oEvent) {
-                var object = oEvent.getParameter("selectedItem").getBindingContext()
+                var object = oEvent.getParameter("selectedItem").getBindingContext("DiagCodeVH")
                     .getObject();
                 var aIndex = this._extractIndexes(this.sDiagCodeVHPath);
                 if (!this.ChronicFlag) {
@@ -308,11 +308,10 @@ sap.ui.define([
                 } else {
                     var oData = this.getView().getModel("LimitsTabableModel").getData();
                     oData[aIndex[0]].DiagCatalog = object.DiagCatalog;
-                    oData[aIndex[0]].DiagCatalog_Text = object.DiagCode;
+                    oData[aIndex[0]].DiagCatalog_Text = object.DiagCatalog_Text;
                     oData[aIndex[0]].DiagCode = object.DiagCode;
                     oData[aIndex[0]].DiagDesc = object.DiagCode_Text;
                     this.getView().getModel("LimitsTabableModel").setData(oData);
-
                 }
             },
             _handleDiagCodeVHCancel: function () {

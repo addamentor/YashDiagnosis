@@ -168,12 +168,13 @@
 												<!-- <m:Text text="{LimitsTemplateModel>Level}"/> -->
 												<m:ComboBox id="_IDGenComboBox2"
 													selectedKey="{LimitsTemplateModel1>DiagLat}"
-													items="{/DiagnosisLateralityValueHelp}">
-													<core:Item key="{DiagLat}" text="{DiagLat_Text}" />
+													items="{DiagLatVH>/DiagnosisLateralityValueHelp}">
+													<core:Item key="{DiagLatVH>DiagLat}" text="{DiagLatVH>DiagLat_Text}" />
 												</m:ComboBox>
 												<m:ComboBox id="_IDGenComboBox3"
-													selectedKey="{LimitsTemplateModel1>DiagCert}" items="{/DiagnosisCertaintyValueHelp}">
-													<core:Item key="{DiagCert}" text="{DiagCert_Text}" />
+													selectedKey="{LimitsTemplateModel1>DiagCert}" 
+													items="{DiagCertVH>/DiagnosisCertaintyValueHelp}">
+													<core:Item key="{DiagCertVH>DiagCert}" text="{DiagCertVH>DiagCert_Text}" />
 												</m:ComboBox>
 								
 											</m:ColumnListItem>
@@ -235,9 +236,9 @@
 											valueLiveUpdate="true"
 											id="new" showValueHelp="true"
 											valueHelpRequest="onDiagCodeChronicVHPress"
-											suggestionItems="{/DiagnosisCodeValueHelp}"	>
+											suggestionItems="{DiagCodeVH>/DiagnosisCodeValueHelp}"	>
 											<m:suggestionItems>
-												<core:ListItem text="{DiagCode}" additionalText="{DiagCode_Text}" />
+												<core:ListItem text="{DiagCodeVH>DiagCode}" additionalText="{DiagCodeVH>DiagCode_Text}" />
 											</m:suggestionItems>
 										</m:Input>
 										<m:Input id="_IDGenInput2"
