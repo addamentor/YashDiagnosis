@@ -10,7 +10,7 @@ sap.ui.define([
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller,Dialog,mobileLibrary,Button,MessageToast,Text, JSONModel) {
+    function (Controller, Dialog, mobileLibrary, Button, MessageToast, Text, JSONModel) {
         "use strict";
         var ButtonType = mobileLibrary.ButtonType;
         var DialogType = mobileLibrary.DialogType;
@@ -37,6 +37,8 @@ sap.ui.define([
                     DiagnosisCodeValueHelp: {},
                     DiagnosisLevelValueHelp: {}
                 });
+                this.getView().setModel(new JSONModel([]), "DeletedDiagnosis");
+                this.getView().setModel(new JSONModel([]), "ChronicDeletedDiagnosis");
                 var oPanel = this.byId("_IDGenPanel1");
                 oPanel.setExpanded(!oPanel.getExpanded());
                 var sPath = jQuery.sap.getModulePath("project7", "/model/Code.json");
@@ -47,7 +49,6 @@ sap.ui.define([
                 var oModel1 = new sap.ui.model.json.JSONModel(sPath1);
                 //  var sPathHeaderItem =new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath());
                 this.getView().setModel(oModel1, "LimitsTabableModel");
-                this.getView().setModel(new sap.ui.model.json.JSONModel(), "DeletedDiagnosis")
                 var oModel_Data = this.getOwnerComponent().getModel();
                 oModel_Data.read("/DiagnosisTypeConfig", {
                     success: function (oData) {
@@ -86,14 +87,14 @@ sap.ui.define([
                             urlParameters: {
                                 $expand: "to_Encounter,to_Encounter/to_Diagnosis,to_Encounter/to_Diagnosis/to_DiagType"
                             },
-                            success: function (oData1,oResponse) {
+                            success: function (oData1, oResponse) {
                                 this.sETag = oResponse.headers['etag'];
                                 var LimitsTemplateModel1 = new sap.ui.model.json.JSONModel();
                                 LimitsTemplateModel1.setProperty("/DiagtypeData", LimitsTemplateModel.getData().DiagtypeData);
                                 var oTable = this.getView().byId("_IDGenTable1");
                                 var oDiadata = LimitsTemplateModel1.getData().DiagtypeData
                                 oDiadata.forEach(function (aDiatype) {
-                                    if(!oColumn) {
+                                    if (!oColumn) {
                                         var oColumn = new sap.m.Column("col" + aDiatype.DiagType, {
                                             header: new sap.m.Label({
                                                 text: aDiatype.DiagType,
@@ -103,7 +104,7 @@ sap.ui.define([
                                         });
                                     }
                                     oTable.addColumn(oColumn);
-                                    if(!oTemplate) {
+                                    if (!oTemplate) {
                                         var oTemplate = oTable.getBindingInfo("items").template;
                                         oTemplate.addCell(new sap.m.CheckBox({
                                             id: "id_" + aDiatype.DiagType,
@@ -118,7 +119,7 @@ sap.ui.define([
                                             });
 
                                         } else {
-                                          //  to_diag.push({});
+                                            //  to_diag.push({});
                                         }
                                     });
                                 });
@@ -150,7 +151,7 @@ sap.ui.define([
                                         }
                                     });
                                     //if (to_diag.length !== 1) {
-                                        to_diag.push({});
+                                    to_diag.push({});
                                     //}
                                 });
 
@@ -165,7 +166,7 @@ sap.ui.define([
                                         var oTable = this.getView().byId("_IDGenTable2");
                                         var oDiadata = LimitsTemplateModel.getData().DiagtypeDataChr
                                         oDiadata.forEach(function (aDiatype) {
-                                            if(!oColumn){
+                                            if (!oColumn) {
                                                 var oColumn = new sap.m.Column("colChrnic" + aDiatype.DiagType, {
                                                     header: new sap.m.Label({
                                                         text: aDiatype.DiagType,
@@ -175,7 +176,7 @@ sap.ui.define([
                                                 });
                                             }
                                             oTable.addColumn(oColumn);
-                                            if(!oTemplate) {
+                                            if (!oTemplate) {
                                                 var oTemplate = oTable.getBindingInfo("items").template;
                                                 oTemplate.addCell(new sap.m.CheckBox({
                                                     id: "Chroniid_" + aDiatype.DiagType,
@@ -201,8 +202,8 @@ sap.ui.define([
 
                                         var aChroninDiag = oData.results;
                                         //if (aChroninDiag.length == 0) {
-                                            aChroninDiag.push({});
-                                       // }
+                                        aChroninDiag.push({});
+                                        // }
                                         aChroninDiag.forEach(function (ChroninDiag) {
                                             if (ChroninDiag && ChroninDiag.to_DiagType && ChroninDiag.to_DiagType.results.length > 0) {
                                                 ChroninDiag.eTag = ChroninDiag.__metadata.etag;
@@ -238,22 +239,22 @@ sap.ui.define([
             },
 
             onDiagDeletePress: function (oEvent) {
-                var aDeletedDiagnosisEntry = []
+                var aDeletedDiagnosisEntry = this.getView().getModel("DeletedDiagnosis").getData() || [];
                 var object = oEvent.getSource().getParent().getBindingContext("LimitsTemplateModel1").getObject();
-                object.Canceled = true; 
+                object.Canceled = true;
                 aDeletedDiagnosisEntry.push(object);
-                this.getView().getModel("DeletedDiagnosis").setProperty("/DeletedDiagnsis",aDeletedDiagnosisEntry.DiagCode)
+                this.getView().getModel("DeletedDiagnosis").setData(aDeletedDiagnosisEntry);
                 sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
-               
+
             },
             onChrDiagDeletePress: function (oEvent) {
-                var aDeletedDiagnosisEntry = []
+                var aDeletedDiagnosisEntry = this.getView().getModel("DeletedDiagnosis").getData() || [];
                 var object = oEvent.getSource().getParent().getBindingContext("LimitsTabableModel").getObject();
-                object.Canceled = true; 
+                object.Canceled = true;
                 aDeletedDiagnosisEntry.push(object);
-                this.getView().getModel("DeletedDiagnosis").setProperty("/DeletedDiagnsis",aDeletedDiagnosisEntry.DiagCode)
+                this.getView().getModel("DeletedDiagnosis").setData(aDeletedDiagnosisEntry);
                 sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
-               
+
             },
             _handleValueHelpCloseNew: function (evt) {
                 var that = this;
@@ -292,11 +293,11 @@ sap.ui.define([
                 oBinding.filter([oFilter]);
             },
             _handleDiagCodeVHClose: function (oEvent) {
-               var object = oEvent.getParameter("selectedItem").getBindingContext()
-               .getObject();
-                var aIndex = this._extractIndexes(this.sDiagCodeVHPath); 
-                if(!this.ChronicFlag){
-                var oData = this.getView().getModel("LimitsTemplateModel1").getData();
+                var object = oEvent.getParameter("selectedItem").getBindingContext()
+                    .getObject();
+                var aIndex = this._extractIndexes(this.sDiagCodeVHPath);
+                if (!this.ChronicFlag) {
+                    var oData = this.getView().getModel("LimitsTemplateModel1").getData();
                     var aDiagTableRowData = oData.to_Encounter.results[aIndex[0]].to_Diagnosis.results[aIndex[1]];
                     aDiagTableRowData.DiagCatalog = object.DiagCatalog;
                     aDiagTableRowData.DiagCode = object.DiagCode;
@@ -314,7 +315,7 @@ sap.ui.define([
 
                 }
             },
-            _handleDiagCodeVHCancel: function(){
+            _handleDiagCodeVHCancel: function () {
                 this.oDiagCodeVHDialog.close();
             },
             onDiagCodeVHPress: function (oEvent) {
@@ -339,49 +340,49 @@ sap.ui.define([
 
 
             },
-            onLiveChangeDiagCode: function(oEvent){
+            onLiveChangeDiagCode: function (oEvent) {
                 var oCode = oEvent.getParameter("newValue");
-                if(oCode.length > 3){
+                if (oCode.length > 3) {
                     this._loadDiagCodeSuggestions(oCode);
                 }
-                if(oCode){
+                if (oCode) {
                     var sContextPath = oEvent.getSource().getParent().getBindingContextPath();
                     var aIndex = this._extractIndexes(sContextPath);
                     var oData = this.getView().getModel("LimitsTemplateModel1").getData();
                     var aDiagTableData = oData.to_Encounter.results[aIndex[0]].to_Diagnosis.results;
-                    if (aDiagTableData.length === (aIndex[1] + 1)){
+                    if (aDiagTableData.length === (aIndex[1] + 1)) {
                         aDiagTableData.push({});
                     };
                     this.getView().getModel("LimitsTemplateModel1").setData(oData);
                 }
             },
-            _loadDiagCodeSuggestions: function(oCode){
+            _loadDiagCodeSuggestions: function (oCode) {
                 var that = this;
-                this.getView().getModel().read("/DiagnosisCodeValueHelp",{
-                    filters: [new sap.ui.model.Filter("DiagCode", "Contains" , oCode),
-                              new sap.ui.model.Filter("DiagCode_Text", "Contains" , oCode)], and: false,
-                    success: function(oResponse){
-                      that.getView().setModel(new JSONModel(oResponse.results), "DiagCodeSuggestionModel");
+                this.getView().getModel().read("/DiagnosisCodeValueHelp", {
+                    filters: [new sap.ui.model.Filter("DiagCode", "Contains", oCode),
+                    new sap.ui.model.Filter("DiagCode_Text", "Contains", oCode)], and: false,
+                    success: function (oResponse) {
+                        that.getView().setModel(new JSONModel(oResponse.results), "DiagCodeSuggestionModel");
                     }
                 });
             },
-            onLiveChangeChronicDiagCode: function(oEvent){
+            onLiveChangeChronicDiagCode: function (oEvent) {
                 var oCode = oEvent.getParameter("newValue");
-                if(oCode.length > 3){
+                if (oCode.length > 3) {
                     this._loadDiagCodeSuggestions(oCode);
                 }
-                if(oCode){
+                if (oCode) {
                     var sContextPath = oEvent.getSource().getParent().getBindingContextPath();
                     var aIndex = this._extractIndexes(sContextPath);
                     var oData = this.getView().getModel("LimitsTabableModel").getData();
                     var aDiagTableData = oData[aIndex[0]];
-                    if (aDiagTableData.length === (aIndex[1] + 1)){
+                    if (aDiagTableData.length === (aIndex[1] + 1)) {
                         aDiagTableData.push({});
                     };
                     this.getView().getModel("LimitsTabableModel").setData(oData);
                 }
             },
-            _extractIndexes: function(path) {
+            _extractIndexes: function (path) {
                 const parts = path.split('/');
                 parts.shift();
                 const indexes = [];
@@ -402,25 +403,31 @@ sap.ui.define([
                 // this.DiagnosisData();
             },
 
-            onPressSaveConfirmation: function(){
+            onPressSaveConfirmation: function () {
                 var that = this;
                 var sDiagCode;
                 var sTextforPopup;
-                var aDeletedDiagnosisEntry = this.getView().getModel("DeletedDiagnosis").getProperty("/DeletedDiagnsis");
-                if(!aDeletedDiagnosisEntry){
+                var aDeletedDiagnosisEntry = this.getView().getModel("DeletedDiagnosis").getData();
+                if (aDeletedDiagnosisEntry.length === 0) {
                     sTextforPopup = "Are you sure you want to save?";
-                } else { 
-                    aDeletedDiagnosisEntry.forEach(function(DeletedCode){
-                        sDiagCode = sDiagCode + ", " + DeletedCode.DiagCode
+                } else {
+                    aDeletedDiagnosisEntry.forEach(function (DeletedEntry) {
+                        if (sDiagCode) {
+                            sDiagCode = sDiagCode + ", " + DeletedEntry.DiagCode
+                        }
+                        else {
+                            sDiagCode = DeletedEntry.DiagCode;
+                        }
+
                     });
-                    sTextforPopup = "Diagnosis Entries with these code" + sDiagCode + "would be deleted, Confirm?"  
+                    sTextforPopup = "Diagnosis Entries with these code " + sDiagCode + " would be deleted, Confirm?"
                 }
                 if (!this.oApproveDialog) {
-                   
+
                     this.oApproveDialog = new Dialog({
                         type: DialogType.Message,
                         title: "Confirm",
-                        content: new Text({ text: sTextforPopup}),
+                        content: new Text({ text: sTextforPopup }),
                         beginButton: new Button({
                             type: ButtonType.Emphasized,
                             text: "Submit",
@@ -438,7 +445,7 @@ sap.ui.define([
                         })
                     });
                 }
-    
+
                 this.oApproveDialog.open();
 
 
@@ -446,7 +453,7 @@ sap.ui.define([
 
             onPressSave: function (oevt) {
                 // this.bsyDialog.open();
-                var sEtag  = this.sETag
+                var sEtag = this.sETag
                 var oModel = this.getOwnerComponent().getModel();
                 var oModel2 = new sap.ui.model.odata.ODataModel(oModel.sServiceUrl, true);
                 var oLimitsData = this.getView().getModel("LimitsTemplateModel1").getData();
@@ -459,7 +466,7 @@ sap.ui.define([
                     var sEncounterUUID = encounter.EncounterUUID
                     aDiagnosis.forEach(function (oDiagnosis) {
                         var aDiagType = [];
-                        if (oDiagnosis && oDiagnosis.to_DiagType && oDiagnosis.to_DiagType.results){
+                        if (oDiagnosis && oDiagnosis.to_DiagType && oDiagnosis.to_DiagType.results) {
                             oDiagnosis.to_DiagType.results.forEach(function (diagType) {
                                 aDiagType.push({
                                     "DiagType": diagType.DiagType,
@@ -469,7 +476,7 @@ sap.ui.define([
                                     "LocalLastChangedUser": "",
                                     "LocalLastChangedAt": null,
                                     "Canceled": false,
-                                    "DiagTypeUuid": diagType.DiagTypeUuid ,
+                                    "DiagTypeUuid": diagType.DiagTypeUuid,
                                     "DiagUuid": diagType.DiagUuid
                                 });
                             });
@@ -485,10 +492,10 @@ sap.ui.define([
                                     "LocalLastChangedAt": null,
                                     "Canceled": false
                                 });
-                        });
+                            });
                         }
-                        if (oDiagnosis.DiagCatalog && oDiagnosis.DiagCode) { 
-                            var sEncUUID = oDiagnosis.DiagUUID ? oDiagnosis.EncounterUUID : sEncounterUUID 
+                        if (oDiagnosis.DiagCatalog && oDiagnosis.DiagCode) {
+                            var sEncUUID = oDiagnosis.DiagUUID ? oDiagnosis.EncounterUUID : sEncounterUUID
                             oPayload.push({
                                 "Org": sOrg,
                                 "DiagCatalog": oDiagnosis.DiagCatalog,
@@ -511,11 +518,11 @@ sap.ui.define([
                     });
                 })
                 oModel.setUseBatch(true);
-                oModel.setDeferredGroups(["BatchCall","BatchCallChronic"]);
+                oModel.setDeferredGroups(["BatchCall", "BatchCallChronic"]);
                 var oChronicData = this.getView().getModel("LimitsTabableModel").getData()
-                
+
                 var oPayloadChronic = []
-                oChronicData.forEach(function(chronicData){
+                oChronicData.forEach(function (chronicData) {
                     var aDiagTypeChr = []
                 if (chronicData && chronicData.to_DiagType && chronicData.to_DiagType.results){
                     chronicData.to_DiagType.results.forEach(function (diagType) {
@@ -588,15 +595,16 @@ sap.ui.define([
                         oModel.callFunction("/Cancel" , {
                             groupId : "BatchCallChronic",
                             eTag: '*',
-                            method: "POST", 
+                            method: "POST",
                             urlParameters: {
                                 "DiagUUID": payloadchr.DiagUUID
-                        }});
-                }
+                            }
+                        });
+                    }
 
-                if (!payloadchr.DiagUUID){
-                    oModel.create("/DiagnosisSet", payloadChronicreate, {
-                        groupId : "BatchCallChronic"
+                    if (!payloadchr.DiagUUID) {
+                        oModel.create("/DiagnosisSet", payloadChronicreate, {
+                            groupId: "BatchCallChronic"
                         });
                 } else {
                     var payloadChronicUpd = {
@@ -620,22 +628,22 @@ sap.ui.define([
                         groupId : "BatchCallChronic",
                         eTag: payloadchr.eTag
                         });
-                    var eTagType = payloadchr.eTag
-                    oPayloadDiagType[0].forEach(function (diagtypepayload) {
-                        if (diagtypepayload.DiagTypeUuid){
-                            oModel.update("/DiagnosisTypes(guid'"  + diagtypepayload.DiagTypeUuid + "')",
-                                        diagtypepayload, {
-                                        groupId : "BatchCallChronic",
-                                        eTag: eTagType 
-                                        })
-                        }
-                    })
-                }
-                
-            });
-                
+                        var eTagType = payloadchr.eTag
+                        oPayloadDiagType[0].forEach(function (diagtypepayload) {
+                            if (diagtypepayload.DiagTypeUuid) {
+                                oModel.update("/DiagnosisTypes(guid'" + diagtypepayload.DiagTypeUuid + "')",
+                                    diagtypepayload, {
+                                    groupId: "BatchCallChronic",
+                                    eTag: eTagType
+                                })
+                            }
+                        })
+                    }
 
-                
+                });
+
+
+
                 oPayload.forEach(function (payloadbatch) {
                     var payloadforCreate = {
                         "Org": payloadbatch.Org,
@@ -653,20 +661,21 @@ sap.ui.define([
                         "DiagEnd": payloadbatch.DiagEnd,
                         "Canceled": payloadbatch.Canceled,
                         "to_DiagType": payloadbatch.to_DiagType
-                };
-                    if(payloadbatch.Canceled){
-                        oModel.callFunction("/Cancel" , {
-                            groupId : "BatchCall",
+                    };
+                    if (payloadbatch.Canceled) {
+                        oModel.callFunction("/Cancel", {
+                            groupId: "BatchCall",
                             eTag: '*',
-                            method: "POST", 
+                            method: "POST",
                             urlParameters: {
                                 "DiagUUID": payloadbatch.DiagUUID
-                        }});
+                            }
+                        });
                     }
-                    if (!payloadbatch.DiagUUID){
+                    if (!payloadbatch.DiagUUID) {
                         oModel.create("/DiagnosisSet", payloadforCreate, {
-                            groupId : "BatchCall"
-                            });
+                            groupId: "BatchCall"
+                        });
                     } else {
                         var payloadforPut = {
                                 "Org": payloadbatch.Org,
@@ -686,44 +695,44 @@ sap.ui.define([
                         };
                         var oPayloadDiagType = [];
                         oPayloadDiagType.push(payloadbatch.to_DiagType)
-                        
+
                         oModel.update("/DiagnosisSet(guid'" + payloadbatch.DiagUUID + "')", payloadforPut, {
-                            groupId : "BatchCall",
+                            groupId: "BatchCall",
                             eTag: payloadbatch.eTag
-                            });
+                        });
                         var eTagType = payloadbatch.eTag
                         oPayloadDiagType[0].forEach(function (diagtypepayload) {
-                            if (diagtypepayload.DiagTypeUuid){
-                                oModel.update("/DiagnosisTypes(guid'"  + diagtypepayload.DiagTypeUuid + "')",
-                                            diagtypepayload, {
-                                            groupId : "BatchCall",
-                                            eTag: eTagType 
-                                            })
+                            if (diagtypepayload.DiagTypeUuid) {
+                                oModel.update("/DiagnosisTypes(guid'" + diagtypepayload.DiagTypeUuid + "')",
+                                    diagtypepayload, {
+                                    groupId: "BatchCall",
+                                    eTag: eTagType
+                                })
                             }
                         })
                     }
                 });
-                  
+
                 oModel.submitChanges({
-                    groupId : "BatchCall",
-					success: function(oData, oResponse) {
-					MessageToast.show("Data Saved")
-					},
-					error: function(oError) {
+                    groupId: "BatchCall",
+                    success: function (oData, oResponse) {
+                        MessageToast.show("Data Saved")
+                    },
+                    error: function (oError) {
                         MessageToast.show("Error is saving Data")
-                     }
-                }); 
+                    }
+                });
                 oModel.submitChanges({
-                    groupId : "BatchCallChronic",
-					success: function(oData, oResponse) {
-					MessageToast.show("Data Saved")
-					},
-					error: function(oError) {
+                    groupId: "BatchCallChronic",
+                    success: function (oData, oResponse) {
+                        MessageToast.show("Data Saved")
+                    },
+                    error: function (oError) {
                         MessageToast.show("Error is saving Data")
-                     }
-                }); 
-             
-              
+                    }
+                });
+
+
             }
         });
     });
