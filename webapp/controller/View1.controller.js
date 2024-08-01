@@ -5,12 +5,14 @@ sap.ui.define([
     "sap/m/Button",
     "sap/m/MessageToast",
     "sap/m/Text",
-    "sap/ui/model/json/JSONModel"
+    "sap/ui/model/json/JSONModel",
+    'sap/ui/model/Filter', 
+    'sap/ui/model/FilterOperator'
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, Dialog, mobileLibrary, Button, MessageToast, Text, JSONModel) {
+    function (Controller, Dialog, mobileLibrary, Button, MessageToast, Text, JSONModel,Filter,FilterOperator) {
         "use strict";
         var ButtonType = mobileLibrary.ButtonType;
         var DialogType = mobileLibrary.DialogType;
@@ -49,8 +51,31 @@ sap.ui.define([
                 var oModel1 = new sap.ui.model.json.JSONModel(sPath1);
                 //  var sPathHeaderItem =new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath());
                 this.getView().setModel(oModel1, "LimitsTabableModel");
-                var oModel_Data = this.getOwnerComponent().getModel();
-                oModel_Data.read("/DiagnosisTypeConfig", {
+                var Model_header = this.getOwnerComponent().getModel();
+                var oModel_Data = this.getOwnerComponent().getModel("ReadModel");
+                var oModel_Data1 = this.getOwnerComponent().getModel("DiagConfigModel");
+                var filter1 = []
+                filter1.push(new Filter({
+                    path: 'PatientId',
+                    operator: FilterOperator.EQ,
+                    value1: "0000000151"
+                  }))
+                 
+                Model_header.read("/Patients('0000000151')", {
+                    // filters: filter1,
+                    urlParameters: {
+                        $expand: "to_BusinessPartner,to_Name,to_PatCvrg"
+                    },
+                    success: function(odata){
+                        debugger;
+
+                    },
+                    error: function(){
+
+                    }
+                }
+                )
+                oModel_Data1.read("/DiagnosisTypeConfig", {
                     success: function (oData) {
                         var aTempDiag = oData.results;
                         var aTempDiagchr = [];
@@ -76,12 +101,8 @@ sap.ui.define([
                     }
                 });
                 var aFilter = [];
-                // var caseGUID = new sap.ui.model.Filter('CaseID', 'EQ', "000000000114");
+                
                 var caseGUID = "b9149892-4a6b-1edf-8caf-422539670d66";
-                // aFilter.push(caseGUID)
-                // oModel_Data.read("/Patients('0000000151')/to_Case", {
-                //     filters: aFilter,
-                //     success: function (oData) {
                         var sPathGUID = "/EpisodeOfCareSet" + "(" + "guid'" + caseGUID + "')";
                         oModel_Data.read(sPathGUID, {
                             urlParameters: {
@@ -98,10 +119,14 @@ sap.ui.define([
                                         var oColumn = new sap.m.Column("col" + aDiatype.DiagType, {
                                             header: new sap.m.Label({
                                                 text: aDiatype.DiagType,
-                                                tooltip: aDiatype.DiagType_Text
+                                                tooltip: aDiatype.DiagType_Text,
+                                                
                                                 // template: oTemplate
                                             }),
-                                        });
+                                            hAlign: "Center",
+                                            width: "4%"
+                                        },
+                                    );
                                     }
                                     oTable.addColumn(oColumn);
                                     if (!oTemplate) {
@@ -173,6 +198,8 @@ sap.ui.define([
                                                         tooltip: aDiatype.DiagType_Text
                                                         // template: oTemplate
                                                     }),
+                                                    hAlign: "Center",
+                                                    width: "15%"
                                                 });
                                             }
                                             oTable.addColumn(oColumn);
@@ -288,9 +315,24 @@ sap.ui.define([
             },
             _handleDiagCodeVHSearch: function (oEvent) {
                 var sValue = oEvent.getParameter("value");
-                var oFilter = new sap.ui.model.Filter("DiagCode", sap.ui.model.FilterOperator.Contains, sValue);
+                var filter  = new Filter({
+                    filters: [
+                      new Filter({
+                        path: 'DiagCode',
+                        operator: FilterOperator.Contains,
+                        value1: sValue
+                      }),
+                      new Filter({
+                        path: 'DiagCode_Text',
+                        operator: FilterOperator.Contains,
+                        value1: sValue
+                      })
+                    ],
+                    and: false
+                  })
+                // var oFilter = new sap.ui.model.Filter("DiagCode", sap.ui.model.FilterOperator.Contains, sValue);
                 var oBinding = oEvent.getParameter("itemsBinding");
-                oBinding.filter([oFilter]);
+                oBinding.filter([filter]);
             },
             _handleDiagCodeVHClose: function (oEvent) {
                 var object = oEvent.getParameter("selectedItem").getBindingContext("DiagCodeVH")
@@ -357,9 +399,13 @@ sap.ui.define([
             },
             _loadDiagCodeSuggestions: function (oCode) {
                 var that = this;
-                this.getView().getModel().read("/DiagnosisCodeValueHelp", {
-                    filters: [new sap.ui.model.Filter("DiagCode", "Contains", oCode),
-                    new sap.ui.model.Filter("DiagCode_Text", "Contains", oCode)], and: false,
+                var filter;
+                    var filter1 = new Filter( 'DiagCode', FilterOperator.Contains, oCode );
+                    var filter2 = new Filter( 'DiagCode_Text', FilterOperator.Contains, oCode )
+                    filter = new Filter({filters: [filter1, filter2], and: false})
+                //var sPath = "/DiagnosisCodeValueHelp?$filter=DiagCode Contains '" + oCode + "'" + 'or' + "DiagCode_Text Contains '" + oCode + "'";
+                this.getView().getModel("DiagCodeVH").read("/DiagnosisCodeValueHelp", {
+                    filters: [filter],
                     success: function (oResponse) {
                         that.getView().setModel(new JSONModel(oResponse.results), "DiagCodeSuggestionModel");
                     }
@@ -453,7 +499,7 @@ sap.ui.define([
             onPressSave: function (oevt) {
                 // this.bsyDialog.open();
                 var sEtag = this.sETag
-                var oModel = this.getOwnerComponent().getModel();
+                var oModel = this.getOwnerComponent().getModel("CUDModel");
                 var oModel2 = new sap.ui.model.odata.ODataModel(oModel.sServiceUrl, true);
                 var oLimitsData = this.getView().getModel("LimitsTemplateModel1").getData();
                 var sOrg = oLimitsData.Org;
