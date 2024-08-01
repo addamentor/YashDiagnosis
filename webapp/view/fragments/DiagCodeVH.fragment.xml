@@ -10,8 +10,8 @@
 		cancel="_handleDiagCodeVHCancel"
 		multiSelect="false">
 		<StandardListItem
-			title="{DiagCodeVH>DiagCode} - {DiagCodeVH>DiagCode_Text}"
-			description="{DiagCodeVH>DiagCode} {DiagCodeVH>DiagCode_Text}" 
+			title="{DiagCodeVH>DiagCode}"
+			description="{DiagCodeVH>DiagCode_Text}" 
 			type="Active"/>
 	</SelectDialog>
 </core:FragmentDefinition>
