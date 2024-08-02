@@ -359,6 +359,7 @@ sap.ui.define([
                     .getObject();
                 var aIndex = this._extractIndexes(this.sDiagCodeVHPath);
                 if (!this.ChronicFlag) {
+                    this.oInputControl.setValueState("None")
                     var oData = this.getView().getModel("LimitsTemplateModel1").getData();
                     var aDiagTableRowData = oData.to_Encounter.results[aIndex[0]].to_Diagnosis.results[aIndex[1]];
                     aDiagTableRowData.DiagCatalog = object.DiagCatalog;
@@ -381,6 +382,7 @@ sap.ui.define([
             },
             onDiagCodeVHPress: function (oEvent) {
                 this.ChronicFlag = false;
+                this.oInputControl = oEvent.getSource();
                 if (!this.oDiagCodeVHDialog) {
                     this.oDiagCodeVHDialog = sap.ui.xmlfragment("project7.view.fragments.DiagCodeVH", this);
                     this.getView().addDependent(this.oDiagCodeVHDialog);
