@@ -17,7 +17,7 @@ sap.ui.define([
         var ButtonType = mobileLibrary.ButtonType;
         var DialogType = mobileLibrary.DialogType;
         return Controller.extend("project7.controller.View1", {
-            
+
             onInit: function () {
                 // var _ = require('lodash');
                 this.ChronicFlag = false;
@@ -74,7 +74,7 @@ sap.ui.define([
                         oPatientData.patientIdDisplay = Number(oSuccess["PatientId"]).toString();
                         oPatientData.patientGender = oSuccess["to_BusinessPartner"]["IsMale"] ? "Male" : oSuccess["to_BusinessPartner"]["IsFemale"] ? "Female" : "";
                         oPatientData.patientBirthDate = oSuccess["to_BusinessPartner"]["BirthDate"];
-                        oPatientData.patientAge = Math.floor(( new Date() - oPatientData.patientBirthDate ) / (365 * 24 * 60 * 60 *1000));
+                        oPatientData.patientAge = Math.floor((new Date() - oPatientData.patientBirthDate) / (365 * 24 * 60 * 60 * 1000));
                         oPatientData.BusinessPartnerFullName = oSuccess["to_BusinessPartner"]["BusinessPartnerFullName"]
                         var sFullName = oSuccess["to_BusinessPartner"]["BusinessPartnerFullName"]
                         var names = sFullName.split(/\s+/);
@@ -86,8 +86,8 @@ sap.ui.define([
                         oPatientData.patientEmail = oSuccess["to_BusinessPartner"]["to_Address"].results.length > 0 ? oSuccess["to_BusinessPartner"]["to_Address"].results[0]["to_EmailAddress"]["results"][0]["EmailAddress"] : "";
 
                         // _.forEach(_.keys(oSuccess), function (_key) {
-                            that.getView().setModel(new JSONModel(oPatientData), "patientDetailsModel")
-                            // that.getView().getModel("patientDetailsModel").setData(oPatientData);
+                        that.getView().setModel(new JSONModel(oPatientData), "patientDetailsModel")
+                        // that.getView().getModel("patientDetailsModel").setData(oPatientData);
                         // }); 
                     },
                     error: function () {
@@ -401,10 +401,34 @@ sap.ui.define([
 
 
             },
+            onChangeDiagCode: function (oEvent) {
+                var code = oEvent.getParameter("newValue");
+                var filter = new Filter('DiagCode', FilterOperator.EQ, code);
+                var sContextPath = oEvent.getSource().getParent().getBindingContextPath();
+                var aIndex = this._extractIndexes(sContextPath);
+                var oModel = this.getView().getModel("LimitsTemplateModel1");
+                this.getView().getModel("DiagCodeVH").read("/DiagnosisCodeValueHelp", {
+                    filters: [filter],
+                    success: function (oResponse) {
+                        if (oResponse.results && oResponse.results.length > 0) {
+                            var oData = oModel.getData();
+                            var aDiagTableRowData = oData.to_Encounter.results[aIndex[0]].to_Diagnosis.results[aIndex[1]];
+                            aDiagTableRowData.DiagCatalog = oResponse.results[0].DiagCatalog;
+                            aDiagTableRowData.DiagCatalog_Text = oResponse.results[0].DiagCatalog_Text;
+                            aDiagTableRowData.DiagCode = oResponse.results[0].DiagCode;
+                            aDiagTableRowData.DiagDesc = oResponse.results[0].DiagCode_Text;
+                            oModel.setData(oData);
+                        } else {
+                            //validation fail
+                        }
+                    }
+                });
+            },
             onLiveChangeDiagCode: function (oEvent) {
                 var oCode = oEvent.getParameter("newValue");
                 if (oCode.length > 3) {
-                    this._loadDiagCodeSuggestions(oCode);
+                    var object = oEvent.getSource().getBindingContext("LimitsTemplateModel1").getObject();
+                    this._loadDiagCodeSuggestions(oCode, object.DiagCatalog);
                 }
                 if (oCode) {
                     var sContextPath = oEvent.getSource().getParent().getBindingContextPath();
@@ -417,15 +441,21 @@ sap.ui.define([
                     this.getView().getModel("LimitsTemplateModel1").setData(oData);
                 }
             },
-            _loadDiagCodeSuggestions: function (oCode) {
+            _loadDiagCodeSuggestions: function (oCode, sCatalog) {
                 var that = this;
-                var filter;
-                var filter1 = new Filter('DiagCode', FilterOperator.Contains, oCode);
-                var filter2 = new Filter('DiagCode_Text', FilterOperator.Contains, oCode)
-                filter = new Filter({ filters: [filter1, filter2], and: false })
+                var oCodeFilter, oFilter;
+                var oCodeFilter1 = new Filter('DiagCode', FilterOperator.Contains, oCode);
+                var oCodeFilter2 = new Filter('DiagCode_Text', FilterOperator.Contains, oCode)
+                oCodeFilter = new Filter({ filters: [oCodeFilter1, oCodeFilter2], and: false });
+                if (sCatalog) {
+                    var sCatalogFilter = new Filter("DiagCatalog", FilterOperator.EQ, sCatalog);
+                    oFilter = new Filter({ filters: [oCodeFilter, sCatalogFilter], and: true });
+                } else {
+                    oFilter = oCodeFilter;
+                }
                 //var sPath = "/DiagnosisCodeValueHelp?$filter=DiagCode Contains '" + oCode + "'" + 'or' + "DiagCode_Text Contains '" + oCode + "'";
                 this.getView().getModel("DiagCodeVH").read("/DiagnosisCodeValueHelp", {
-                    filters: [filter],
+                    filters: [oFilter],
                     success: function (oResponse) {
                         that.getView().setModel(new JSONModel(oResponse.results), "DiagCodeSuggestionModel");
                     }

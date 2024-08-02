@@ -146,6 +146,7 @@
 												value="{LimitsTemplateModel>Code}"/> -->
 												<m:Input showSuggestion="true" enabled="true"
 													value="{LimitsTemplateModel1>DiagCode}"
+													change="onChangeDiagCode"
 													liveChange="onLiveChangeDiagCode"
 													valueLiveUpdate="true"
 													id="multiInput" showValueHelp="true"
