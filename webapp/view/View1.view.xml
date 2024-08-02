@@ -20,20 +20,14 @@
 					</m:FlexBox>
 				</snappedHeading>
 				<expandedContent>
-					<m:Text id="_IDGenText1" text="{i18n>lblMRN} : {patientDetailsModel>/patientIdDisplay}"/>
+					<m:Text id="_IDGenText1" text="{i18n>MRN} : {patientDetailsModel>/patientIdDisplay}"/>
 				</expandedContent>
 				<snappedContent>
-					<m:Text id="_IDGenText2" text="{i18n>lblMRN} : {patientDetailsModel>/patientIdDisplay}"/>
+					<m:Text id="_IDGenText2" text="{i18n>MRN} : {patientDetailsModel>/patientIdDisplay}"/>
 				</snappedContent>
 				<snappedTitleOnMobile>
-					<m:Title id="_IDGenTitle3" text="{i18n>lblMRN} : {patientDetailsModel>/patientIdDisplay}"/>
+					<m:Title id="_IDGenTitle3" text="{i18n>MRN} : {patientDetailsModel>/patientIdDisplay}"/>
 				</snappedTitleOnMobile>
-				<!-- <actions>
-					<m:Button id="_IDGenButton1" text="Save" type="Emphasized" press="onPressSaveConfirmation"
-						ariaDescribedBy="defaultButtonDescription genericButtonDescription"
-						icon="sap-icon://business-card">
-					</m:Button>
-				</actions> -->
 			</ObjectPageDynamicHeaderTitle>
 		</headerTitle>
 		<headerContent>
@@ -60,21 +54,7 @@
 					<m:ObjectStatus id="_IDGenObjectStatus2" class="sapUiTinyMarginTop" text="Overdue: 0.00" state="Error"/>
 				</layout:VerticalLayout>
 			</m:FlexBox>
-			<m:HBox id="_IDGenHBox3" justifyContent="End"  >
-					
-						<m:Button id="_IDGenButton5" text="Save" type="Emphasized" press="onPressSaveConfirmation"
-						ariaDescribedBy="defaultButtonDescription genericButtonDescription"
-						icon="sap-icon://business-card">
-					</m:Button>
-						</m:HBox>
-			<!-- <actions>
-					<m:Button id="_IDGenButton1" text="Save" type="Emphasized" press="onPressSaveConfirmation"
-						ariaDescribedBy="defaultButtonDescription genericButtonDescription"
-						icon="sap-icon://business-card">
-					</m:Button>
-				</actions> -->
 		</headerContent>
-		
 		<sections>
 			<ObjectPageSection id="_IDGenObjectPageSection1" titleUppercase="false"
 				title="{i18n>dignoisis}">
@@ -138,6 +118,7 @@
 											<m:ColumnListItem id="_IDGenColumnListItem1">
 												<m:ComboBox id="_IDGenComboBox1"
 													selectedKey="{LimitsTemplateModel1>DiagCatalog}"
+													change="onChangingCatalog"
 													enabled="{= ${LimitsTemplateModel1>DiagUUID} ? false : true}"
 													items="{DiagCatlogVH>/DiagnosisCatalogValueHelp}">
 													<core:Item id="_IDGenItem1" key="{DiagCatlogVH>value_low}" text="{DiagCatlogVH>text}" />
@@ -146,6 +127,7 @@
 												value="{LimitsTemplateModel>Code}"/> -->
 												<m:Input showSuggestion="true" enabled="true"
 													value="{LimitsTemplateModel1>DiagCode}"
+													valueState="None"
 													change="onChangeDiagCode"
 													liveChange="onLiveChangeDiagCode"
 													valueLiveUpdate="true"
@@ -236,6 +218,7 @@
 									<m:ColumnListItem id="_IDGenColumnListItem2">
 										<m:ComboBox id="_IDGenComboBox4"
 											selectedKey="{LimitsTabableModel>DiagCatalog}"
+											change="onChangingCatalog"
 											enabled="{= ${LimitsTabableModel>DiagUUID} ? false : true}"
 											items="{DiagCatlogVH>/DiagnosisCatalogValueHelp}">
 											<core:Item id="_IDGenItem4" key="{DiagCatlogVH>value_low}" text="{DiagCatlogVH>text}" />					
@@ -287,5 +270,15 @@
 				</subSections>
 			</ObjectPageSection>
 		</sections>
+		<footer>
+		<m:OverflowToolbar id="_IDGenOverflowToolbar1">
+				<m:ToolbarSpacer id="_IDGenToolbarSpacer1"/>
+				<m:Button id="_IDGenButton1" text="Save" type="Emphasized" press="onPressSaveConfirmation"
+						ariaDescribedBy="defaultButtonDescription genericButtonDescription"
+						icon="sap-icon://business-card">
+					</m:Button>
+				<m:Button type="Reject" text="Cancel"/>
+			</m:OverflowToolbar>
+		</footer>
 	</ObjectPageLayout>
 </mvc:View>

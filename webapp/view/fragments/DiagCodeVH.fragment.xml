@@ -10,7 +10,7 @@
 		cancel="_handleDiagCodeVHCancel"
 		multiSelect="false">
 		<StandardListItem
-			title="{DiagCodeVH>DiagCode}"
+			title="{DiagCodeVH>DiagCatalog_Text} - {DiagCodeVH>DiagCode}"
 			description="{DiagCodeVH>DiagCode_Text}" 
 			type="Active"/>
 	</SelectDialog>

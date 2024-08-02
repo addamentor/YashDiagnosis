@@ -402,6 +402,8 @@ sap.ui.define([
 
             },
             onChangeDiagCode: function (oEvent) {
+                var oSource =  oEvent.getSource();
+                oSource.setValueState("None");
                 var code = oEvent.getParameter("newValue");
                 var filter = new Filter('DiagCode', FilterOperator.EQ, code);
                 var sContextPath = oEvent.getSource().getParent().getBindingContextPath();
@@ -419,7 +421,7 @@ sap.ui.define([
                             aDiagTableRowData.DiagDesc = oResponse.results[0].DiagCode_Text;
                             oModel.setData(oData);
                         } else {
-                            //validation fail
+                            oSource.setValueState("Error");
                         }
                     }
                 });
@@ -496,6 +498,17 @@ sap.ui.define([
                 // this.EncounterData();
                 // this.PatientsData();
                 // this.DiagnosisData();
+            },
+            onChangingCatalog: function (oEvent) {
+                var newval = oEvent.getParameter("newValue");
+                var key = oEvent.getSource().getSelectedItem();
+                if (newval !== "" && key === null) {
+                    oEvent.getSource().setValue("");
+                    oEvent.getSource().setValueState("Error");
+                } else {
+                    oEvent.getSource().setValueState("None");
+                }
+
             },
 
             onPressSaveConfirmation: function () {
