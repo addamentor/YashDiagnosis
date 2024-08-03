@@ -153,7 +153,8 @@ sap.ui.define([
                                 var oTemplate = oTable.getBindingInfo("items").template;
                                 oTemplate.addCell(new sap.m.CheckBox({
                                     id: "id_" + aDiatype.DiagType,
-                                    selected: "{LimitsTemplateModel1>" + aDiatype.DiagType + "}"
+                                    selected: "{LimitsTemplateModel1>" + aDiatype.DiagType + "}",
+                                    enabled: "{ConfigModel>/DiagEnab}"
                                 }));
                             }
                             oData1.to_Encounter.results.forEach(function (encounter) {
@@ -179,7 +180,8 @@ sap.ui.define([
                         oTemplate.addCell(new sap.m.Button({
                             press: this.onDiagDeletePress.bind(this),
                             icon: "sap-icon://delete",
-                            type: "Reject"
+                            type: "Reject",
+                            enabled: "{ConfigModel>/DiagEnab}"
                         }));
                         this.getView().setModel(LimitsTemplateModel1, "LimitsTemplateModel1");
                         var aEnc = oData1.to_Encounter.results;
@@ -227,7 +229,8 @@ sap.ui.define([
                                         var oTemplate = oTable.getBindingInfo("items").template;
                                         oTemplate.addCell(new sap.m.CheckBox({
                                             id: "Chroniid_" + aDiatype.DiagType,
-                                            selected: "{LimitsTabableModel>" + aDiatype.DiagType + "}"
+                                            selected: "{LimitsTabableModel>" + aDiatype.DiagType + "}",
+                                            enabled: "{ConfigModel>/DiagEnab}"
                                         }));
                                     }
                                 });
@@ -242,7 +245,8 @@ sap.ui.define([
                                 oTemplate.addCell(new sap.m.Button({
                                     press: this.onChrDiagDeletePress.bind(this),
                                     icon: "sap-icon://delete",
-                                    type: "Reject"
+                                    type: "Reject",
+                                    enabled: "{ConfigModel>/DiagEnab}"
                                 }));
                                 var oModel1 = new sap.ui.model.json.JSONModel();
                                 this.getView().setModel(oModel1, "LimitsTabableModel");
@@ -283,6 +287,9 @@ sap.ui.define([
                 //         sap.m.MessageToast.show(msg);
                 //     }
                 // });
+            },
+            onEditDiag:function(evt){
+                this.getView().getModel("ConfigModel").setProperty("/DiagEnab",true);
             },
 
             onDiagDeletePress: function (oEvent) {
@@ -544,7 +551,9 @@ sap.ui.define([
                             press: function () {
                                 this.oApproveDialog.close();
                                 this.onPressSave();
+                           
                             }.bind(this)
+                          
                             // this.onPressSave().bind(this)
                         }),
                         endButton: new Button({
@@ -827,6 +836,7 @@ sap.ui.define([
                     groupId: "BatchCall",
                     success: function (oData, oResponse) {
                         MessageToast.show("Data Saved")
+                        window.location.reload();
                     },
                     error: function (oError) {
                         MessageToast.show("Error is saving Data")
