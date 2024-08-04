@@ -9,63 +9,56 @@
 			<ObjectPageDynamicHeaderTitle id="_IDGenObjectPageDynamicHeaderTitle1">
 				<expandedHeading>
 					<m:HBox id="_IDGenHBox1">
-						<m:Title id="_IDGenTitle1" text="Ruben Smith" wrapping="true" />
-						<m:ObjectMarker id="_IDGenObjectMarker1" type="Flagged"
-							class="sapUiTinyMarginBegin" />
+						<m:Title id="_IDGenTitle1" text="{patientDetailsModel>/BusinessPartnerFullName}" wrapping="true"/>
+						<m:ObjectMarker id="_IDGenObjectMarker1" type="Flagged" class="sapUiTinyMarginBegin"/>
 					</m:HBox>
 				</expandedHeading>
 				<snappedHeading>
 					<m:FlexBox id="_IDGenFlexBox1" fitContainer="true" alignItems="Center">
-						<m:Avatar id="_IDGenAvatar1" src="" class="sapUiTinyMarginEnd" />
-						<m:Title id="_IDGenTitle2" text="Ruben Smith" wrapping="true" />
+						<m:Avatar id="_IDGenAvatar1" src="./test-resources/sap/uxap/images/imageID_275314.png" class="sapUiTinyMarginEnd"/>
+						<m:Title id="_IDGenTitle2" text="{patientDetailsModel>/BusinessPartnerFullName}" wrapping="true"/>
 					</m:FlexBox>
 				</snappedHeading>
 				<expandedContent>
-					<m:Text id="_IDGenText1" text="MRN: 12345" />
+					<m:Text id="_IDGenText1" text="{i18n>MRN} : {patientDetailsModel>/patientIdDisplay}"/>
 				</expandedContent>
 				<snappedContent>
-					<m:Text id="_IDGenText2" text="MRN: 12345" />
+					<m:Text id="_IDGenText2" text="{i18n>MRN} : {patientDetailsModel>/patientIdDisplay}"/>
 				</snappedContent>
 				<snappedTitleOnMobile>
-					<m:Title id="_IDGenTitle3" text="MRN: 12345" />
+					<m:Title id="_IDGenTitle3" text="{i18n>MRN} : {patientDetailsModel>/patientIdDisplay}"/>
 				</snappedTitleOnMobile>
-				<actions>
-					<m:Button id="_IDGenButton1" text="Save" type="Emphasized" press="onPress"
-						ariaDescribedBy="defaultButtonDescription genericButtonDescription"
-						icon="sap-icon://business-card">
-					</m:Button>
-
+					<actions>
+					<m:OverflowToolbarButton icon="sap-icon://edit" text="edit header" type="Emphasized" tooltip="edit">
+						<m:layoutData>
+							<m:OverflowToolbarLayoutData priority="NeverOverflow"/>
+						</m:layoutData>
+					</m:OverflowToolbarButton>
 				</actions>
 			</ObjectPageDynamicHeaderTitle>
 		</headerTitle>
 		<headerContent>
 			<m:FlexBox id="_IDGenFlexBox2" wrap="Wrap">
-				<m:Avatar id="_IDGenAvatar2" class="sapUiSmallMarginEnd" initials="DS"
-					displaySize="L" />
+				<m:Avatar id="_IDGenAvatar2" class="sapUiSmallMarginEnd" initials="{patientDetailsModel>/patientInitials}" displaySize="L"/>
 				<layout:VerticalLayout id="_IDGenVerticalLayout1" class="sapUiSmallMarginBeginEnd">
-					<m:Text id="_IDGenText3" class="sapUiTinyMarginTop" text="Male" />
-					<m:Text id="_IDGenText4" class="sapUiTinyMarginTop" text="DOB: 11.08.1978" />
-					<m:Text id="_IDGenText5" class="sapUiTinyMarginTop" text="46yrs 23 days" />
-					<m:Link id="_IDGenLink1" class="sapUiTinyMarginTop" text="+971-501234567" />
-					<m:Link id="_IDGenLink2" class="sapUiTinyMarginTop" text="Denise.Smith@test.com" />
+					<m:Text id="_IDGenText3" class="sapUiTinyMarginTop" text="{patientDetailsModel>/patientGender}"/>
+					<m:Text id="_IDGenText4" class="sapUiTinyMarginTop" text="{path: 'patientDetailsModel>/patientBirthDate',type: 'sap.ui.model.type.Date', formatOptions: { style: 'medium'}}"/>
+					<m:Text id="_IDGenText5" class="sapUiTinyMarginTop" text="{patientDetailsModel>/patientAge}"/>
+					<m:Link id="_IDGenLink1" class="sapUiTinyMarginTop" text="{patientDetailsModel>/patientMobile}"/>
+					<m:Link id="_IDGenLink2" class="sapUiTinyMarginTop" text="{patientDetailsModel>/patientEmail}"/>
 				</layout:VerticalLayout>
-				<layout:HorizontalLayout id="_IDGenHorizontalLayout1"
-					class="sapUiSmallMarginBeginEnd">
-					<m:Image id="_IDGenImage1" src="./test-resources/sap/uxap/images/linkedin.png" />
-					<m:Image id="_IDGenImage2" src="./test-resources/sap/uxap/images/Twitter.png"
-						class="sapUiSmallMarginBegin" />
+				<layout:HorizontalLayout id="_IDGenHorizontalLayout1" class="sapUiSmallMarginBeginEnd">
+					<m:Image id="_IDGenImage1" src="./test-resources/sap/uxap/images/linkedin.png"/>
+					<m:Image id="_IDGenImage2" src="./test-resources/sap/uxap/images/Twitter.png" class="sapUiSmallMarginBegin"/>
 				</layout:HorizontalLayout>
 				<layout:VerticalLayout id="_IDGenVerticalLayout2" class="sapUiSmallMarginBeginEnd">
-					<m:Link id="_IDGenLink3" text="Dentist" />
-					<m:Text id="_IDGenText6" class="sapUiTinyMarginTop" text="General Dentist" />
-					<m:Label id="_IDGenLabel1" class="sapUiTinyMarginTop"
-						text="Visit Date: 20.04.2024" />
+					<m:Link id="_IDGenLink3" text="Dentist"/>
+					<m:Text id="_IDGenText6" class="sapUiTinyMarginTop" text="General Dentist"/>
+					<m:Label id="idEpisodeofCareLabel" class="sapUiTinyMarginTop" text="Episode of Care ID: {LimitsTemplateModel1>/CaseID}"/>
 				</layout:VerticalLayout>
 				<layout:VerticalLayout id="_IDGenVerticalLayout3" class="sapUiSmallMarginBeginEnd">
-					<m:ObjectStatus id="_IDGenObjectStatus1" text="Credit Limit: 1850.00"
-						state="Success" />
-					<m:ObjectStatus id="_IDGenObjectStatus2" class="sapUiTinyMarginTop"
-						text="Overdue: 0.00" state="Error" />
+					<m:ObjectStatus id="_IDGenObjectStatus1" text="Credit: 1850.00 AED" state="Success"/>
+					<m:ObjectStatus id="_IDGenObjectStatus2" class="sapUiTinyMarginTop" text="Overdue: 0.00" state="Error"/>
 				</layout:VerticalLayout>
 			</m:FlexBox>
 		</headerContent>
@@ -74,123 +67,113 @@
 				title="{i18n>dignoisis}">
 				<subSections>
 					<ObjectPageSubSection id="_IDGenObjectPageSubSection1">
+					
 						<blocks>
 							<!-- <m:VBox id="_IDGenVBox1" items="{LimitsTemplateModel>/panelData}"> -->
 							<m:VBox id="_IDGenVBox1"
 								items="{LimitsTemplateModel1>/to_Encounter/results}">
 								<m:Panel id="_IDGenPanel1" headerText="{LimitsTemplateModel1>EncID}"
 									expanded="true" expandable="true">
-
-									<m:Table id="_IDGenTable1"
+									<m:Table id="_IDGenTable1" autoPopinMode= "true"
 										items="{LimitsTemplateModel1>to_Diagnosis/results}">
-
 										<m:columns>
 											<m:Column id="_IDGenColumn1" minScreenWidth="Tablet"
-												hAlign="Center" width="6rem"
+												hAlign="Center" width="10%"
 												demandPopin="true">
 												<m:Label id="_IDGenLabel2" design="Bold"
 													text="Catalog" />
 											</m:Column>
 											<m:Column id="_IDGenColumn2" minScreenWidth="Tablet"
-												hAlign="Center" width="8rem"
+												hAlign="Center" width="10%"
 												demandPopin="true">
 												<m:Label id="_IDGenLabel3" design="Bold" text="Code" />
 											</m:Column>
 											<m:Column id="_IDGenColumn3" minScreenWidth="Tablet"
-												width="10rem"
+												width="28%"
 												demandPopin="true">
 												<m:Label id="_IDGenLabel4" design="Bold"
 													text="Description" />
 											</m:Column>
 											<m:Column id="_IDGenColumn4" minScreenWidth="Tablet"
-												demandPopin="true">
+												demandPopin="true" width="6%">
 												<m:Label id="_IDGenLabel5" design="Bold"
 													text="Level" />
 											</m:Column>
 											<m:Column id="_IDGenColumn5" minScreenWidth="Tablet"
-												hAlign="Left" width="6rem"
+												hAlign="Left" width="10%"
 												demandPopin="true">
 												<m:Label id="_IDGenLabel6" design="Bold"
 													text="Laterality" />
 											</m:Column>
 											<m:Column id="_IDGenColumn6" minScreenWidth="Tablet"
-												hAlign="Center" width="6rem"
+												hAlign="Center" width="8%"
 												demandPopin="true">
 												<m:Label id="_IDGenLabel7" design="Bold"
 													text="Certainty" />
 											</m:Column>
-											<!-- <m:Column id="_IDGenColumn7"
-											minScreenWidth="Tablet"
-				demandPopin="true" hAlign="Center">
-					 <m:Label id="_IDGenLabel8" design="Bold" text="C1"/>
-                     </m:Column>
-					  <m:Column id="_IDGenColumn8" minScreenWidth="Tablet" hAlign="Center"
-				demandPopin="true">
-					 <m:Label id="_IDGenLabel9" design="Bold" text="C2"/>
-                     </m:Column> -->
 										</m:columns>
-										<m:items>
+										<m:items visible="{= ${LimitsTemplateModel1>Canceled} ? false : true}">
 											<m:ColumnListItem id="_IDGenColumnListItem1">
 												<m:ComboBox id="_IDGenComboBox1"
 													selectedKey="{LimitsTemplateModel1>DiagCatalog}"
-													enabled="{LimitsTemplateModel1>DiagSecondary}">
-													<!-- <core:Item id="_IDGenItem1" key="ICD-10"
-													text="ICD-10" />
-				 <core:Item id="_IDGenItem2" key="ICD-11" text="ICD-11" /> -->
+													change="onChangingCatalog"
+													enabled="{= ${LimitsTemplateModel1>DiagUUID} ? false : true}"
+													items="{DiagCatlogVH>/DiagnosisCatalogValueHelp}">
+													<core:Item id="_IDGenItem1" key="{DiagCatlogVH>value_low}" text="{DiagCatlogVH>text}" />
 												</m:ComboBox>
 												<!-- <m:Input enabled="false"
 												value="{LimitsTemplateModel>Code}"/> -->
 												<m:Input showSuggestion="true" enabled="true"
 													value="{LimitsTemplateModel1>DiagCode}"
-													liveChange="changeCode"
+													valueState="None"
+													change="onChangeDiagCode"
+													liveChange="onLiveChangeDiagCode"
+													valueLiveUpdate="true"
 													id="multiInput" showValueHelp="true"
-													valueHelpRequest="handleValueHelp">
-													<core:Item id="_IDGenItem3"
-														key="{LimitsTemplateModel1>DiagCode}"
-														text="{LimitsTemplateModel1>DiagCode}" />
+													valueHelpRequest="onDiagCodeVHPress"
+													suggestionItems="{DiagCodeSuggestionModel>/}">
+														<m:suggestionItems>
+															<core:ListItem id="_IDGenListItem1" text="{DiagCodeSuggestionModel>DiagCode}" 
+															additionalText="{DiagCodeSuggestionModel>DiagCode_Text}"
+															 />
+														</m:suggestionItems>
 												</m:Input>
-												<m:Input id="_IDGenInput1" enabled="true"
-													value="{LimitsTemplateModel1>DiagCode}" />
+												<!-- <m:Input id="_IDGenInput1" enabled="false"
+													value="{LimitsTemplateModel1>DiagDesc}" /> -->
+														<m:Label id="_IDGenInput1"
+															text="{LimitsTemplateModel1>DiagDesc}"
+															design="Bold" />
 												<m:SegmentedButton id="_IDGenSegmentedButton1"
-													selectedKey="S" enabled="true">
+													selectedKey="{LimitsTemplateModel1>DiagSecondary}" selectionChange="onChangeLevel" enabled="true">
 													<m:items>
 														<m:SegmentedButtonItem
 															id="_IDGenSegmentedButtonItem1"
-															tooltip="Primary" type="Accept" text="P"
-															key="P" />
+															tooltip="Primary" text="P"
+															key="P"/>
 														<m:SegmentedButtonItem
 															id="_IDGenSegmentedButtonItem2"
 															tooltip="Secondary" text="S" key="S" />
 
 													</m:items>
 												</m:SegmentedButton>
+												
 												<!-- <m:Text text="{LimitsTemplateModel>Level}"/> -->
 												<m:ComboBox id="_IDGenComboBox2"
 													selectedKey="{LimitsTemplateModel1>DiagLat}"
-													enabled="true">
-													<!-- <core:Item id="_IDGenItem4" key="Right"
-													text="Right" />
-				 <core:Item id="_IDGenItem5" key="Left" text="Left" /> -->
+													items="{DiagLatVH>/DiagnosisLateralityValueHelp}">
+													<core:Item id="_IDGenItem2" key="{DiagLatVH>DiagLat}" text="{DiagLatVH>DiagLat_Text}" />
 												</m:ComboBox>
 												<m:ComboBox id="_IDGenComboBox3"
-													selectedKey="{LimitsTemplateModel1>DiagCert}"
-													enabled="true">
-													<!-- <core:Item id="_IDGenItem6" key="Suspected"
-													text="Suspected" />
-				 <core:Item id="_IDGenItem7" key="Suspected" text="Suspected" /> -->
+													selectedKey="{LimitsTemplateModel1>DiagCert}" 
+													items="{DiagCertVH>/DiagnosisCertaintyValueHelp}">
+													<core:Item id="_IDGenItem3" key="{DiagCertVH>DiagCert}" text="{DiagCertVH>DiagCert_Text}" />
 												</m:ComboBox>
-												<!-- <m:CheckBox id="_IDGenCheckBox1"
-												selected="{LimitsTemplateModel>C1}"
-												enabled="{LimitsTemplateModel>enabledcode}"></m:CheckBox>
-				  <m:CheckBox id="_IDGenCheckBox2" selected="{LimitsTemplateModel>C2}"
-												enabled="{LimitsTemplateModel>enabledcode}"></m:CheckBox> -->
+								
 											</m:ColumnListItem>
 										</m:items>
 									</m:Table>
-
 								</m:Panel>
 							</m:VBox>
-
 						</blocks>
 					</ObjectPageSubSection>
 				</subSections>
@@ -201,35 +184,31 @@
 					<ObjectPageSubSection id="_IDGenObjectPageSubSection2">
 						<blocks>
 							<m:Table id="_IDGenTable2" items="{LimitsTabableModel>/}">
-
 								<m:columns>
 									<m:Column id="_IDGenColumn9" minScreenWidth="Tablet"
-										hAlign="Center" width="6rem"
+										hAlign="Center" width="10%"
 										demandPopin="true">
 										<m:Label id="_IDGenLabel10" design="Bold" text="Catalog" />
 									</m:Column>
 									<m:Column id="_IDGenColumn10" minScreenWidth="Tablet"
-										hAlign="Center" width="8rem"
+										hAlign="Center" width="10%"
 										demandPopin="true">
 										<m:Label id="_IDGenLabel11" design="Bold" text="Code" />
 									</m:Column>
-									<m:Column id="_IDGenColumn11" minScreenWidth="Tablet"
-										width="10rem"
-										demandPopin="true">
+									<m:Column id="_IDGenColumn11" 
+										demandPopin="true" width="30%">
 										<m:Label id="_IDGenLabel12" design="Bold" text="Description" />
 									</m:Column>
-									<m:Column id="_IDGenColumn12" minScreenWidth="Tablet"
-										demandPopin="true">
+									<m:Column id="_IDGenColumn12" 
+										demandPopin="true" width="8%">
 										<m:Label id="_IDGenLabel13" design="Bold" text="Level" />
 									</m:Column>
-									<m:Column id="_IDGenColumn13" minScreenWidth="Tablet"
-										hAlign="Left" width="6rem"
-										demandPopin="true">
+									<m:Column id="_IDGenColumn13" 
+										demandPopin="true" width="10%">
 										<m:Label id="_IDGenLabel14" design="Bold" text="Laterality" />
 									</m:Column>
-									<m:Column id="_IDGenColumn14" minScreenWidth="Tablet"
-										hAlign="Center" width="6rem"
-										demandPopin="true">
+									<m:Column id="_IDGenColumn14" 
+										demandPopin="true" width="10%">
 										<m:Label id="_IDGenLabel15" design="Bold" text="Certainty" />
 									</m:Column>
 								</m:columns>
@@ -237,28 +216,29 @@
 									<m:ColumnListItem id="_IDGenColumnListItem2">
 										<m:ComboBox id="_IDGenComboBox4"
 											selectedKey="{LimitsTabableModel>DiagCatalog}"
-											enabled="{LimitsTabableModel>enabledcode}">
-											<core:Item id="_IDGenItem8" key="ICD-10" text="ICD-10" />
-											<core:Item id="_IDGenItem9" key="ICD-11" text="ICD-11" />
+											change="onChangingCatalog"
+											enabled="{= ${LimitsTabableModel>DiagUUID} ? false : true}"
+											items="{DiagCatlogVH>/DiagnosisCatalogValueHelp}">
+											<core:Item id="_IDGenItem4" key="{DiagCatlogVH>value_low}" text="{DiagCatlogVH>text}" />					
 										</m:ComboBox>
 										<!-- <m:Input enabled="false"
 										value="{LimitsTemplateModel>Code}"/> -->
 										<m:Input showSuggestion="true" enabled="true"
 											value="{LimitsTabableModel>DiagCode}"
-											liveChange="changeCode"
+											liveChange="onLiveChangeChronicDiagCode"
+											valueLiveUpdate="true"
 											id="new" showValueHelp="true"
-											suggestionItems="{sPathHeaderItemModel>/Code}"
-											valueHelpRequest="handleValueHelpNew">
-											<core:Item id="_IDGenItem10"
-												key="{sPathHeaderItemModel>Planid}"
-												text="{sPathHeaderItemModel>Planid}" />
+											valueHelpRequest="onDiagCodeChronicVHPress"
+											suggestionItems="{DiagCodeVH>/DiagnosisCodeValueHelp}"	>
+											<m:suggestionItems>
+												<core:ListItem id="_IDGenListItem2" text="{DiagCodeVH>DiagCode}" additionalText="{DiagCodeVH>DiagCode_Text}" />
+											</m:suggestionItems>
 										</m:Input>
-										<m:Input id="_IDGenInput2"
-											enabled="{LimitsTabableModel>enabledcode}"
-											value="{LimitsTabableModel>Description}" />
+										<m:Label id="_IDGenInput2"
+															text="{LimitsTabableModel>DiagDesc}"
+															design="Bold" />		
 										<m:SegmentedButton id="_IDGenSegmentedButton2"
-											selectedKey="S"
-											enabled="{LimitsTabableModel>enabledcode}">
+											selectedKey="{LimitsTabableModel>DiagSecondary}" selectionChange="onChangeLevel" enabled="true">
 											<m:items>
 												<m:SegmentedButtonItem
 													id="_IDGenSegmentedButtonItem3"
@@ -270,11 +250,13 @@
 										</m:SegmentedButton>
 										<m:ComboBox id="_IDGenComboBox5"
 											selectedKey="{LimitsTabableModel>DiagLat}"
-											enabled="true">
+											items="{DiagLatVH>/DiagnosisLateralityValueHelp}">
+													<core:Item id="_IDGenItem5" key="{DiagLatVH>DiagLat}" text="{DiagLatVH>DiagLat_Text}" />
 										</m:ComboBox>
 										<m:ComboBox id="_IDGenComboBox6"
 											selectedKey="{LimitsTabableModel>DiagCert}"
-											enabled="{LimitsTabableModel>enabledcode}">
+											items="{DiagCertVH>/DiagnosisCertaintyValueHelp}">
+													<core:Item id="_IDGenItem6" key="{DiagCertVH>DiagCert}" text="{DiagCertVH>DiagCert_Text}" />
 										</m:ComboBox>
 									</m:ColumnListItem>
 
@@ -285,8 +267,16 @@
 					</ObjectPageSubSection>
 				</subSections>
 			</ObjectPageSection>
-
-
 		</sections>
+		<footer>
+		<m:OverflowToolbar id="_IDGenOverflowToolbar1">
+				<m:ToolbarSpacer id="_IDGenToolbarSpacer1"/>
+				<m:Button id="_IDGenButton1" text="Save" type="Emphasized" press="onPressSaveConfirmation"
+						ariaDescribedBy="defaultButtonDescription genericButtonDescription"
+						icon="sap-icon://business-card">
+					</m:Button>
+				<m:Button type="Reject" text="Cancel"/>
+			</m:OverflowToolbar>
+		</footer>
 	</ObjectPageLayout>
 </mvc:View>

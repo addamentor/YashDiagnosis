@@ -24,7 +24,71 @@
           "localUri": "localService/metadata.xml",
           "odataVersion": "2.0"
         }
+      },
+      "DiagConfig": {
+        "uri": "/sap/opu/odata/SMY/API_DIATYPCNFG_VH_O2/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      },
+      "ReadService": {
+        "uri": "/sap/opu/odata/SMY/API_PATEPISENCDIA_UO2/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      },
+      "CUDService":{
+        "uri": "/sap/opu/odata/SMY/API_DIAGNOSIS_U_O2/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      },
+      "DiagCode": {
+        "uri": "/sap/opu/odata/SMY/API_DIAGCODE_VH_U_O2/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      },
+      "DiagCatlog": {
+        "uri": "/sap/opu/odata/SMY/API_DIAGCAT_VH_U_O2/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      },
+      "DiagLat": {
+        "uri": "/sap/opu/odata/SMY/API_DIAGLATE_VH_U_O2/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "2.0"
+        }
+      },
+      "DiagCert": {
+        "uri": "/sap/opu/odata/SMY/API_DIAGCERT_VH_U_O2/",
+        "type": "OData",
+        "settings": {
+          "annotations": [],
+          "localUri": "localService/metadata.xml",
+          "odataVersion": "2.0"
+        }
       }
+
     }
   },
   "sap.ui": {
@@ -71,6 +135,41 @@
       },
       "": {
         "dataSource": "mainService",
+        "preload": true,
+        "settings": {}
+      },
+      "DiagConfigModel":{
+        "dataSource": "DiagConfig",
+        "preload": true,
+        "settings": {}
+      },
+      "ReadModel": {
+        "dataSource": "ReadService",
+        "preload": true,
+        "settings": {}
+      },
+      "CUDModel": {
+        "dataSource": "CUDService",
+        "preload": true,
+        "settings": {}
+      },
+      "DiagCodeVH": {
+        "dataSource": "DiagCode",
+        "preload": true,
+        "settings": {}
+      },
+      "DiagCatlogVH": {
+        "dataSource": "DiagCatlog",
+        "preload": true,
+        "settings": {}
+      },
+      "DiagLatVH": {
+        "dataSource": "DiagLat",
+        "preload": true,
+        "settings": {}
+      },
+      "DiagCertVH": {
+        "dataSource": "DiagCert",
         "preload": true,
         "settings": {}
       }
