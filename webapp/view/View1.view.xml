@@ -29,7 +29,7 @@
 					<m:Title id="_IDGenTitle3" text="{i18n>MRN} : {patientDetailsModel>/patientIdDisplay}"/>
 				</snappedTitleOnMobile>
 					<actions>
-					<m:OverflowToolbarButton icon="sap-icon://edit" text="edit header" type="Emphasized" tooltip="edit" press="onEditDiag">
+					<m:OverflowToolbarButton icon="sap-icon://edit" text="edit header" type="Emphasized" tooltip="edit" press="onEditDiag " visible="{ConfigModel>/EditVisible}">
 						<m:layoutData>
 							<m:OverflowToolbarLayoutData priority="NeverOverflow"/>
 						</m:layoutData>
@@ -237,8 +237,8 @@
 										<m:Label id="_IDGenInput2"
 															text="{LimitsTabableModel>DiagDesc}"
 															design="Bold" />		
-										<m:SegmentedButton id="_IDGenSegmentedButton2" enabled="{ConfigModel>/DiagEnab}"
-											selectedKey="{LimitsTabableModel>DiagSecondary}" selectionChange="onChangeLevel">
+										<m:SegmentedButton id="_IDGenSegmentedButton2" 
+											selectedKey="{LimitsTabableModel>DiagSecondary}" selectionChange="onChangeLevel" enabled="{ConfigModel>/DiagEnab}" >
 											<m:items>
 												<m:SegmentedButtonItem
 													id="_IDGenSegmentedButtonItem3"
@@ -268,10 +268,10 @@
 				</subSections>
 			</ObjectPageSection>
 		</sections>
-		<footer>
-		<m:OverflowToolbar id="_IDGenOverflowToolbar1">
+		<footer > 
+		<m:OverflowToolbar id="_IDGenOverflowToolbar1" visible= "{ConfigModel>/DiagEnab}" >
 				<m:ToolbarSpacer id="_IDGenToolbarSpacer1"/>
-				<m:Button id="_IDGenButton1" text="Save" type="Emphasized" press="onPressSaveConfirmation" enabled= "{ConfigModel>/DiagEnab}"
+				<m:Button id="_IDGenButton1" text="Save" type="Emphasized" press="onPressSaveConfirmation" 
 						ariaDescribedBy="defaultButtonDescription genericButtonDescription"
 						icon="sap-icon://business-card">
 					</m:Button>

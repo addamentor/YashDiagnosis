@@ -34,7 +34,8 @@ sap.ui.define([
             },
             fnSetDataModel:function(){
                 var oConfig = {
-                    DiagEnab:false
+                    DiagEnab:false,
+                    EditVisible:true
                 };
                 this.setModel(new JSONModel(oConfig),"ConfigModel");
             }

@@ -197,9 +197,10 @@ sap.ui.define([
                                     });
                                 }
                             });
-                            //if (to_diag.length !== 1) {
-                            to_diag.push({});
-                            //}
+                            //if (to_diag === "X") {
+                                
+                          //  to_diag.push({});
+                          //  }
                         });
 
                         this.getView().getModel("LimitsTemplateModel1").setData(oData1);
@@ -252,9 +253,9 @@ sap.ui.define([
                                 this.getView().setModel(oModel1, "LimitsTabableModel");
 
                                 var aChroninDiag = oData.results;
-                                //if (aChroninDiag.length == 0) {
-                                aChroninDiag.push({});
-                                // }
+                               // if (aChroninDiag === "X") {
+                               // aChroninDiag.push({});
+                               //  }
                                 aChroninDiag.forEach(function (ChroninDiag) {
                                     if (ChroninDiag && ChroninDiag.to_DiagType && ChroninDiag.to_DiagType.results.length > 0) {
                                         ChroninDiag.eTag = ChroninDiag.__metadata.etag;
@@ -290,6 +291,19 @@ sap.ui.define([
             },
             onEditDiag:function(evt){
                 this.getView().getModel("ConfigModel").setProperty("/DiagEnab",true);
+                this.getView().getModel("ConfigModel").setProperty("/EditVisible",false);
+                
+                var oData = this.getView().getModel("LimitsTemplateModel1").getData();
+                
+                var to_diagModel = oData.to_Encounter.results; //table Data
+                to_diagModel.forEach(function (diagrow) {           
+                    diagrow.to_Diagnosis.results.push({})
+                                           })
+                var chrData = this.getView().getModel("LimitsTabableModel").getData();
+               chrData.push({});
+                 this.getView().getModel("LimitsTemplateModel1").setData(oData);
+                 this.getView().getModel("LimitsTabableModel").setData(chrData);
+                
             },
 
             onDiagDeletePress: function (oEvent) {
@@ -836,7 +850,9 @@ sap.ui.define([
                     groupId: "BatchCall",
                     success: function (oData, oResponse) {
                         MessageToast.show("Data Saved")
-                        window.location.reload();
+                        this.getView().getModel("ConfigModel").setProperty("/DiagEnab",false);
+                        this.getView().getModel("ConfigModel").setProperty("/EditVisible",true);
+                        //window.location.reload();
                     },
                     error: function (oError) {
                         MessageToast.show("Error is saving Data")
