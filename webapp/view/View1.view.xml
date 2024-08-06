@@ -212,7 +212,7 @@
 										<m:Label id="_IDGenLabel15" design="Bold" text="Certainty" />
 									</m:Column>
 								</m:columns>
-								<m:items>
+								<m:items visible="{= ${LimitsTabableModel>Canceled} ? false : true}">
 									<m:ColumnListItem id="_IDGenColumnListItem2">
 										<m:ComboBox id="_IDGenComboBox4"
 											selectedKey="{LimitsTabableModel>DiagCatalog}"
@@ -235,7 +235,7 @@
 											</m:suggestionItems>
 										</m:Input>
 										<m:Label id="_IDGenInput2"
-															text="{LimitsTabableModel>DiagDesc}"
+															text="{LimitsTabableModel>DiagDesc}" tooltip="{LimitsTabableModel>DiagDesc}"
 															design="Bold" />		
 										<m:SegmentedButton id="_IDGenSegmentedButton2" 
 											selectedKey="{LimitsTabableModel>DiagSecondary}" selectionChange="onChangeLevel" enabled="{ConfigModel>/DiagEnab}" >
