@@ -507,15 +507,9 @@ sap.ui.define([
                 }
                 //aDeletedDiagnosisEntry.removeDuplicates();
                 this.getView().getModel("DeletedDiagnosis").setData(aDeletedDiagnosisEntry);
-<<<<<<< HEAD
-                sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
-                this.getView().getModel("LimitsTemplateModel1").updateBindings();
-                this.getView().getModel("LimitsTemplateModel1").refresh(true);
-=======
                 if(object.DiagCode){
                     sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
                 }
->>>>>>> 82c5312bffb9fbedff00d70c8b68ee7ace396e1d
 
             },
             onChrDiagDeletePress: function (oEvent) {
