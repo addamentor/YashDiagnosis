@@ -289,11 +289,203 @@ sap.ui.define([
                 //     }
                 // });
             },
+      /*      clearRows:function(evt){
+                var oData = this.getView().getModel("LimitsTemplateModel1").getData();
+                
+                var to_diagModel = oData.to_Encounter.results; //table Data
+                to_diagModel.forEach(function (diagrow) { 
+                    if(diagrow.to_Diagnosis.results.DiagCatalog === undefined)      {
+                        diagrow.to_Diagnosis.results.push({})
+                    }    
+                   
+                                           })
+            }, */
             onEditDiag:function(evt){
+                var that = this;
+                var LimitsTemplateModel = new sap.ui.model.json.JSONModel({
+                    FirstEncounter: true,
+                    DiagtypeData: [],
+                    DiagtypeDataChr: [],
+                    DeletedDiagnsis: [],
+                    DiagnosisCodeValueHelp: {},
+                    DiagnosisLevelValueHelp: {}
+                });
+                sap.ui.core.BusyIndicator.show();
+                
+                var aFilter = [];
+                var oModel_Data = this.getOwnerComponent().getModel("ReadModel");
+             //   var oModel_Data1 = this.getOwnerComponent().getModel("DiagConfigModel");
+
+                var caseGUID = "b9149892-4a6b-1edf-8caf-422539670d66";
+                var sPathGUID = "/EpisodeOfCareSet" + "(" + "guid'" + caseGUID + "')";
+                oModel_Data.read(sPathGUID, {
+                    urlParameters: {
+                        $expand: "to_Encounter,to_Encounter/to_Diagnosis,to_Encounter/to_Diagnosis/to_DiagType"
+                    },
+                    success: function (oData1, oResponse) {
+                        sap.ui.core.BusyIndicator.hide();
+                        this.sETag = oResponse.headers['etag'];
+                        var LimitsTemplateModel1 = new sap.ui.model.json.JSONModel();
+                        LimitsTemplateModel1.setProperty("/DiagtypeData", LimitsTemplateModel.getData().DiagtypeData);
+                        var oTable = this.getView().byId("_IDGenTable1");
+                        var oDiadata = LimitsTemplateModel1.getData().DiagtypeData
+                        oDiadata.forEach(function (aDiatype) {
+                            if (!oColumn) {
+                                var oColumn = new sap.m.Column("col" + aDiatype.DiagType, {
+                                    header: new sap.m.Label({
+                                        text: aDiatype.DiagType,
+                                        tooltip: aDiatype.DiagType_Text,
+
+                                        // template: oTemplate
+                                    }),
+                                    hAlign: "Center",
+                                    width: "4%"
+                                },
+                                );
+                            }
+                            oTable.addColumn(oColumn);
+                            if (!oTemplate) {
+                                var oTemplate = oTable.getBindingInfo("items").template;
+                                oTemplate.addCell(new sap.m.CheckBox({
+                                    id: "id_" + aDiatype.DiagType,
+                                    selected: "{LimitsTemplateModel1>" + aDiatype.DiagType + "}"
+                                    
+                                }));
+                            }
+                            oData1.to_Encounter.results.forEach(function (encounter) {
+                                var to_diag = encounter.to_Diagnosis.results; //table Data
+                                if (to_diag.length > 0) {
+                                    to_diag.forEach(function (diagnosis) {
+                                        diagnosis[aDiatype.DiagType] = false;
+                                    });
+
+                                } else {
+                                    //  to_diag.push({});
+                                }
+                            });
+                        });
+                        if (this.byId("btnEdit").getText() !== "edit header") {
+                        oTable.addColumn(
+                            new sap.m.Column({
+                                header: new sap.m.Label({
+                                    text: ""
+                                })
+                            })
+                        );
+                        
+                        var oTemplate = oTable.getBindingInfo("items").template;
+                        oTemplate.addCell(new sap.m.Button({
+                            press: this.onDiagDeletePress.bind(this),
+                            icon: "sap-icon://delete",
+                            type: "Reject"
+                          
+                        }));
+                    }
+                        this.getView().setModel(LimitsTemplateModel1, "LimitsTemplateModel1");
+                        var aEnc = oData1.to_Encounter.results;
+                        aEnc.forEach(function (encounter) {
+                            var to_diag = encounter.to_Diagnosis.results; //table Data
+                            to_diag.forEach(function (diagnosis) {
+                                if (diagnosis.to_DiagType && diagnosis.to_DiagType.results.length > 0) {
+                                    diagnosis.eTag = diagnosis.__metadata.etag;
+                                    diagnosis.DiagSecondary = diagnosis.DiagSecondary === true ? 'S' : 'P';
+                                    diagnosis.to_DiagType.results.forEach(function (diagType) {
+                                        var type = diagType.DiagType;
+                                        diagnosis[type] = diagType.DiagFlag
+                                    });
+                                }
+                            });
+                            //if (to_diag === "X") {
+                                
+                           to_diag.push({});
+                          //  }
+                        });
+
+                        this.getView().getModel("LimitsTemplateModel1").setData(oData1);
+
+                        oModel_Data.read("/Patients('0000000151')/to_Diagnosis", {
+                            urlParameters: {
+                                $expand: "to_DiagType"
+                            },
+                            success: function (oData) {
+                                sap.ui.core.BusyIndicator.hide();
+                                that.bsyDialog.close();
+                                var oTable = this.getView().byId("_IDGenTable2");
+                                var oDiadata = LimitsTemplateModel.getData().DiagtypeDataChr
+                                oDiadata.forEach(function (aDiatype) {
+                                    if (!oColumn) {
+                                        var oColumn = new sap.m.Column("colChrnic" + aDiatype.DiagType, {
+                                            header: new sap.m.Label({
+                                                text: aDiatype.DiagType,
+                                                tooltip: aDiatype.DiagType_Text
+                                                // template: oTemplate
+                                            }),
+                                            hAlign: "Center",
+                                            width: "15%"
+                                        });
+                                    }
+                                    oTable.addColumn(oColumn);
+                                    if (!oTemplate) {
+                                        var oTemplate = oTable.getBindingInfo("items").template;
+                                        oTemplate.addCell(new sap.m.CheckBox({
+                                            id: "Chroniid_" + aDiatype.DiagType,
+                                            selected: "{LimitsTabableModel>" + aDiatype.DiagType + "}",
+                                            enabled: "{ConfigModel>/DiagEnab}"
+                                        }));
+                                    }
+                                });
+                                if (this.byId("btnEdit").getText() !== "edit header") {
+                                oTable.addColumn(
+                                    new sap.m.Column({
+                                        header: new sap.m.Label({
+                                            text: ""
+                                        })
+                                    })
+                                );
+                                var oTemplate = oTable.getBindingInfo("items").template;
+                                oTemplate.addCell(new sap.m.Button({
+                                    press: this.onChrDiagDeletePress.bind(this),
+                                    icon: "sap-icon://delete",
+                                    type: "Reject"
+                                    
+                                }));
+                            }
+                                var oModel1 = new sap.ui.model.json.JSONModel();
+                                this.getView().setModel(oModel1, "LimitsTabableModel");
+
+                                var aChroninDiag = oData.results;
+                               // if (aChroninDiag === "X") {
+                                aChroninDiag.push({});
+                               //  }
+                                aChroninDiag.forEach(function (ChroninDiag) {
+                                    if (ChroninDiag && ChroninDiag.to_DiagType && ChroninDiag.to_DiagType.results.length > 0) {
+                                        ChroninDiag.eTag = ChroninDiag.__metadata.etag;
+                                        ChroninDiag.DiagSecondary = ChroninDiag.DiagSecondary === true ? 'S' : 'P';
+                                        var to_diagtype = ChroninDiag.to_DiagType.results; //table Data
+                                        to_diagtype.forEach(function (diagtype) {
+                                            ChroninDiag[diagtype.DiagType] = diagtype.DiagFlag
+                                        })
+                                    }
+                                });
+                                this.getView().getModel("LimitsTabableModel").setData(oData.results);
+                            }.bind(this),
+                            error: function (oError) {
+                                that.bsyDialog.close();
+                                var msg = JSON.parse(oError.responseText).error.message.value;
+                                sap.m.MessageToast.show(msg);
+                            }
+                        });
+                    }.bind(this),
+                    error: function (oError) {
+                        that.bsyDialog.close();
+                        var msg = JSON.parse(oError.responseText).error.message.value;
+                        sap.m.MessageToast.show(msg);
+                    }
+                });
+                
                 this.getView().getModel("ConfigModel").setProperty("/DiagEnab",true);
                 this.getView().getModel("ConfigModel").setProperty("/EditVisible",false);
-                
-                var oData = this.getView().getModel("LimitsTemplateModel1").getData();
+             /*  var oData = this.getView().getModel("LimitsTemplateModel1").getData();
                 
                 var to_diagModel = oData.to_Encounter.results; //table Data
                 to_diagModel.forEach(function (diagrow) {           
@@ -302,7 +494,7 @@ sap.ui.define([
                 var chrData = this.getView().getModel("LimitsTabableModel").getData();
                chrData.push({});
                  this.getView().getModel("LimitsTemplateModel1").setData(oData);
-                 this.getView().getModel("LimitsTabableModel").setData(chrData);
+                 this.getView().getModel("LimitsTabableModel").setData(chrData); */
                 
             },
 
@@ -313,6 +505,8 @@ sap.ui.define([
                 aDeletedDiagnosisEntry.push(object);
                 this.getView().getModel("DeletedDiagnosis").setData(aDeletedDiagnosisEntry);
                 sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
+                this.getView().getModel("LimitsTemplateModel1").updateBindings();
+                this.getView().getModel("LimitsTemplateModel1").refresh(true);
 
             },
             onChrDiagDeletePress: function (oEvent) {
@@ -321,7 +515,14 @@ sap.ui.define([
                 object.Canceled = true;
                 aDeletedDiagnosisEntry.push(object);
                 this.getView().getModel("DeletedDiagnosis").setData(aDeletedDiagnosisEntry);
-                sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
+                var row = oEvent.getSource().getBindingContext("LimitsTabableModel").sPath.split("/")[1];
+                row = parseInt(row);
+                var data = this.getView().byId("_IDGenTable2").getItems();
+                 data[row].getCells()[0].setValueState(sap.ui.core.ValueState.Error);
+
+                 sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
+                this.getView().getModel("LimitsTabableModel").updateBindings();
+                this.getView().getModel("LimitsTabableModel").refresh(true);
 
             },
             _handleValueHelpCloseNew: function (evt) {
@@ -850,8 +1051,8 @@ sap.ui.define([
                     groupId: "BatchCall",
                     success: function (oData, oResponse) {
                         MessageToast.show("Data Saved")
-                        this.getView().getModel("ConfigModel").setProperty("/DiagEnab",false);
-                        this.getView().getModel("ConfigModel").setProperty("/EditVisible",true);
+                        that.getView().getModel("ConfigModel").setProperty("/DiagEnab",false);
+                        that.getView().getModel("ConfigModel").setProperty("/EditVisible",true);
                         //window.location.reload();
                     },
                     error: function (oError) {
