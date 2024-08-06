@@ -502,11 +502,20 @@ sap.ui.define([
                 var aDeletedDiagnosisEntry = this.getView().getModel("DeletedDiagnosis").getData() || [];
                 var object = oEvent.getSource().getParent().getBindingContext("LimitsTemplateModel1").getObject();
                 object.Canceled = true;
-                aDeletedDiagnosisEntry.push(object);
+                if(!aDeletedDiagnosisEntry.includes(object.DiagCode)){
+                    aDeletedDiagnosisEntry.push(object.DiagCode);
+                }
+                //aDeletedDiagnosisEntry.removeDuplicates();
                 this.getView().getModel("DeletedDiagnosis").setData(aDeletedDiagnosisEntry);
+<<<<<<< HEAD
                 sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
                 this.getView().getModel("LimitsTemplateModel1").updateBindings();
                 this.getView().getModel("LimitsTemplateModel1").refresh(true);
+=======
+                if(object.DiagCode){
+                    sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
+                }
+>>>>>>> 82c5312bffb9fbedff00d70c8b68ee7ace396e1d
 
             },
             onChrDiagDeletePress: function (oEvent) {
@@ -740,6 +749,20 @@ sap.ui.define([
                 var sDiagCode;
                 var sTextforPopup;
                 var aDeletedDiagnosisEntry = this.getView().getModel("DeletedDiagnosis").getData();
+                var oChronicData = this.getView().getModel("LimitsTabableModel").getData();
+                var oDiagTypeData = this.getView().getModel("DiagTypeConfigModelChr").getData();
+                var sDiagTy;
+                var aTempDiagtype = [];
+                oChronicData.forEach(function (chronicData) {
+                    oDiagTypeData.forEach(function(diagTy){
+                        sDiagTy = diagTy.DiagType
+                        if(chronicData[sDiagTy]) {
+                            aTempDiagtype.push(chronicData[sDiagTy])
+                        } else {
+                        }
+                    });
+                });
+                if(aTempDiagtype && aTempDiagtype.length>0){
                 if (aDeletedDiagnosisEntry.length === 0) {
                     sTextforPopup = "Are you sure you want to save?";
                 } else {
@@ -781,6 +804,28 @@ sap.ui.define([
                 }
 
                 this.oApproveDialog.open();
+            } else {
+
+                if (!this.oValidationDiag) {
+
+                    this.oValidationDiag = new Dialog({
+                        type: DialogType.Message,
+                        title: "Confirm",
+                        content: new Text({ text: "Select Atleast one Diagnosis type in Chronic section" }),
+                        beginButton: new Button({
+                            type: ButtonType.Emphasized,
+                            text: "Ok",
+                            press: function () {
+                                this.oValidationDiag.close();
+                            }.bind(this)
+                          
+                        })
+                    });
+                }
+                this.oValidationDiag.open();
+
+
+            }
 
 
             },
