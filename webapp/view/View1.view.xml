@@ -112,8 +112,8 @@
 													text="Certainty" />
 											</m:Column>
 										</m:columns>
-										<m:items visible="{= ${LimitsTemplateModel1>Canceled} ? false : true}">
-											<m:ColumnListItem id="_IDGenColumnListItem1">
+										<m:items>
+											<m:ColumnListItem id="_IDGenColumnListItem1" visible="{=! ${LimitsTemplateModel1>Canceled}}">
 												<m:ComboBox id="_IDGenComboBox1"
 													selectedKey="{LimitsTemplateModel1>DiagCatalog}"
 													change="onChangingCatalog"
@@ -212,8 +212,8 @@
 										<m:Label id="_IDGenLabel15" design="Bold" text="Certainty" />
 									</m:Column>
 								</m:columns>
-								<m:items visible="{= ${LimitsTabableModel>Canceled} ? false : true}">
-									<m:ColumnListItem id="_IDGenColumnListItem2">
+								<m:items>
+									<m:ColumnListItem id="_IDGenColumnListItem2" visible="{=! ${LimitsTabableModel>Canceled}}">
 										<m:ComboBox id="_IDGenComboBox4"
 											selectedKey="{LimitsTabableModel>DiagCatalog}"
 											change="onChangingCatalog"
@@ -229,10 +229,12 @@
 											valueLiveUpdate="true"
 											id="new" showValueHelp="true"
 											valueHelpRequest="onDiagCodeChronicVHPress"
-											suggestionItems="{DiagCodeVH>/DiagnosisCodeValueHelp}"	>
-											<m:suggestionItems>
-												<core:ListItem id="_IDGenListItem2" text="{DiagCodeVH>DiagCode}" additionalText="{DiagCodeVH>DiagCode_Text}" />
-											</m:suggestionItems>
+											suggestionItems="{DiagCodeSuggestionModel>/}">
+														<m:suggestionItems>
+															<core:ListItem id="_IDGenListItemCh" text="{DiagCodeSuggestionModel>DiagCode}" 
+															additionalText="{DiagCodeSuggestionModel>DiagCode_Text}"
+															 />
+														</m:suggestionItems>
 										</m:Input>
 										<m:Label id="_IDGenInput2"
 															text="{LimitsTabableModel>DiagDesc}" tooltip="{LimitsTabableModel>DiagDesc}"

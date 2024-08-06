@@ -502,15 +502,11 @@ sap.ui.define([
                 var aDeletedDiagnosisEntry = this.getView().getModel("DeletedDiagnosis").getData() || [];
                 var object = oEvent.getSource().getParent().getBindingContext("LimitsTemplateModel1").getObject();
                 object.Canceled = true;
-                if(!aDeletedDiagnosisEntry.includes(object.DiagCode)){
-                    aDeletedDiagnosisEntry.push(object.DiagCode);
-                }
-                //aDeletedDiagnosisEntry.removeDuplicates();
+                aDeletedDiagnosisEntry.push(object.DiagCode);
                 this.getView().getModel("DeletedDiagnosis").setData(aDeletedDiagnosisEntry);
-                if(object.DiagCode){
-                    sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
-                }
-
+                sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
+                this.getView().getModel("LimitsTemplateModel1").refresh(true);
+                
             },
             onChrDiagDeletePress: function (oEvent) {
                 var aDeletedDiagnosisEntry = this.getView().getModel("DeletedDiagnosis").getData() || [];
@@ -518,13 +514,7 @@ sap.ui.define([
                 object.Canceled = true;
                 aDeletedDiagnosisEntry.push(object);
                 this.getView().getModel("DeletedDiagnosis").setData(aDeletedDiagnosisEntry);
-                var row = oEvent.getSource().getBindingContext("LimitsTabableModel").sPath.split("/")[1];
-                row = parseInt(row);
-                var data = this.getView().byId("_IDGenTable2").getItems();
-                 data[row].getCells()[0].setValueState(sap.ui.core.ValueState.Error);
-
-                 sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
-                this.getView().getModel("LimitsTabableModel").updateBindings();
+                sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
                 this.getView().getModel("LimitsTabableModel").refresh(true);
 
             },
@@ -607,6 +597,8 @@ sap.ui.define([
             },
             onDiagCodeVHPress: function (oEvent) {
                 this.ChronicFlag = false;
+                var object = oEvent.getSource().getBindingContext("LimitsTemplateModel1").getObject();
+                this.getDiagCodeVH(object.DiagCatalog);
                 this.oInputControl = oEvent.getSource();
                 if (!this.oDiagCodeVHDialog) {
                     this.oDiagCodeVHDialog = sap.ui.xmlfragment("project7.view.fragments.DiagCodeVH", this);
@@ -615,7 +607,23 @@ sap.ui.define([
                 this.oDiagCodeVHDialog.open();
                 this.sDiagCodeVHPath = oEvent.getSource().getBindingContext("LimitsTemplateModel1").getPath();
             },
+            getDiagCodeVH: function(Catalog){
+                var oDiagCatModel = this.getView().getModel("DiagCodeVH")
+                var that = this;
+                var filter = new Filter('DiagCatalog', FilterOperator.EQ, Catalog || '');
+                oDiagCatModel.read("/DiagnosisCodeValueHelp", {
+                    filters: [filter],
+                    success: function (oResponse) {
+                        if (oResponse.results && oResponse.results.length > 0) {
+                            that.getView().setModel(new JSONModel(oResponse.results), "DiagCodeVHModel");
+                    }
+                }
+                });
+            },
+
             onDiagCodeChronicVHPress: function (oEvent) {
+                var object = oEvent.getSource().getBindingContext("LimitsTabableModel").getObject();
+                this.getDiagCodeVH(object.DiagCatalog);
                 this.ChronicFlag = true;
                 if (!this.oDiagCodeVHDialog) {
                     this.oDiagCodeVHDialog = sap.ui.xmlfragment("project7.view.fragments.DiagCodeVH", this);
@@ -693,14 +701,15 @@ sap.ui.define([
             onLiveChangeChronicDiagCode: function (oEvent) {
                 var oCode = oEvent.getParameter("newValue");
                 if (oCode.length > 3) {
-                    this._loadDiagCodeSuggestions(oCode);
+                    var object = oEvent.getSource().getBindingContext("LimitsTabableModel").getObject();
+                    this._loadDiagCodeSuggestions(oCode, object.DiagCatalog);
                 }
                 if (oCode) {
                     var sContextPath = oEvent.getSource().getParent().getBindingContextPath();
                     var aIndex = this._extractIndexes(sContextPath);
                     var oData = this.getView().getModel("LimitsTabableModel").getData();
-                    var aDiagTableData = oData[aIndex[0]];
-                    if (aDiagTableData.length === (aIndex[1] + 1)) {
+                    var aDiagTableData = oData;
+                    if (aDiagTableData.length === (aIndex[0] + 1)) {
                         aDiagTableData.push({});
                     };
                     this.getView().getModel("LimitsTabableModel").setData(oData);
@@ -747,6 +756,7 @@ sap.ui.define([
                 var oDiagTypeData = this.getView().getModel("DiagTypeConfigModelChr").getData();
                 var sDiagTy;
                 var aTempDiagtype = [];
+                debugger;
                 oChronicData.forEach(function (chronicData) {
                     oDiagTypeData.forEach(function(diagTy){
                         sDiagTy = diagTy.DiagType
@@ -756,7 +766,7 @@ sap.ui.define([
                         }
                     });
                 });
-                if(aTempDiagtype && aTempDiagtype.length>0){
+                if(aTempDiagtype && aTempDiagtype.length>0 && oChronicData.length < aTempDiagtype.length){
                 if (aDeletedDiagnosisEntry.length === 0) {
                     sTextforPopup = "Are you sure you want to save?";
                 } else {

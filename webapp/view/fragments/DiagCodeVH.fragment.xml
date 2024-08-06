@@ -4,14 +4,14 @@
 	<SelectDialog
 		id="valueHelpDialog"
 		title="Code"
-		items="{DiagCodeVH>/DiagnosisCodeValueHelp}"
+		items="{DiagCodeVHModel>/}"
 		search="_handleDiagCodeVHSearch"
 		confirm="_handleDiagCodeVHClose"
 		cancel="_handleDiagCodeVHCancel"
 		multiSelect="false">
 		<StandardListItem
-			title="{DiagCodeVH>DiagCatalog_Text} - {DiagCodeVH>DiagCode}"
-			description="{DiagCodeVH>DiagCode_Text}" 
+			title="{DiagCodeVHModel>DiagCatalog_Text} - {DiagCodeVHModel>DiagCode}"
+			description="{DiagCodeVHModel>DiagCode_Text}" 
 			type="Active"/>
 	</SelectDialog>
 </core:FragmentDefinition>
