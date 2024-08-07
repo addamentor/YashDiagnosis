@@ -20,7 +20,6 @@ sap.ui.define([
 
             onInit: function () {
                 this.FirstTime = true;
-                // var _ = require('lodash');
                 this.ChronicFlag = false;
                 this.bsyDialog = new sap.m.BusyDialog();
                 this.bsyDialog.open();
@@ -30,6 +29,10 @@ sap.ui.define([
                 this._LoadData();
                 this._loadVHData();
             },
+
+            /**
+             * Method to load initial Data
+             */
 
             _LoadData: function () {
                 var that = this;
@@ -64,7 +67,6 @@ sap.ui.define([
                 }))
 
                 Model_header.read("/Patients('0000000152')", {
-                    // filters: filter1,
                     urlParameters: {
                         $expand: "to_Case,to_Diagnosis,to_Name,to_BusinessPartner,to_BusinessPartner/to_Address," +
                             "to_BusinessPartner/to_Address/to_EmailAddress,to_BusinessPartner/to_Address/to_MobilePhoneNumber," +
@@ -499,17 +501,7 @@ sap.ui.define([
                 });
 
             },
-            /*      clearRows:function(evt){
-                      var oData = this.getView().getModel("LimitsTemplateModel1").getData();
-                      
-                      var to_diagModel = oData.to_Encounter.results; //table Data
-                      to_diagModel.forEach(function (diagrow) { 
-                          if(diagrow.to_Diagnosis.results.DiagCatalog === undefined)      {
-                              diagrow.to_Diagnosis.results.push({})
-                          }    
-                         
-                                                 })
-                  }, */
+
             onEditDiag: function (evt) {
                 this.getView().getModel("ConfigModel").setProperty("/DiagEnab", true);
                 this.getView().getModel("ConfigModel").setProperty("/EditVisible", false);
@@ -538,36 +530,7 @@ sap.ui.define([
                 this.getView().getModel("LimitsTabableModel").refresh(true);
 
             },
-            _handleValueHelpCloseNew: function (evt) {
-                var that = this;
-                var aSelectedItems = evt.getParameter("selectedItems");
-                // oMultiInput = this.byId("multiInput");
-                var index = that.getView().getModel("LimitsTabableModel").getData().header.length;
-                var finalIndx = index - 1;
 
-                if (aSelectedItems && aSelectedItems.length > 0) {
-                    aSelectedItems.forEach(function (oItem) {
-                        var newItem = {
-                            Catalog: "ICD-10",
-                            Code: oItem.getTitle(),
-                            enabledcode: true,
-                            Description: oItem.getDescription(),
-                            Level: "",
-                            Laternity: "",
-                            Certainity: "",
-                            C1: false,
-                            C2: false
-                        };
-                        that.getView().getModel("LimitsTabableModel").getData().header.splice(finalIndx, 0, newItem);
-                        that.getView().getModel("LimitsTabableModel").refresh();
-                        //  var oModel = this.getOwnerComponent().getModel("invoice");
-                        //  oModel.setProperty("/Invoices", oModel.getProperty("/Invoices").concat(newItem));
-                        // oMultiInput.addToken(new Token({
-                        //     text: oItem.getTitle()
-                        // }));
-                    });
-                }
-            },
             _handleDiagCodeVHSearch: function (oEvent) {
                 var sValue = oEvent.getParameter("value");
                 var filter = new Filter({
@@ -585,7 +548,6 @@ sap.ui.define([
                     ],
                     and: false
                 })
-                // var oFilter = new sap.ui.model.Filter("DiagCode", sap.ui.model.FilterOperator.Contains, sValue);
                 var oBinding = oEvent.getParameter("itemsBinding");
                 oBinding.filter([filter]);
             },
@@ -615,6 +577,7 @@ sap.ui.define([
             _handleDiagCodeVHCancel: function () {
                 this.oDiagCodeVHDialog.close();
             },
+
             onDiagCodeVHPress: function (oEvent) {
                 this.ChronicFlag = false;
                 var object = oEvent.getSource().getBindingContext("LimitsTemplateModel1").getObject();
@@ -785,7 +748,6 @@ sap.ui.define([
                 var oDiagTypeData = this.getView().getModel("DiagTypeConfigModelChr").getData();
                 var sDiagTy;
                 var aTempDiagtype = [];
-                debugger;
                 oChronicData.forEach(function (chronicData) {
                     oDiagTypeData.forEach(function (diagTy) {
                         sDiagTy = diagTy.DiagType
@@ -797,7 +759,7 @@ sap.ui.define([
                 });
                 var iDelChr = aDeleteChronicdDiagnosisEntry.length || 0;
                 if (aTempDiagtype && aTempDiagtype.length > 0 && (oChronicData.length - 1 - iDelChr) <= aTempDiagtype.length) {
-                    if (aDeletedDiagnosisEntry.length === 0 || aDeleteChronicdDiagnosisEntry.length === 0) {
+                    if (aDeletedDiagnosisEntry.length === 0 && aDeleteChronicdDiagnosisEntry.length === 0) {
                         sTextforPopup = "Are you sure you want to save?";
                     } else {
                         if(aDeletedDiagnosisEntry.length > 0){
@@ -852,12 +814,9 @@ sap.ui.define([
                             })
                         });
                     }
-
                     this.oApproveDialog.open();
                 } else {
-
                     if (!this.oValidationDiag) {
-
                         this.oValidationDiag = new Dialog({
                             type: DialogType.Message,
                             title: "Confirm",
@@ -873,11 +832,7 @@ sap.ui.define([
                         });
                     }
                     this.oValidationDiag.open();
-
-
                 }
-
-
             },
 
             onPressSave: function (oevt) {
@@ -1143,8 +1098,6 @@ sap.ui.define([
                     }
 
                 });
-
-
                 oModel.submitChanges({
                     groupId: "BatchCall",
                     success: function (oData, oResponse) {
@@ -1162,23 +1115,6 @@ sap.ui.define([
                         MessageToast.show("Error is saving Data")
                     }
                 });
-                // oModel.submitChanges({
-                //     groupId: "BatchCall",
-                //     success: function (oData, oResponse) {
-                //         if (oResponse.data.__batchResponses[0].message) {
-                //             debugger;
-                //             MessageToast.show(data.__batchResponses[0].message + "for Chronic Data");
-                //         } else {
-                //             MessageToast.show("Data Saved")
-                //         }
-
-                //     },
-                //     error: function (oError) {
-                //         MessageToast.show("Error is saving Data")
-                //     }
-                // });
-
-
             }
         });
     });
