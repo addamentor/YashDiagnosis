@@ -118,8 +118,8 @@
 													selectedKey="{LimitsTemplateModel1>DiagCatalog}"
 													change="onChangingCatalog"
 													enabled="{= ${LimitsTemplateModel1>DiagUUID} ? false : true &amp;&amp; ${ConfigModel>/DiagEnab} ? true : false}"
-													items="{DiagCatlogVH>/DiagnosisCatalogValueHelp}">
-													<core:Item id="_IDGenItem1" key="{DiagCatlogVH>value_low}" text="{DiagCatlogVH>text}" />
+													items="{DiagCatlogVHModel>/}">
+													<core:Item id="_IDGenItem1" key="{DiagCatlogVHModel>value_low}" text="{DiagCatlogVHModel>text}" />
 												</m:ComboBox>
 												<!-- <m:Input enabled="false"
 												value="{LimitsTemplateModel>Code}"/> -->
@@ -160,13 +160,13 @@
 												<!-- <m:Text text="{LimitsTemplateModel>Level}"/> -->
 												<m:ComboBox id="_IDGenComboBox2" enabled="{ConfigModel>/DiagEnab}"
 													selectedKey="{LimitsTemplateModel1>DiagLat}"
-													items="{DiagLatVH>/DiagnosisLateralityValueHelp}">
-													<core:Item id="_IDGenItem2" key="{DiagLatVH>DiagLat}" text="{DiagLatVH>DiagLat_Text}" />
+													items="{DiagLatVHModel>/}">
+													<core:Item id="_IDGenItem2" key="{DiagLatVHModel>DiagLat}" text="{DiagLatVHModel>DiagLat_Text}" />
 												</m:ComboBox>
 												<m:ComboBox id="_IDGenComboBox3" enabled="{ConfigModel>/DiagEnab}"
 													selectedKey="{LimitsTemplateModel1>DiagCert}" 
-													items="{DiagCertVH>/DiagnosisCertaintyValueHelp}">
-													<core:Item id="_IDGenItem3" key="{DiagCertVH>DiagCert}" text="{DiagCertVH>DiagCert_Text}" />
+													items="{DiagCertVHVHModel>/}">
+													<core:Item id="_IDGenItem3" key="{DiagCertVHVHModel>DiagCert}" text="{DiagCertVHVHModel>DiagCert_Text}" />
 												</m:ComboBox>
 								
 											</m:ColumnListItem>
@@ -218,8 +218,8 @@
 											selectedKey="{LimitsTabableModel>DiagCatalog}"
 											change="onChangingCatalog"
 											enabled="{= ${LimitsTabableModel>DiagUUID} ? false : true &amp;&amp; ${ConfigModel>/DiagEnab} ? true : false}"
-											items="{DiagCatlogVH>/DiagnosisCatalogValueHelp}">
-											<core:Item id="_IDGenItem4" key="{DiagCatlogVH>value_low}" text="{DiagCatlogVH>text}" />					
+											items="{DiagCatlogVHModel>/}">
+											<core:Item id="_IDGenItem4" key="{DiagCatlogVHModel>value_low}" text="{DiagCatlogVHModel>text}" />					
 										</m:ComboBox>
 										<!-- <m:Input enabled="false"
 										value="{LimitsTemplateModel>Code}"/> -->
@@ -252,13 +252,13 @@
 										</m:SegmentedButton>
 										<m:ComboBox id="_IDGenComboBox5"
 											selectedKey="{LimitsTabableModel>DiagLat}" enabled="{ConfigModel>/DiagEnab}"
-											items="{DiagLatVH>/DiagnosisLateralityValueHelp}">
-													<core:Item id="_IDGenItem5" key="{DiagLatVH>DiagLat}" text="{DiagLatVH>DiagLat_Text}" />
+											items="{DiagLatVHModel>/}">
+													<core:Item id="_IDGenItem5" key="{DiagLatVHModel>DiagLat}" text="{DiagLatVHModel>DiagLat_Text}" />
 										</m:ComboBox>
 										<m:ComboBox id="_IDGenComboBox6" enabled="{ConfigModel>/DiagEnab}"
 											selectedKey="{LimitsTabableModel>DiagCert}"
-											items="{DiagCertVH>/DiagnosisCertaintyValueHelp}">
-													<core:Item id="_IDGenItem6" key="{DiagCertVH>DiagCert}" text="{DiagCertVH>DiagCert_Text}" />
+											items="{DiagCertVHVHModel>/}">
+													<core:Item id="_IDGenItem6" key="{DiagCertVHVHModel>DiagCert}" text="{DiagCertVHVHModel>DiagCert_Text}" />
 										</m:ComboBox>
 									</m:ColumnListItem>
 
@@ -277,7 +277,7 @@
 						ariaDescribedBy="defaultButtonDescription genericButtonDescription"
 						icon="sap-icon://business-card">
 					</m:Button>
-				<m:Button type="Reject" text="Cancel"/>
+				<m:Button id="_IDGenButton2" type="Reject" text="Cancel" press="onPressCancel"/>
 			</m:OverflowToolbar>
 		</footer>
 	</ObjectPageLayout>
