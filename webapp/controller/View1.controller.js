@@ -529,11 +529,11 @@ sap.ui.define([
 
             },
             onChrDiagDeletePress: function (oEvent) {
-                var aDeletedDiagnosisEntry = this.getView().getModel("DeletedDiagnosis").getData() || [];
+                var aDeletedDiagnosisEntry = this.getView().getModel("ChronicDeletedDiagnosis").getData() || [];
                 var object = oEvent.getSource().getParent().getBindingContext("LimitsTabableModel").getObject();
                 object.Canceled = true;
                 aDeletedDiagnosisEntry.push(object);
-                this.getView().getModel("DeletedDiagnosis").setData(aDeletedDiagnosisEntry);
+                this.getView().getModel("ChronicDeletedDiagnosis").setData(aDeletedDiagnosisEntry);
                 sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
                 this.getView().getModel("LimitsTabableModel").refresh(true);
 
@@ -768,6 +768,8 @@ sap.ui.define([
             },
 
             onPressCancel: function() {
+                this.getView().getModel("DeletedDiagnosis").setData([]);
+                this.getView().getModel("ChronicDeletedDiagnosis").setData([]);
                 this.getView().getModel("ConfigModel").setProperty("/DiagEnab", false);
                 this.getView().getModel("ConfigModel").setProperty("/EditVisible", true);
                 this.loadDataEdit();
@@ -778,6 +780,7 @@ sap.ui.define([
                 var sDiagCode;
                 var sTextforPopup;
                 var aDeletedDiagnosisEntry = this.getView().getModel("DeletedDiagnosis").getData();
+                var aDeleteChronicdDiagnosisEntry = this.getView().getModel("ChronicDeletedDiagnosis").getData();
                 var oChronicData = this.getView().getModel("LimitsTabableModel").getData();
                 var oDiagTypeData = this.getView().getModel("DiagTypeConfigModelChr").getData();
                 var sDiagTy;
@@ -792,19 +795,36 @@ sap.ui.define([
                         }
                     });
                 });
-                if (aTempDiagtype && aTempDiagtype.length > 0 && (oChronicData.length - 1) <= aTempDiagtype.length) {
-                    if (aDeletedDiagnosisEntry.length === 0) {
+                var iDelChr = aDeleteChronicdDiagnosisEntry.length || 0;
+                if (aTempDiagtype && aTempDiagtype.length > 0 && (oChronicData.length - 1 - iDelChr) <= aTempDiagtype.length) {
+                    if (aDeletedDiagnosisEntry.length === 0 || aDeleteChronicdDiagnosisEntry.length === 0) {
                         sTextforPopup = "Are you sure you want to save?";
                     } else {
-                        aDeletedDiagnosisEntry.forEach(function (DeletedEntry) {
-                            if (sDiagCode) {
-                                sDiagCode = sDiagCode + ", " + DeletedEntry.DiagCode
-                            }
-                            else {
-                                sDiagCode = DeletedEntry.DiagCode;
-                            }
+                        if(aDeletedDiagnosisEntry.length > 0){
+                            aDeletedDiagnosisEntry.forEach(function (DeletedEntry) {
+                                if (sDiagCode) {
+                                    sDiagCode = sDiagCode + ", " + DeletedEntry.DiagCode
+                                }
+                                else {
+                                    sDiagCode = DeletedEntry.DiagCode;
+                                }
+                        
 
-                        });
+                            });
+                        }   
+                        if (aDeleteChronicdDiagnosisEntry.length > 0) {
+                            aDeleteChronicdDiagnosisEntry.forEach(function (ChrDeletedEntry) {
+                                if (sDiagCode) {
+                                    sDiagCode = sDiagCode + ", " + ChrDeletedEntry.DiagCode
+                                }
+                                else {
+                                    sDiagCode = ChrDeletedEntry.DiagCode;
+                                }
+                        
+
+                            });
+
+                        }
                         sTextforPopup = "Diagnosis Entries with these code " + sDiagCode + " would be deleted, Confirm?"
                     }
                     if (!this.oApproveDialog) {
@@ -1134,6 +1154,8 @@ sap.ui.define([
                         //MessageToast.show("Data Saved")
                         that.getView().getModel("ConfigModel").setProperty("/DiagEnab", false);
                         that.getView().getModel("ConfigModel").setProperty("/EditVisible", true);
+                        this.getView().getModel("DeletedDiagnosis").setData([]);
+                        this.getView().getModel("ChronicDeletedDiagnosis").setData([]);
                         //window.location.reload();
                     },
                     error: function (oError) {
