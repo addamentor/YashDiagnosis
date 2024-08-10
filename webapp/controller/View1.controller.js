@@ -26,6 +26,7 @@ sap.ui.define([
                 var me = this;
                 me._oRouter = sap.ui.core.UIComponent.getRouterFor(this);
                 me._oRouter.attachRouteMatched(me.handleRouteMatched, me);
+                this.sContextPath;
                 this._LoadData();
                 this._loadVHData();
             },
@@ -66,6 +67,14 @@ sap.ui.define([
                     value1: "0000000151"
                 }))
 
+                Model_header.setHeaders({
+                    "X-Requested-With":"XMLHttpRequest",
+                    "Content-Type":"application/atom+xml",
+                    "DataServiceVersion":"2.0",
+                    "Accept": "application/atom+xml,application/atomsvc+xml,application/xml",
+                    "X-CSRF-Token":"Fetch"
+                });
+
                 Model_header.read("/Patients('0000000152')", {
                     urlParameters: {
                         $expand: "to_Case,to_Diagnosis,to_Name,to_BusinessPartner,to_BusinessPartner/to_Address," +
@@ -96,8 +105,14 @@ sap.ui.define([
                     error: function () {
 
                     }
-                }
-                )
+                });
+                oModel_Data1.setHeaders({
+                    "X-Requested-With":"XMLHttpRequest",
+                    "Content-Type":"application/atom+xml",
+                    "DataServiceVersion":"2.0",
+                    "Accept": "application/atom+xml,application/atomsvc+xml,application/xml",
+                    "X-CSRF-Token":"Fetch"
+                });
                 oModel_Data1.read("/DiagnosisTypeConfig", {
                     success: function (oData) {
                         var aTempDiag = oData.results;
@@ -514,7 +529,7 @@ sap.ui.define([
                 var aDeletedDiagnosisEntry = this.getView().getModel("DeletedDiagnosis").getData() || [];
                 var object = oEvent.getSource().getParent().getBindingContext("LimitsTemplateModel1").getObject();
                 object.Canceled = true;
-                aDeletedDiagnosisEntry.push(object.DiagCode);
+                aDeletedDiagnosisEntry.push(object);
                 this.getView().getModel("DeletedDiagnosis").setData(aDeletedDiagnosisEntry);
                 sap.m.MessageToast.show(object.DiagCode + " " + "will be deleted");
                 this.getView().getModel("LimitsTemplateModel1").refresh(true);
@@ -556,6 +571,13 @@ sap.ui.define([
                     .getObject();
                 var aIndex = this._extractIndexes(this.sDiagCodeVHPath);
                 if (!this.ChronicFlag) {
+                    var aIndexContext = this._extractIndexes(this.sContextPath);
+                    var oData = this.getView().getModel("LimitsTemplateModel1").getData();
+                    var aDiagTableData = oData.to_Encounter.results[aIndexContext[0]].to_Diagnosis.results;
+                        if (aDiagTableData.length === (aIndexContext[1] + 1)) {
+                            aDiagTableData.push({});
+                        };
+                        this.getView().getModel("LimitsTemplateModel1").setData(oData);
                     this.oInputControl.setValueState("None")
                     var oData = this.getView().getModel("LimitsTemplateModel1").getData();
                     var aDiagTableRowData = oData.to_Encounter.results[aIndex[0]].to_Diagnosis.results[aIndex[1]];
@@ -566,6 +588,13 @@ sap.ui.define([
                     this.getView().getModel("LimitsTemplateModel1").setData(oData);
 
                 } else {
+                    var aIndexContext = this._extractIndexes(this.sContextPath);
+                    var oData = this.getView().getModel("LimitsTabableModel").getData();
+                    var aDiagTableData = oData;
+                    if (aDiagTableData.length === (aIndex[0] + 1)) {
+                        aDiagTableData.push({});
+                    };
+                    this.getView().getModel("LimitsTabableModel").setData(oData);
                     var oData = this.getView().getModel("LimitsTabableModel").getData();
                     oData[aIndex[0]].DiagCatalog = object.DiagCatalog;
                     oData[aIndex[0]].DiagCatalog_Text = object.DiagCatalog_Text;
@@ -580,6 +609,7 @@ sap.ui.define([
 
             onDiagCodeVHPress: function (oEvent) {
                 this.ChronicFlag = false;
+                this.sContextPath = oEvent.getSource().getParent().getBindingContextPath();
                 var object = oEvent.getSource().getBindingContext("LimitsTemplateModel1").getObject();
                 this.getDiagCodeVH(object.DiagCatalog);
                 this.oInputControl = oEvent.getSource();
@@ -593,18 +623,35 @@ sap.ui.define([
             getDiagCodeVH: function (Catalog) {
                 var oDiagCatModel = this.getView().getModel("DiagCodeVH")
                 var that = this;
+                if(Catalog) {
                 var filter = new Filter('DiagCatalog', FilterOperator.EQ, Catalog || '');
                 oDiagCatModel.read("/DiagnosisCodeValueHelp", {
                     filters: [filter],
                     success: function (oResponse) {
-                        if (oResponse.results && oResponse.results.length > 0) {
+                        if (oResponse.results) {
+                            // if (oResponse.results && oResponse.results.length > 0) {
                             that.getView().setModel(new JSONModel(oResponse.results), "DiagCodeVHModel");
                         }
                     }
                 });
+            } else {
+                oDiagCatModel.read("/DiagnosisCodeValueHelp", {
+                    urlParameters: {
+                        "$top": 5000,
+                       
+                },
+                    success: function (oResponse) {
+                        if (oResponse.results) {
+                            // if (oResponse.results && oResponse.results.length > 0) {
+                            that.getView().setModel(new JSONModel(oResponse.results), "DiagCodeVHModel");
+                        }
+                    }
+                });
+            }
             },
 
             onDiagCodeChronicVHPress: function (oEvent) {
+                this.sContextPath = oEvent.getSource().getParent().getBindingContextPath();
                 var object = oEvent.getSource().getBindingContext("LimitsTabableModel").getObject();
                 this.getDiagCodeVH(object.DiagCatalog);
                 this.ChronicFlag = true;
@@ -731,6 +778,7 @@ sap.ui.define([
             },
 
             onPressCancel: function() {
+                // this.oApproveDialog.destroy();
                 this.getView().getModel("DeletedDiagnosis").setData([]);
                 this.getView().getModel("ChronicDeletedDiagnosis").setData([]);
                 this.getView().getModel("ConfigModel").setProperty("/DiagEnab", false);
@@ -739,6 +787,7 @@ sap.ui.define([
             },
 
             onPressSaveConfirmation: function () {
+                
                 var that = this;
                 var sDiagCode;
                 var sTextforPopup;
@@ -801,7 +850,6 @@ sap.ui.define([
                                 press: function () {
                                     this.oApproveDialog.close();
                                     this.onPressSave();
-
                                 }.bind(this)
 
                                 // this.onPressSave().bind(this)
@@ -810,6 +858,7 @@ sap.ui.define([
                                 text: "Cancel",
                                 press: function () {
                                     this.oApproveDialog.close();
+                                    this.resetDialog();
                                 }.bind(this)
                             })
                         });
@@ -835,7 +884,13 @@ sap.ui.define([
                 }
             },
 
+            resetDialog:function(){
+                this.oApproveDialog.destroy();
+                this.oApproveDialog = null;
+            },
             onPressSave: function (oevt) {
+                sap.ui.core.BusyIndicator.show();
+                this.resetDialog();
                 this.FirstTime = false;
                 // this.bsyDialog.open();
                 var sEtag = this.sETag
@@ -906,24 +961,26 @@ sap.ui.define([
                 })
 
                 oPayload.forEach(function (payloadbatch) {
-                    var payloadforCreate = {
-                        "Org": payloadbatch.Org,
-                        "DiagCatalog": payloadbatch.DiagCatalog,
-                        "DiagCode": payloadbatch.DiagCode,
-                        "DiagDesc": payloadbatch.DiagDesc,
-                        "DiagLevel": payloadbatch.DiagLevel,
-                        "DiagUUID": payloadbatch.DiagUUID,
-                        "EncounterUUID": payloadbatch.EncounterUUID,
-                        "PatientId": payloadbatch.PatientId,
-                        "DiagSecondary": payloadbatch.DiagSecondary,
-                        "DiagLat": payloadbatch.DiagLat,
-                        "DiagCert": payloadbatch.DiagCert,
-                        "DiagStart": payloadbatch.DiagStart,
-                        "DiagEnd": payloadbatch.DiagEnd,
-                        "Canceled": payloadbatch.Canceled,
-                        "to_DiagType": payloadbatch.to_DiagType
-                    };
-                    if (payloadbatch.Canceled) {
+                    if(!payloadbatch.Canceled){
+                        var payloadforCreate = {
+                            "Org": payloadbatch.Org,
+                            "DiagCatalog": payloadbatch.DiagCatalog,
+                            "DiagCode": payloadbatch.DiagCode,
+                            "DiagDesc": payloadbatch.DiagDesc,
+                            "DiagLevel": payloadbatch.DiagLevel,
+                            "DiagUUID": payloadbatch.DiagUUID,
+                            "EncounterUUID": payloadbatch.EncounterUUID,
+                            "PatientId": payloadbatch.PatientId,
+                            "DiagSecondary": payloadbatch.DiagSecondary,
+                            "DiagLat": payloadbatch.DiagLat,
+                            "DiagCert": payloadbatch.DiagCert,
+                            "DiagStart": payloadbatch.DiagStart,
+                            "DiagEnd": payloadbatch.DiagEnd,
+                            "Canceled": payloadbatch.Canceled,
+                            "to_DiagType": payloadbatch.to_DiagType
+                        };
+                    }
+                    if (payloadbatch.Canceled && payloadbatch.DiagUUID) {
                         oModel.callFunction("/Cancel", {
                             groupId: "BatchCall",
                             eTag: '*',
@@ -934,9 +991,11 @@ sap.ui.define([
                         });
                     }
                     if (!payloadbatch.DiagUUID) {
-                        oModel.create("/DiagnosisSet", payloadforCreate, {
-                            groupId: "BatchCall"
-                        });
+                        if(!payloadbatch.Canceled){
+                            oModel.create("/DiagnosisSet", payloadforCreate, {
+                                groupId: "BatchCall"
+                            });
+                        }
                     } else {
                         var payloadforPut = {
                             "Org": payloadbatch.Org,
@@ -1032,23 +1091,25 @@ sap.ui.define([
                 });
 
                 oPayloadChronic.forEach(function (payloadchr) {
-                    var payloadChronicreate = {
-                        "Org": payloadchr.Org,
-                        "DiagCatalog": payloadchr.DiagCatalog,
-                        "DiagCode": payloadchr.DiagCode,
-                        "DiagDesc": payloadchr.DiagDesc,
-                        "DiagLevel": payloadchr.DiagLevel,
-                        "DiagUUID": payloadchr.DiagUUID,
-                        "PatientId": '0000000151',
-                        "DiagSecondary": payloadchr.DiagSecondary,
-                        "DiagLat": payloadchr.DiagLat,
-                        "DiagCert": payloadchr.DiagCert,
-                        "DiagStart": payloadchr.DiagStart,
-                        "DiagEnd": payloadchr.DiagEnd,
-                        "Canceled": payloadchr.Canceled,
-                        "to_DiagType": payloadchr.to_DiagType
+                    if(!payloadchr.Canceled){
+                        var payloadChronicreate = {
+                            "Org": payloadchr.Org,
+                            "DiagCatalog": payloadchr.DiagCatalog,
+                            "DiagCode": payloadchr.DiagCode,
+                            "DiagDesc": payloadchr.DiagDesc,
+                            "DiagLevel": payloadchr.DiagLevel,
+                            "DiagUUID": payloadchr.DiagUUID,
+                            "PatientId": '0000000151',
+                            "DiagSecondary": payloadchr.DiagSecondary,
+                            "DiagLat": payloadchr.DiagLat,
+                            "DiagCert": payloadchr.DiagCert,
+                            "DiagStart": payloadchr.DiagStart,
+                            "DiagEnd": payloadchr.DiagEnd,
+                            "Canceled": payloadchr.Canceled,
+                            "to_DiagType": payloadchr.to_DiagType
+                        }
                     }
-                    if (payloadchr.Canceled) {
+                    if (payloadchr.Canceled && payloadchr.DiagUUID) {
                         oModel.callFunction("/Cancel", {
                             groupId: "BatchCall",
                             eTag: '*',
@@ -1060,9 +1121,11 @@ sap.ui.define([
                     }
 
                     if (!payloadchr.DiagUUID) {
-                        oModel.create("/DiagnosisSet", payloadChronicreate, {
-                            groupId: "BatchCall"
-                        });
+                        if(!payloadchr.Canceled){
+                            oModel.create("/DiagnosisSet", payloadChronicreate, {
+                                groupId: "BatchCall"
+                            });
+                        }
                     } else {
                         var payloadChronicUpd = {
                             "Org": payloadchr.Org,
@@ -1105,10 +1168,11 @@ sap.ui.define([
                             debugger;
                         }
                         //MessageToast.show("Data Saved")
+                        sap.ui.core.BusyIndicator.hide();
                         that.getView().getModel("ConfigModel").setProperty("/DiagEnab", false);
                         that.getView().getModel("ConfigModel").setProperty("/EditVisible", true);
-                        this.getView().getModel("DeletedDiagnosis").setData([]);
-                        this.getView().getModel("ChronicDeletedDiagnosis").setData([]);
+                        that.getView().getModel("DeletedDiagnosis").setData([]);
+                        that.getView().getModel("ChronicDeletedDiagnosis").setData([]);
                         //window.location.reload();
                     },
                     error: function (oError) {
