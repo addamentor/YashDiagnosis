@@ -452,8 +452,8 @@ sap.ui.define([
                                                 tooltip: aDiatype.DiagType_Text
                                                 // template: oTemplate
                                             }),
-                                            hAlign: "Center",
-                                            width: "15%"
+                                            hAlign: "Initial",
+                                            width: "5%"
                                         });
                                     }
                                     oTable.addColumn(oColumn);
@@ -471,7 +471,9 @@ sap.ui.define([
                                         new sap.m.Column({
                                             header: new sap.m.Label({
                                                 text: ""
-                                            })
+                                            }),
+                                            hAlign: "Initial",
+                                            width: "5%"
                                         })
                                     );
                                     var oTemplate = oTable.getBindingInfo("items").template;

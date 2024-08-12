@@ -183,10 +183,10 @@
 				<subSections>
 					<ObjectPageSubSection id="_IDGenObjectPageSubSection2">
 						<blocks>
-							<m:Table id="_IDGenTable2" items="{LimitsTabableModel>/}">
+							<m:Table id="_IDGenTable2" autoPopinMode="true" items="{LimitsTabableModel>/}">
 								<m:columns>
 									<m:Column id="_IDGenColumn9" minScreenWidth="Tablet"
-										hAlign="Center" width="10%"
+										hAlign="Center" width="8%"
 										demandPopin="true">
 										<m:Label id="_IDGenLabel10" design="Bold" text="Catalog" />
 									</m:Column>
@@ -196,7 +196,7 @@
 										<m:Label id="_IDGenLabel11" design="Bold" text="Code" />
 									</m:Column>
 									<m:Column id="_IDGenColumn11" 
-										demandPopin="true" width="30%">
+										demandPopin="true" width="20%">
 										<m:Label id="_IDGenLabel12" design="Bold" text="Description" />
 									</m:Column>
 									<m:Column id="_IDGenColumn12" 
@@ -204,12 +204,20 @@
 										<m:Label id="_IDGenLabel13" design="Bold" text="Level" />
 									</m:Column>
 									<m:Column id="_IDGenColumn13" 
-										demandPopin="true" width="10%">
+										demandPopin="true" width="8%">
 										<m:Label id="_IDGenLabel14" design="Bold" text="Laterality" />
 									</m:Column>
 									<m:Column id="_IDGenColumn14" 
-										demandPopin="true" width="10%">
+										demandPopin="true" width="8%">
 										<m:Label id="_IDGenLabel15" design="Bold" text="Certainty" />
+									</m:Column>
+									<m:Column id="_IDGenStartDate" 
+										demandPopin="true" width="9%">
+										<m:Label id="_IDGenStartDateLabel" design="Bold" text="Start Validity" />
+									</m:Column>
+									<m:Column id="_IDGenEndDate" 
+										demandPopin="true" width="9%">
+										<m:Label id="_IDGenEndDateLabel" design="Bold" text="End Validity" />
 									</m:Column>
 								</m:columns>
 								<m:items>
@@ -260,6 +268,50 @@
 											items="{DiagCertVHVHModel>/}">
 													<core:Item id="_IDGenItem6" key="{DiagCertVHVHModel>DiagCert}" text="{DiagCertVHVHModel>DiagCert_Text}" />
 										</m:ComboBox>
+										<m:HBox >
+										<m:Label  visible="{=! ${ConfigModel>/DiagEnab}}"
+													text="{
+													'path': 'LimitsTabableModel>DiagStart',
+													'type': 'sap.ui.model.type.Date',
+													'formatOptions': {
+														'pattern': 'dd-MMM-YYYY'
+													}
+												}"
+													/>
+										<m:DatePicker visible="{ConfigModel>/DiagEnab}"
+											id="DP1"
+											placeholder="Start Date"
+												value="{
+													'path': 'LimitsTabableModel>DiagStart',
+													'type': 'sap.ui.model.type.Date',
+													'formatOptions': {
+														'pattern': 'dd-MMM-YYYY'
+													}
+												}"
+											class="sapUiSmallMarginBottom"/>
+											</m:HBox>
+											<m:HBox >
+										<m:Label  visible="{=! ${ConfigModel>/DiagEnab}}"
+													text="{
+													'path': 'LimitsTabableModel>DiagEnd',
+													'type': 'sap.ui.model.type.Date',
+													'formatOptions': {
+														'pattern': 'dd-MMM-YYYY'
+													}
+												}"
+													/>
+										<m:DatePicker visible="{ConfigModel>/DiagEnab}"
+											id="DP2"
+											placeholder="End Date"
+											value="{
+													'path': 'LimitsTabableModel>DiagEnd',
+													'type': 'sap.ui.model.type.Date',
+													'formatOptions': {
+														'pattern': 'dd-MMM-YYYY'
+													}
+												}"
+											class="sapUiSmallMarginBottom"/>
+											</m:HBox>
 									</m:ColumnListItem>
 
 								</m:items>
