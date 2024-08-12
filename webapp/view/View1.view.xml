@@ -274,7 +274,7 @@
 													'path': 'LimitsTabableModel>DiagStart',
 													'type': 'sap.ui.model.type.Date',
 													'formatOptions': {
-														'pattern': 'dd-MMM-YYYY'
+														'pattern': 'dd-MM-YYYY'
 													}
 												}"
 													/>
@@ -286,7 +286,7 @@
 													'path': 'LimitsTabableModel>DiagStart',
 													'type': 'sap.ui.model.type.Date',
 													'formatOptions': {
-														'pattern': 'dd-MMM-YYYY'
+														'pattern': 'dd-MM-YYYY'
 													}
 												}"
 											class="sapUiSmallMarginBottom"/>
@@ -297,7 +297,7 @@
 													'path': 'LimitsTabableModel>DiagEnd',
 													'type': 'sap.ui.model.type.Date',
 													'formatOptions': {
-														'pattern': 'dd-MMM-YYYY'
+														'pattern': 'dd-MM-YYYY'
 													}
 												}"
 													/>
@@ -309,7 +309,7 @@
 													'path': 'LimitsTabableModel>DiagEnd',
 													'type': 'sap.ui.model.type.Date',
 													'formatOptions': {
-														'pattern': 'dd-MMM-YYYY'
+														'pattern': 'dd-MM-YYYY'
 													}
 												}"
 											class="sapUiSmallMarginBottom"/>

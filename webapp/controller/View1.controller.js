@@ -311,11 +311,12 @@ sap.ui.define([
                 // });
             },
             onDiagEndDatePickerChange:function(evt){
+                
+                var Edate = evt.getSource().getValue();
                 var path = evt.getSource().getId().split("_IDGenTable2-")[1];
-                var StartDate = this.getView().getModel("LimitsTabableModel").getData()[path].DiagStart;
-                var Enddate = this.getView().getModel("LimitsTabableModel").getData()[path].DiagEnd;
-                // var StartDate = this.dateFormatCh(Sdate);
-                if(Enddate < StartDate){
+                var Sdate = this.getView().getModel("LimitsTabableModel").getData()[path].DiagStart;
+                var StartDate = this.dateFormatCh(Sdate);
+                if(Edate < StartDate){
                     evt.getSource().setValueState(sap.ui.core.ValueState.Error);
                     evt.getSource().setValueStateText("End date should be a greater then start date");
                    
@@ -324,7 +325,14 @@ sap.ui.define([
                     evt.getSource().valueStateText("")
                 }
             },
-    
+            dateFormatCh:function(oDate){
+                var date = new Date(oDate);
+                var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+                    pattern: "dd-MMM-yyyy"
+                });
+                var FormattedDate = dateFormat.format(date);
+                return FormattedDate;
+            },
             _loadVHData:function(){
                 var that = this;
                 var oDiagCatModel = this.getOwnerComponent().getModel("DiagCatlogVH")
