@@ -302,6 +302,7 @@
 													/>
 										<m:DatePicker visible="{ConfigModel>/DiagEnab}"
 											id="DP2"
+											change="onDiagEndDatePickerChange"
 											placeholder="End Date"
 											value="{
 													'path': 'LimitsTabableModel>DiagEnd',

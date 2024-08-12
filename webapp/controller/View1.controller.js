@@ -307,7 +307,27 @@ sap.ui.define([
                 //     }
                 // });
             },
-
+            onDiagEndDatePickerChange:function(evt){
+                
+                var Edate = evt.getSource().getValue();
+                var path = evt.getSource().getId().split("_IDGenTable2-")[1];
+                var Sdate = this.getView().getModel("LimitsTabableModel").getData()[path].DiagStart;
+                var StartDate = this.dateFormatCh(Sdate);
+                if(Edate < StartDate){
+                    evt.getSource().setValueState(sap.ui.core.ValueState.Error);
+                   
+                }else{
+                    evt.getSource().setValueState(sap.ui.core.ValueState.None);
+                }
+            },
+            dateFormatCh:function(oDate){
+                var date = new Date(oDate);
+                var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+                    pattern: "dd-MMM-yyyy"
+                });
+                var FormattedDate = dateFormat.format(date);
+                return FormattedDate;
+            },
             _loadVHData:function(){
                 var that = this;
                 var oDiagCatModel = this.getOwnerComponent().getModel("DiagCatlogVH")
@@ -791,6 +811,7 @@ sap.ui.define([
             onPressSaveConfirmation: function () {
                 
                 var that = this;
+                that.strt ="";
                 var sDiagCode;
                 var sTextforPopup;
                 var aDeletedDiagnosisEntry = this.getView().getModel("DeletedDiagnosis").getData();
@@ -799,7 +820,16 @@ sap.ui.define([
                 var oDiagTypeData = this.getView().getModel("DiagTypeConfigModelChr").getData();
                 var sDiagTy;
                 var aTempDiagtype = [];
+                oChronicData.forEach(function (chrData) {
+                    if(chrData.DiagStart === null && chrData.DiagCatalog){
+                        that.strt = "X";
+                        sap.m.MessageBox.error("Please enter Start Date for " +chrData.DiagDesc);
+                        return;
+                    }
+                });
+             
                 oChronicData.forEach(function (chronicData) {
+                    
                     oDiagTypeData.forEach(function (diagTy) {
                         sDiagTy = diagTy.DiagType
                         if (chronicData[sDiagTy]) {
@@ -809,7 +839,7 @@ sap.ui.define([
                     });
                 });
                 var iDelChr = aDeleteChronicdDiagnosisEntry.length || 0;
-                if (aTempDiagtype && aTempDiagtype.length > 0 && (oChronicData.length - 1 - iDelChr) <= aTempDiagtype.length) {
+                if (aTempDiagtype && aTempDiagtype.length > 0 && (oChronicData.length - 1 - iDelChr) <= aTempDiagtype.length && that.strt !== "X") {
                     if (aDeletedDiagnosisEntry.length === 0 && aDeleteChronicdDiagnosisEntry.length === 0) {
                         sTextforPopup = "Are you sure you want to save?";
                     } else {
@@ -867,7 +897,7 @@ sap.ui.define([
                     }
                     this.oApproveDialog.open();
                 } else {
-                    if (!this.oValidationDiag) {
+                    if (!this.oValidationDiag && that.strt !=="X") {
                         this.oValidationDiag = new Dialog({
                             type: DialogType.Message,
                             title: "Confirm",
