@@ -309,11 +309,12 @@ sap.ui.define([
             },
             onDiagEndDatePickerChange:function(evt){
                 
-                var Edate = evt.getSource().getValue();
+                var Edate =evt.getSource().getDateValue();
+                var endDate = this.dateFormatCh(Edate);
                 var path = evt.getSource().getId().split("_IDGenTable2-")[1];
                 var Sdate = this.getView().getModel("LimitsTabableModel").getData()[path].DiagStart;
                 var StartDate = this.dateFormatCh(Sdate);
-                if(Edate < StartDate){
+                if(endDate < StartDate){
                     evt.getSource().setValueState(sap.ui.core.ValueState.Error);
                    
                 }else{
@@ -322,11 +323,8 @@ sap.ui.define([
             },
             dateFormatCh:function(oDate){
                 var date = new Date(oDate);
-                var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({
-                    pattern: "dd-MMM-yyyy"
-                });
-                var FormattedDate = dateFormat.format(date);
-                return FormattedDate;
+             
+                return date.getUTCFullYear() + "-" +(date.getUTCMonth()).toString().padStart(2,'0') + "-" +date.getUTCDate().toString().padStart(2,'0');
             },
             _loadVHData:function(){
                 var that = this;
