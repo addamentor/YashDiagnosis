@@ -22,12 +22,15 @@ sap.ui.define([
                 this.FirstTime = true;
                 this.ChronicFlag = false;
                 this.bsyDialog = new sap.m.BusyDialog();
+                var aUrlParams = window.location.href.split("?");
+                var sPatientID = aUrlParams[2].split('&')[0].split('=')[1]
+                var sCaseUUID = aUrlParams[2].split('&')[1].split('=')[1]
                 this.bsyDialog.open();
                 var me = this;
                 me._oRouter = sap.ui.core.UIComponent.getRouterFor(this);
                 me._oRouter.attachRouteMatched(me.handleRouteMatched, me);
                 this.sContextPath;
-                this._LoadData();
+                this._LoadData(sPatientID, sCaseUUID);
                 this._loadVHData();
             },
 
@@ -35,7 +38,7 @@ sap.ui.define([
              * Method to load initial Data
              */
 
-            _LoadData: function () {
+            _LoadData: function (PatientID, CaseUUID) {
                 var that = this;
                 var LimitsTemplateModel = new sap.ui.model.json.JSONModel({
                     FirstEncounter: true,
@@ -64,7 +67,7 @@ sap.ui.define([
                 filter1.push(new Filter({
                     path: 'PatientId',
                     operator: FilterOperator.EQ,
-                    value1: "0000000151"
+                    value1: PatientID
                 }))
 
                 Model_header.setHeaders({
@@ -75,7 +78,7 @@ sap.ui.define([
                     "X-CSRF-Token":"Fetch"
                 });
 
-                Model_header.read("/Patients('0000000152')", {
+                Model_header.read("/Patients(" + PatientID + ")", {
                     urlParameters: {
                         $expand: "to_Case,to_Diagnosis,to_Name,to_BusinessPartner,to_BusinessPartner/to_Address," +
                             "to_BusinessPartner/to_Address/to_EmailAddress,to_BusinessPartner/to_Address/to_MobilePhoneNumber," +
@@ -140,7 +143,7 @@ sap.ui.define([
                 });
                 var aFilter = [];
 
-                var caseGUID = "b9149892-4a6b-1edf-8caf-422539670d66";
+                var caseGUID = CaseUUID;
                 var sPathGUID = "/EpisodeOfCareSet" + "(" + "guid'" + caseGUID + "')";
                 oModel_Data.read(sPathGUID, {
                     urlParameters: {
@@ -223,7 +226,7 @@ sap.ui.define([
 
                         this.getView().getModel("LimitsTemplateModel1").setData(oData1);
 
-                        oModel_Data.read("/Patients('0000000151')/to_Diagnosis", {
+                        oModel_Data.read("/Patients(" + PatientID + ")/to_Diagnosis", {
                             urlParameters: {
                                 $expand: "to_DiagType"
                             },
@@ -308,26 +311,20 @@ sap.ui.define([
                 // });
             },
             onDiagEndDatePickerChange:function(evt){
-                
-                var Edate = evt.getSource().getValue();
                 var path = evt.getSource().getId().split("_IDGenTable2-")[1];
-                var Sdate = this.getView().getModel("LimitsTabableModel").getData()[path].DiagStart;
-                var StartDate = this.dateFormatCh(Sdate);
-                if(Edate < StartDate){
+                var StartDate = this.getView().getModel("LimitsTabableModel").getData()[path].DiagStart;
+                var Enddate = this.getView().getModel("LimitsTabableModel").getData()[path].DiagEnd;
+                // var StartDate = this.dateFormatCh(Sdate);
+                if(Enddate < StartDate){
                     evt.getSource().setValueState(sap.ui.core.ValueState.Error);
+                    evt.getSource().setValueStateText("End date should be a greater then start date");
                    
                 }else{
                     evt.getSource().setValueState(sap.ui.core.ValueState.None);
+                    evt.getSource().valueStateText("")
                 }
             },
-            dateFormatCh:function(oDate){
-                var date = new Date(oDate);
-                var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({
-                    pattern: "dd-MMM-yyyy"
-                });
-                var FormattedDate = dateFormat.format(date);
-                return FormattedDate;
-            },
+    
             _loadVHData:function(){
                 var that = this;
                 var oDiagCatModel = this.getOwnerComponent().getModel("DiagCatlogVH")
@@ -358,7 +355,7 @@ sap.ui.define([
                 
             },
 
-            loadDataEdit: function() {
+            loadDataEdit: function(PatientID, CaseUUID) {
                 var that = this;
                 var LimitsTemplateModel = new sap.ui.model.json.JSONModel({
                     FirstEncounter: true,
@@ -370,7 +367,7 @@ sap.ui.define([
                 });
                 sap.ui.core.BusyIndicator.show();
                 var oModel_Data = this.getOwnerComponent().getModel("ReadModel");
-                var caseGUID = "b9149892-4a6b-1edf-8caf-422539670d66";
+                var caseGUID = CaseUUID;
                 var sPathGUID = "/EpisodeOfCareSet" + "(" + "guid'" + caseGUID + "')";
                 oModel_Data.read(sPathGUID, {
                     urlParameters: {
@@ -455,7 +452,7 @@ sap.ui.define([
 
                         this.getView().getModel("LimitsTemplateModel1").setData(oData1);
 
-                        oModel_Data.read("/Patients('0000000151')/to_Diagnosis", {
+                        oModel_Data.read("/Patients(" + PatientID + ")/to_Diagnosis", {
                             urlParameters: {
                                 $expand: "to_DiagType"
                             },
@@ -823,7 +820,7 @@ sap.ui.define([
                 oChronicData.forEach(function (chrData) {
                     if(chrData.DiagStart === null && chrData.DiagCatalog){
                         that.strt = "X";
-                        sap.m.MessageBox.error("Please enter Start Date for " +chrData.DiagDesc);
+                        sap.m.MessageBox.error("Start date is mandatory");
                         return;
                     }
                 });
@@ -1131,7 +1128,7 @@ sap.ui.define([
                             "DiagDesc": payloadchr.DiagDesc,
                             "DiagLevel": payloadchr.DiagLevel,
                             "DiagUUID": payloadchr.DiagUUID,
-                            "PatientId": '0000000151',
+                            "PatientId": payloadchr.PatientId,
                             "DiagSecondary": payloadchr.DiagSecondary,
                             "DiagLat": payloadchr.DiagLat,
                             "DiagCert": payloadchr.DiagCert,
@@ -1165,7 +1162,7 @@ sap.ui.define([
                             "DiagCode": payloadchr.DiagCode,
                             "DiagDesc": payloadchr.DiagDesc,
                             "DiagUUID": payloadchr.DiagUUID,
-                            "PatientId": '0000000151',
+                            "PatientId": payloadchr.PatientId,
                             "DiagSecondary": payloadchr.DiagSecondary,
                             "DiagLat": payloadchr.DiagLat,
                             "DiagCert": payloadchr.DiagCert,

@@ -281,6 +281,7 @@
 										<m:DatePicker visible="{ConfigModel>/DiagEnab}"
 											id="DP1"
 											placeholder="Start Date"
+											required="true"
 												value="{
 													'path': 'LimitsTabableModel>DiagStart',
 													'type': 'sap.ui.model.type.Date',
