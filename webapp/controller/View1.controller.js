@@ -8,11 +8,12 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     'sap/ui/model/Filter',
     'sap/ui/model/FilterOperator',
+    "sap/m/MessageBox"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, Dialog, mobileLibrary, Button, MessageToast, Text, JSONModel, Filter, FilterOperator) {
+    function (Controller, Dialog, mobileLibrary, Button, MessageToast, Text, JSONModel, Filter, FilterOperator, MessageBox) {
         "use strict";
         var ButtonType = mobileLibrary.ButtonType;
         var DialogType = mobileLibrary.DialogType;
@@ -22,23 +23,22 @@ sap.ui.define([
                 this.FirstTime = true;
                 this.ChronicFlag = false;
                 this.bsyDialog = new sap.m.BusyDialog();
-                var aUrlParams = window.location.href.split("?");
-                var sPatientID = aUrlParams[2].split('&')[0].split('=')[1]
-                var sCaseUUID = aUrlParams[2].split('&')[1].split('=')[1]
+                // var aUrlParams = window.location.href.split("?");
+                // var sCaseUUID = aUrlParams[1].split('&')[1].split('=')[1]
                 this.bsyDialog.open();
                 var me = this;
                 me._oRouter = sap.ui.core.UIComponent.getRouterFor(this);
                 me._oRouter.attachRouteMatched(me.handleRouteMatched, me);
                 this.sContextPath;
-                this._LoadData(sPatientID, sCaseUUID);
-                this._loadVHData();
+                // this._LoadData(sCaseUUID);
+                // this._loadVHData();
             },
 
             /**
              * Method to load initial Data
              */
 
-            _LoadData: function (PatientID, CaseUUID) {
+            _LoadData: function (CaseUUID) {
                 var that = this;
                 var LimitsTemplateModel = new sap.ui.model.json.JSONModel({
                     FirstEncounter: true,
@@ -63,52 +63,7 @@ sap.ui.define([
                 var Model_header = this.getOwnerComponent().getModel();
                 var oModel_Data = this.getOwnerComponent().getModel("ReadModel");
                 var oModel_Data1 = this.getOwnerComponent().getModel("DiagConfigModel");
-                var filter1 = []
-                filter1.push(new Filter({
-                    path: 'PatientId',
-                    operator: FilterOperator.EQ,
-                    value1: PatientID
-                }))
-
-                Model_header.setHeaders({
-                    "X-Requested-With":"XMLHttpRequest",
-                    "Content-Type":"application/atom+xml",
-                    "DataServiceVersion":"2.0",
-                    "Accept": "application/atom+xml,application/atomsvc+xml,application/xml",
-                    "X-CSRF-Token":"Fetch"
-                });
-
-                Model_header.read("/Patients(" + PatientID + ")", {
-                    urlParameters: {
-                        $expand: "to_Case,to_Diagnosis,to_Name,to_BusinessPartner,to_BusinessPartner/to_Address," +
-                            "to_BusinessPartner/to_Address/to_EmailAddress,to_BusinessPartner/to_Address/to_MobilePhoneNumber," +
-                            "to_BusinessPartner/to_Address/to_PhoneNumber,to_BusinessPartner/to_Cases,to_PatCvrg"
-                    },
-                    success: function (oSuccess) {
-                        var oPatientData = [];
-                        oPatientData.patientIdDisplay = Number(oSuccess["PatientId"]).toString();
-                        oPatientData.patientGender = oSuccess["to_BusinessPartner"]["IsMale"] ? "Male" : oSuccess["to_BusinessPartner"]["IsFemale"] ? "Female" : "";
-                        oPatientData.patientBirthDate = oSuccess["to_BusinessPartner"]["BirthDate"];
-                        oPatientData.patientAge = Math.floor((new Date() - oPatientData.patientBirthDate) / (365 * 24 * 60 * 60 * 1000));
-                        oPatientData.BusinessPartnerFullName = oSuccess["to_BusinessPartner"]["BusinessPartnerFullName"]
-                        var sFullName = oSuccess["to_BusinessPartner"]["BusinessPartnerFullName"]
-                        var names = sFullName.split(/\s+/);
-                        names[0] = names[0].substr(0, 1);
-                        names[1] = names[1].substr(0, 1);
-                        var name_abbr = names.join('');
-                        oPatientData.patientInitials = name_abbr;
-                        oPatientData.patientMobile = oSuccess["to_BusinessPartner"]["to_Address"].results.length > 0 ? oSuccess["to_BusinessPartner"]["to_Address"].results[0]["to_MobilePhoneNumber"]["results"][0]["InternationalPhoneNumber"] : "";
-                        oPatientData.patientEmail = oSuccess["to_BusinessPartner"]["to_Address"].results.length > 0 ? oSuccess["to_BusinessPartner"]["to_Address"].results[0]["to_EmailAddress"]["results"][0]["EmailAddress"] : "";
-
-                        // _.forEach(_.keys(oSuccess), function (_key) {
-                        that.getView().setModel(new JSONModel(oPatientData), "patientDetailsModel")
-                        // that.getView().getModel("patientDetailsModel").setData(oPatientData);
-                        // }); 
-                    },
-                    error: function () {
-
-                    }
-                });
+                
                 oModel_Data1.setHeaders({
                     "X-Requested-With":"XMLHttpRequest",
                     "Content-Type":"application/atom+xml",
@@ -143,13 +98,63 @@ sap.ui.define([
                 });
                 var aFilter = [];
 
-                var caseGUID = CaseUUID;
-                var sPathGUID = "/EpisodeOfCareSet" + "(" + "guid'" + caseGUID + "')";
+                // var caseGUID = CaseUUID;
+                var sPathGUID = "/EpisodeOfCareSet" + "(" + "guid'" + CaseUUID + "')";
                 oModel_Data.read(sPathGUID, {
                     urlParameters: {
                         $expand: "to_Encounter,to_Encounter/to_Diagnosis,to_Encounter/to_Diagnosis/to_DiagType"
                     },
                     success: function (oData1, oResponse) {
+                    var sPatientID = oData1.PatientID;
+                    var filter1 = []
+                    filter1.push(new Filter({
+                        path: 'PatientId',
+                        operator: FilterOperator.EQ,
+                        value1: sPatientID
+                    }))
+
+                    Model_header.setHeaders({
+                        "X-Requested-With":"XMLHttpRequest",
+                        "Content-Type":"application/atom+xml",
+                        "DataServiceVersion":"2.0",
+                        "Accept": "application/atom+xml,application/atomsvc+xml,application/xml",
+                        "X-CSRF-Token":"Fetch"
+                 });
+
+                    Model_header.read("/Patients('" + sPatientID + "')", {
+                        urlParameters: {
+                            $expand: "to_Case,to_Diagnosis,to_Name,to_BusinessPartner,to_BusinessPartner/to_Address," +
+                                "to_BusinessPartner/to_Address/to_EmailAddress,to_BusinessPartner/to_Address/to_MobilePhoneNumber," +
+                                "to_BusinessPartner/to_Address/to_PhoneNumber,to_BusinessPartner/to_Cases,to_PatCvrg"
+                        },
+                        success: function (oSuccess) {
+                            var oPatientData = [];
+                            oPatientData.patientIdDisplay = Number(oSuccess["PatientId"]).toString();
+                            oPatientData.patientGender = oSuccess["to_BusinessPartner"]["IsMale"] ? "Male" : oSuccess["to_BusinessPartner"]["IsFemale"] ? "Female" : "";
+                            oPatientData.patientBirthDate = oSuccess["to_BusinessPartner"]["BirthDate"];
+                            oPatientData.patientAge = Math.floor((new Date() - oPatientData.patientBirthDate) / (365 * 24 * 60 * 60 * 1000));
+                            oPatientData.BusinessPartnerFullName = oSuccess["to_BusinessPartner"]["BusinessPartnerFullName"]
+                            var sFullName = oSuccess["to_BusinessPartner"]["BusinessPartnerFullName"]
+                            var names = sFullName.split(/\s+/);
+                            names[0] = names[0].substr(0, 1);
+                            names[1] = names[1].substr(0, 1);
+                            var name_abbr = names.join('');
+                            oPatientData.patientInitials = name_abbr;
+                            oPatientData.patientMobile = oSuccess["to_BusinessPartner"]["to_Address"].results.length > 0 ? oSuccess["to_BusinessPartner"]["to_Address"].results[0]["to_MobilePhoneNumber"]["results"][0]["InternationalPhoneNumber"] : "";
+                            oPatientData.patientEmail = oSuccess["to_BusinessPartner"]["to_Address"].results.length > 0 ? oSuccess["to_BusinessPartner"]["to_Address"].results[0]["to_EmailAddress"]["results"][0]["EmailAddress"] : "";
+
+                            // _.forEach(_.keys(oSuccess), function (_key) {
+                            that.getView().setModel(new JSONModel(oPatientData), "patientDetailsModel")
+                            // that.getView().getModel("patientDetailsModel").setData(oPatientData);
+                            // }); 
+                        },
+                        error: function () {
+
+                        }
+                    });
+
+
+
                         this.sETag = oResponse.headers['etag'];
                         var LimitsTemplateModel1 = new sap.ui.model.json.JSONModel();
                         LimitsTemplateModel1.setProperty("/DiagtypeData", LimitsTemplateModel.getData().DiagtypeData);
@@ -226,7 +231,7 @@ sap.ui.define([
 
                         this.getView().getModel("LimitsTemplateModel1").setData(oData1);
 
-                        oModel_Data.read("/Patients(" + PatientID + ")/to_Diagnosis", {
+                        oModel_Data.read("/Patients('" + sPatientID + "')/to_Diagnosis", {
                             urlParameters: {
                                 $expand: "to_DiagType"
                             },
@@ -311,12 +316,10 @@ sap.ui.define([
                 // });
             },
             onDiagEndDatePickerChange:function(evt){
-                
-                var Edate = evt.getSource().getValue();
                 var path = evt.getSource().getId().split("_IDGenTable2-")[1];
                 var Sdate = this.getView().getModel("LimitsTabableModel").getData()[path].DiagStart;
-                var StartDate = this.dateFormatCh(Sdate);
-                if(Edate < StartDate){
+                var Edate = this.getView().getModel("LimitsTabableModel").getData()[path].DiagEnd;
+                if(Edate < Sdate){
                     evt.getSource().setValueState(sap.ui.core.ValueState.Error);
                     evt.getSource().setValueStateText("End date should be a greater then start date");
                    
@@ -325,14 +328,7 @@ sap.ui.define([
                     evt.getSource().valueStateText("")
                 }
             },
-            dateFormatCh:function(oDate){
-                var date = new Date(oDate);
-                var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({
-                    pattern: "dd-MMM-yyyy"
-                });
-                var FormattedDate = dateFormat.format(date);
-                return FormattedDate;
-            },
+
             _loadVHData:function(){
                 var that = this;
                 var oDiagCatModel = this.getOwnerComponent().getModel("DiagCatlogVH")
@@ -362,8 +358,7 @@ sap.ui.define([
                 });
                 
             },
-
-            loadDataEdit: function(PatientID, CaseUUID) {
+            loadDataEdit: function(CaseUUID) {
                 var that = this;
                 var LimitsTemplateModel = new sap.ui.model.json.JSONModel({
                     FirstEncounter: true,
@@ -375,13 +370,14 @@ sap.ui.define([
                 });
                 sap.ui.core.BusyIndicator.show();
                 var oModel_Data = this.getOwnerComponent().getModel("ReadModel");
-                var caseGUID = CaseUUID;
-                var sPathGUID = "/EpisodeOfCareSet" + "(" + "guid'" + caseGUID + "')";
+                // var caseGUID = CaseUUID;
+                var sPathGUID = "/EpisodeOfCareSet" + "(" + "guid'" + CaseUUID + "')";
                 oModel_Data.read(sPathGUID, {
                     urlParameters: {
                         $expand: "to_Encounter,to_Encounter/to_Diagnosis,to_Encounter/to_Diagnosis/to_DiagType"
                     },
                     success: function (oData1, oResponse) {
+                        var sPatientID = oData1.PatientID;
                         // sap.ui.core.BusyIndicator.hide();
                         this.sETag = oResponse.headers['etag'];
                         var LimitsTemplateModel1 = new sap.ui.model.json.JSONModel();
@@ -460,7 +456,7 @@ sap.ui.define([
 
                         this.getView().getModel("LimitsTemplateModel1").setData(oData1);
 
-                        oModel_Data.read("/Patients(" + PatientID + ")/to_Diagnosis", {
+                        oModel_Data.read("/Patients('" + +  sPatientID +  "')/to_Diagnosis", {
                             urlParameters: {
                                 $expand: "to_DiagType"
                             },
@@ -547,8 +543,10 @@ sap.ui.define([
             onEditDiag: function (evt) {
                 this.getView().getModel("ConfigModel").setProperty("/DiagEnab", true);
                 this.getView().getModel("ConfigModel").setProperty("/EditVisible", false);
+                var aUrlParams = window.location.href.split("?");
+                //var sCaseUUID = aUrlParams[1].split('&')[1].split('=')[1]
                 if (!this.FirstTime) {
-                    this.loadDataEdit()
+                    this.loadDataEdit(this.sContextPath)
                 }
             },
 
@@ -783,15 +781,21 @@ sap.ui.define([
                 });
                 return indexes;
             },
-            handleRouteMatched: function () {
-                var sPath = jQuery.sap.getModulePath("project7", "/model/Code.json");
-                var oModel = new sap.ui.model.json.JSONModel(sPath);
+            handleRouteMatched: function (oEvent) {
+                var PatientId=oEvent.getParameter("arguments").PatientID
+                var caseId = oEvent.getParameter("arguments").CaseUUID
+                this.sContextPath = caseId
+
+               // var sPath = jQuery.sap.getModulePath("project7", "/model/Code.json");
+              //  var oModel = new sap.ui.model.json.JSONModel(sPath);
                 //  var sPathHeaderItem =new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath());
-                this.getView().setModel(oModel, "sPathHeaderItemModel");
+               // this.getView().setModel(oModel, "sPathHeaderItemModel");
+                this._LoadData(PatientId,caseId);
+                this._loadVHData();
                 // this.EncounterData();
                 // this.PatientsData();
                 // this.DiagnosisData();
-            },
+            },
             onChangingCatalog: function (oEvent) {
                 var newval = oEvent.getParameter("newValue");
                 var key = oEvent.getSource().getSelectedItem();
@@ -805,12 +809,14 @@ sap.ui.define([
             },
 
             onPressCancel: function() {
+                var aUrlParams = window.location.href.split("?");
+                //var sCaseUUID = aUrlParams[1].split('&')[1].split('=')[1]
                 // this.oApproveDialog.destroy();
                 this.getView().getModel("DeletedDiagnosis").setData([]);
                 this.getView().getModel("ChronicDeletedDiagnosis").setData([]);
                 this.getView().getModel("ConfigModel").setProperty("/DiagEnab", false);
                 this.getView().getModel("ConfigModel").setProperty("/EditVisible", true);
-                this.loadDataEdit();
+                this.loadDataEdit(this.sContextPath);
             },
 
             onPressSaveConfirmation: function () {
@@ -826,9 +832,9 @@ sap.ui.define([
                 var sDiagTy;
                 var aTempDiagtype = [];
                 oChronicData.forEach(function (chrData) {
-                    if(chrData.DiagStart === null && chrData.DiagCatalog){
+                    if((chrData.DiagStart === undefined && chrData.DiagCode != null) || (chrData.DiagStart === null && chrData.DiagCatalog)){
                         that.strt = "X";
-                        sap.m.MessageBox.error("Start date is mandatory");
+                        MessageBox.error("Start date is mandatory");
                         return;
                     }
                 });
@@ -844,7 +850,7 @@ sap.ui.define([
                     });
                 });
                 var iDelChr = aDeleteChronicdDiagnosisEntry.length || 0;
-                if (aTempDiagtype && aTempDiagtype.length > 0 && (oChronicData.length - 1 - iDelChr) <= aTempDiagtype.length && that.strt !== "X") {
+                if (oChronicData[0].DiagCode === undefined  || (aTempDiagtype && aTempDiagtype.length > 0 && (oChronicData.length - 1 - iDelChr) <= aTempDiagtype.length && that.strt !== "X")) {
                     if (aDeletedDiagnosisEntry.length === 0 && aDeleteChronicdDiagnosisEntry.length === 0) {
                         sTextforPopup = "Are you sure you want to save?";
                     } else {
