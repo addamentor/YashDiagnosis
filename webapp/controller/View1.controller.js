@@ -38,7 +38,7 @@ sap.ui.define([
              * Method to load initial Data
              */
 
-            _LoadData: function (CaseUUID) {
+            _LoadData: function (PatientID, CaseUUID) {
                 var that = this;
                 var LimitsTemplateModel = new sap.ui.model.json.JSONModel({
                     FirstEncounter: true,
@@ -60,9 +60,19 @@ sap.ui.define([
                 var oModel1 = new sap.ui.model.json.JSONModel(sPath1);
                 //  var sPathHeaderItem =new sap.ui.model.json.JSONModel(jQuery.sap.getModulePath());
                 this.getView().setModel(oModel1, "LimitsTabableModel");
-                var Model_header = this.getOwnerComponent().getModel();
-                var oModel_Data = this.getOwnerComponent().getModel("ReadModel");
-                var oModel_Data1 = this.getOwnerComponent().getModel("DiagConfigModel");
+
+                var oModelHead = this.getOwnerComponent().getModel();
+                var Model_header = new sap.ui.model.odata.ODataModel(oModelHead.sServiceUrl, true);
+                // var Model_header = this.getOwnerComponent().getModel();
+                var oModelData = this.getOwnerComponent().getModel("ReadModel");
+                var oModel_Data = new sap.ui.model.odata.ODataModel(oModelData.sServiceUrl, true);
+
+                var oModelData1 = this.getOwnerComponent().getModel("DiagConfigModel");
+                var oModel_Data1 = new sap.ui.model.odata.ODataModel(oModelData1.sServiceUrl, true);
+                
+                Model_header.setUseBatch(false);
+                oModel_Data.setUseBatch(false);
+                oModel_Data1.setUseBatch(false);
                 
                 oModel_Data1.setHeaders({
                     "X-Requested-With":"XMLHttpRequest",
@@ -105,7 +115,7 @@ sap.ui.define([
                         $expand: "to_Encounter,to_Encounter/to_Diagnosis,to_Encounter/to_Diagnosis/to_DiagType"
                     },
                     success: function (oData1, oResponse) {
-                    var sPatientID = oData1.PatientID;
+                    var sPatientID = oData1.PatientId || PatientID;
                     var filter1 = []
                     filter1.push(new Filter({
                         path: 'PatientId',
@@ -125,7 +135,7 @@ sap.ui.define([
                         urlParameters: {
                             $expand: "to_Case,to_Diagnosis,to_Name,to_BusinessPartner,to_BusinessPartner/to_Address," +
                                 "to_BusinessPartner/to_Address/to_EmailAddress,to_BusinessPartner/to_Address/to_MobilePhoneNumber," +
-                                "to_BusinessPartner/to_Address/to_PhoneNumber,to_BusinessPartner/to_Cases,to_PatCvrg"
+                                "to_BusinessPartner/to_Address/to_PhoneNumber,to_PatCvrg"
                         },
                         success: function (oSuccess) {
                             var oPatientData = [];
@@ -152,9 +162,6 @@ sap.ui.define([
 
                         }
                     });
-
-
-
                         this.sETag = oResponse.headers['etag'];
                         var LimitsTemplateModel1 = new sap.ui.model.json.JSONModel();
                         LimitsTemplateModel1.setProperty("/DiagtypeData", LimitsTemplateModel.getData().DiagtypeData);
@@ -782,8 +789,8 @@ sap.ui.define([
                 return indexes;
             },
             handleRouteMatched: function (oEvent) {
-                var PatientId=oEvent.getParameter("arguments").PatientID
-                var caseId = oEvent.getParameter("arguments").CaseUUID
+                var PatientId=this.getOwnerComponent().getComponentData().startupParameters.PatientID.join()
+                var caseId = this.getOwnerComponent().getComponentData().startupParameters.CaseUUId.join()
                 this.sContextPath = caseId
 
                // var sPath = jQuery.sap.getModulePath("project7", "/model/Code.json");
