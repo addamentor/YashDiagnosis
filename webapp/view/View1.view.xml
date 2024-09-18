@@ -52,13 +52,13 @@
 					<m:Image id="_IDGenImage2" src="./test-resources/sap/uxap/images/Twitter.png" class="sapUiSmallMarginBegin"/>
 				</layout:HorizontalLayout>
 				<layout:VerticalLayout id="_IDGenVerticalLayout2" class="sapUiSmallMarginBeginEnd">
-					<m:Link id="_IDGenLink3" text="{LimitsTemplateModel1>/results/0/to_OrgUnitTxt/OrgUnitText}"/>
-					<m:Text id="_IDGenText6" class="sapUiTinyMarginTop" text="{LimitsTemplateModel1>/results/0/to_TreatUnitTxt/TreatUnitText}"/>
+					<m:Link id="_IDGenLink3" text="{LimitsTemplateModel1>/to_Encounter/results/0/to_OrgUnitTxt/OrgUnitText}"/>
+					<m:Text id="_IDGenText6" class="sapUiTinyMarginTop" text="{LimitsTemplateModel1>/to_Encounter/results/0/to_TreatUnitTxt/TreatUnitText}"/>
 					<m:Label id="idEpisodeofCareLabel" class="sapUiTinyMarginTop" text="Episode of Care ID: {LimitsTemplateModel1>/CaseID}"/>
 				</layout:VerticalLayout>
 				<layout:VerticalLayout id="_IDGenVerticalLayout3" class="sapUiSmallMarginBeginEnd">
-					<m:ObjectStatus id="_IDGenObjectStatus1" text="Credit: 1850.00 AED" state="Success"/>
-					<m:ObjectStatus id="_IDGenObjectStatus2" class="sapUiTinyMarginTop" text="Overdue: 0.00" state="Error"/>
+					<m:ObjectStatus id="_IDGenObjectStatus1" text="Credit: 1850.00 AED" state="Success" visible="false"/>
+					<m:ObjectStatus id="_IDGenObjectStatus2" class="sapUiTinyMarginTop" text="Overdue: 0.00" state="Error" visible="false"/>
 				</layout:VerticalLayout>
 			</m:FlexBox>
 		</headerContent>

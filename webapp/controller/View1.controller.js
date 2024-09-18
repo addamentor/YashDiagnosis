@@ -112,7 +112,7 @@ sap.ui.define([
                 var sPathGUID = "/EpisodeOfCareSet" + "(" + "guid'" + CaseUUID + "')";
                 oModel_Data.read(sPathGUID, {
                     urlParameters: {
-                        $expand: "to_Encounter,to_Encounter/to_Diagnosis,to_Encounter/to_Diagnosis/to_DiagType"
+                        $expand: "to_Encounter,to_Encounter/to_Diagnosis,to_Encounter/to_OrgUnitTxt,to_Encounter/to_TreatUnitTxt,to_Encounter/to_Diagnosis/to_DiagType"
                     },
                     success: function (oData1, oResponse) {
                     var sPatientID = oData1.PatientId || PatientID;
@@ -384,7 +384,7 @@ sap.ui.define([
                         $expand: "to_Encounter,to_Encounter/to_Diagnosis,to_Encounter/to_OrgUnitTxt,to_Encounter/to_TreatUnitTxt,to_Encounter/to_Diagnosis/to_DiagType"
                     },
                     success: function (oData1, oResponse) {
-                        var sPatientID = oData1.PatientID;
+                        var sPatientID = oData1.PatientId;
                         // sap.ui.core.BusyIndicator.hide();
                         this.sETag = oResponse.headers['etag'];
                         var LimitsTemplateModel1 = new sap.ui.model.json.JSONModel();
