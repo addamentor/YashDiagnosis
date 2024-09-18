@@ -43,7 +43,7 @@
 				<layout:VerticalLayout id="_IDGenVerticalLayout1" class="sapUiSmallMarginBeginEnd">
 					<m:Text id="_IDGenText3" class="sapUiTinyMarginTop" text="{patientDetailsModel>/patientGender}"/>
 					<m:Text id="_IDGenText4" class="sapUiTinyMarginTop" text="{path: 'patientDetailsModel>/patientBirthDate',type: 'sap.ui.model.type.Date', formatOptions: { style: 'medium'}}"/>
-					<m:Text id="_IDGenText5" class="sapUiTinyMarginTop" text="{patientDetailsModel>/patientAge}"/>
+					<m:Text id="_IDGenText5" class="sapUiTinyMarginTop" text="{patientDetailsModel>/patientAge} Years"/>
 					<m:Link id="_IDGenLink1" class="sapUiTinyMarginTop" text="{patientDetailsModel>/patientMobile}"/>
 					<m:Link id="_IDGenLink2" class="sapUiTinyMarginTop" text="{patientDetailsModel>/patientEmail}"/>
 				</layout:VerticalLayout>
@@ -52,8 +52,8 @@
 					<m:Image id="_IDGenImage2" src="./test-resources/sap/uxap/images/Twitter.png" class="sapUiSmallMarginBegin"/>
 				</layout:HorizontalLayout>
 				<layout:VerticalLayout id="_IDGenVerticalLayout2" class="sapUiSmallMarginBeginEnd">
-					<m:Link id="_IDGenLink3" text="Dentist"/>
-					<m:Text id="_IDGenText6" class="sapUiTinyMarginTop" text="General Dentist"/>
+					<m:Link id="_IDGenLink3" text="{LimitsTemplateModel1>/results/0/to_OrgUnitTxt/OrgUnitText}"/>
+					<m:Text id="_IDGenText6" class="sapUiTinyMarginTop" text="{LimitsTemplateModel1>/results/0/to_TreatUnitTxt/TreatUnitText}"/>
 					<m:Label id="idEpisodeofCareLabel" class="sapUiTinyMarginTop" text="Episode of Care ID: {LimitsTemplateModel1>/CaseID}"/>
 				</layout:VerticalLayout>
 				<layout:VerticalLayout id="_IDGenVerticalLayout3" class="sapUiSmallMarginBeginEnd">
@@ -72,7 +72,7 @@
 							<!-- <m:VBox id="_IDGenVBox1" items="{LimitsTemplateModel>/panelData}"> -->
 							<m:VBox id="_IDGenVBox1"
 								items="{LimitsTemplateModel1>/to_Encounter/results}">
-								<m:Panel id="_IDGenPanel1" headerText="{LimitsTemplateModel1>EncID}"
+								<m:Panel id="_IDGenPanel1" headerText="{LimitsTemplateModel1>EncID} - {LimitsTemplateModel1>EncClassDesc}"
 									expanded="true" expandable="true">
 									<m:Table id="_IDGenTable1" autoPopinMode= "true"
 										items="{LimitsTemplateModel1>to_Diagnosis/results}">

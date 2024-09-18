@@ -381,7 +381,7 @@ sap.ui.define([
                 var sPathGUID = "/EpisodeOfCareSet" + "(" + "guid'" + CaseUUID + "')";
                 oModel_Data.read(sPathGUID, {
                     urlParameters: {
-                        $expand: "to_Encounter,to_Encounter/to_Diagnosis,to_Encounter/to_Diagnosis/to_DiagType"
+                        $expand: "to_Encounter,to_Encounter/to_Diagnosis,to_Encounter/to_OrgUnitTxt,to_Encounter/to_TreatUnitTxt,to_Encounter/to_Diagnosis/to_DiagType"
                     },
                     success: function (oData1, oResponse) {
                         var sPatientID = oData1.PatientID;
