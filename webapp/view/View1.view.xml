@@ -57,8 +57,8 @@
 					<m:Label id="idEpisodeofCareLabel" class="sapUiTinyMarginTop" text="Episode of Care ID: {LimitsTemplateModel1>/CaseID}"/>
 				</layout:VerticalLayout>
 				<layout:VerticalLayout id="_IDGenVerticalLayout3" class="sapUiSmallMarginBeginEnd">
-					<m:ObjectStatus id="_IDGenObjectStatus1" text="Credit: 1850.00 AED" state="Success" visible="false"/>
-					<m:ObjectStatus id="_IDGenObjectStatus2" class="sapUiTinyMarginTop" text="Overdue: 0.00" state="Error" visible="false"/>
+					<m:ObjectStatus id="_IDGenObjectStatus1" text="Credit: 1850.00 AED" state="Success"/>
+					<m:ObjectStatus id="_IDGenObjectStatus2" class="sapUiTinyMarginTop" text="Overdue: 0.0" state="Error"/>
 				</layout:VerticalLayout>
 			</m:FlexBox>
 		</headerContent>
